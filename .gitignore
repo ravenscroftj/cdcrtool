@@ -1,0 +1,6 @@
+__pycache__
+*.py[co]
+.env
+*.egg-info
+credentials.json
+token.pkl
