@@ -19,7 +19,7 @@ class User(Base):
     email = Column(String(255))
     tasks = relationship("Task", secondary="user_tasks")
     salt = Column(String(64))
-    
+    view_gsheets = Column(Boolean, default=False)
     
 class Task(Base):
     

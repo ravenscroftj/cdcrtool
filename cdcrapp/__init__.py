@@ -44,6 +44,22 @@ def create_user(ctx: CLIContext, username: str, email: str, password: str):
     print(f"Create user with username={username}")
     
     ctx.usersvc.add_user(username, password, email)
+  
+@cli.command()
+@click.option("--username", type=str, prompt='Username')  
+@click.option("--frame-button/--no-frame-button", default=False)
+@click.pass_obj
+def set_user_frame_permission(ctx: CLIContext, username: str, frame_button: bool):
+    
+    user : User = ctx.usersvc.get_by_username(username)
+    
+    if user is None:
+        print(f"Could not find user with username={username}")
+        return
+    
+    print(f"Setting frame_button_visible={frame_button} for {username}")
+    user.view_gsheets = frame_button
+    ctx.usersvc.update(user)
     
 @cli.command()
 @click.option("--username", type=str, prompt='Username')
@@ -147,4 +163,4 @@ def import_tasks(ctx: CLIContext, task_csv: str):
         
 
 if __name__ == "__main__":
-    cli()
+    cli() #pylint: disable=no-value-for-parameter

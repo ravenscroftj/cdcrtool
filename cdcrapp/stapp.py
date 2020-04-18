@@ -52,7 +52,7 @@ def get_interesting_tasks():
     """Get all interesting/difficult tasks from google sheets"""
     all_complete = dict()
     sheet = get_spreadsheet_client()
-    for (hash, user, comment) in sheet.get_range(INTERESTING_RANGE)['values']:
+    for (hash, user, _) in sheet.get_range(INTERESTING_RANGE)['values']:
         all_complete[hash.strip()] = user
     
     return all_complete
@@ -109,7 +109,7 @@ class CDCRTool():
             
             self.task_question_ph = st.empty()
             
-            st.markdown("Use the below buttons to add this task to the interesting or frame sheets. You need to do this before you give a Yes/No/Report answer")
+            st.markdown("Use the below button to add this task to the 'difficult' list. You need to do this before you give a Yes/No/Report answer if applicable.")
             self.interesting_btn_ph = st.empty()
             self.frame_btn_ph = st.empty()
             
@@ -147,22 +147,22 @@ class CDCRTool():
     def add_frame_task(self, task):
         self.add_sheet_task(task, FRAME_RANGE)
         #append to cache
-        get_frame_tasks()[task['hash']] = self.user['name']
+        get_frame_tasks()[task.hash] = self.user.username
 
     def add_interesting_task(self, task):
         self.add_sheet_task(task, INTERESTING_RANGE)
         #append to cache
-        get_interesting_tasks()[task['hash']] = self.user['name']
+        get_interesting_tasks()[task.hash] = self.user.username
         
-    def add_sheet_task(self, task, range):
+    def add_sheet_task(self, task: Task, range):
         # generate text
-        entity = task['News Candidates'].split(";")[0]
-        sci_entity = task['Abstract Candidates'].split(";")[0]
+        entity = task.news_ent.split(";")[0]
+        sci_entity = task.sci_ent.split(";")[0]
         comment = f"{entity} and {sci_entity}"
         
         #append to actual sheet
         sheet = get_spreadsheet_client()
-        row = [task['hash'], self.user['name'], comment]
+        row = [task.hash, self.user.username, comment]
         sheet.append_sheet(range, [row])
 
             
@@ -274,14 +274,15 @@ class CDCRTool():
     def show_task_spreadsheet_options(self, task: Task):
         
         if task.hash not in get_interesting_tasks():
-            self.interesting_btn = self.interesting_btn_ph.button("Interesting Task (Append Spreadsheet)")
+            self.interesting_btn = self.interesting_btn_ph.button("This task is difficult to think about")
         else:
-            self.interesting_btn_ph.markdown(f"**Task already in interesting list, added by {get_interesting_tasks()[task.hash]}**")
+            self.interesting_btn_ph.markdown(f"**Task already in 'difficult list', added by {get_interesting_tasks()[task.hash]}**")
             
-        if task.hash not in get_frame_tasks():
-            self.frame_btn = self.frame_btn_ph.button("Interesting Frame (Append Spreadsheet)")
-        else:
-            self.frame_btn_ph.markdown(f"**Task already exists in frame list, added by {get_frame_tasks()[task.hash]}**")
+        if self.user.view_gsheets:
+            if task.hash not in get_frame_tasks():
+                self.frame_btn = self.frame_btn_ph.button("Interesting Frame (Append Spreadsheet)")
+            else:
+                self.frame_btn_ph.markdown(f"**Task already exists in frame list, added by {get_frame_tasks()[task.hash]}**")
 
 
     def user_list(self):
@@ -315,15 +316,17 @@ class CDCRTool():
         with open(os.path.join(ASSETS_DIR, "README.md")) as f:
             st.markdown(body=f.read())
             
-        st.markdown("**If you are a returning user, select your username in the sidebar. If you are new create your profile below.**")
+        st.markdown("**If you are a returning user, select your username in the sidebar. Otherwise contact [James](twitter.com/jamesravey/) if you would like to get involved.**")
         
-        username = st.text_input("Enter a username:")
+        # username = st.text_input("Enter a username:")
+        # password = st.text_input("Enter a password:", type="password")
+        # conf_pw  = st.text_input("Confirm password:", type="password")
         
-        cb = st.button("Create a user profile")
+        # cb = st.button("Create a user profile")
         
-        if cb:
-            self.add_user(username)
-            st.write("Thank you for creating a new user... Please refresh your browser to log in.")
+        # if cb:
+        #     self.add_user(username)
+        #     st.write("Thank you for creating a new user... Please refresh your browser to log in.")
         
 
     def append_user_work(self, username, work):
@@ -335,12 +338,6 @@ class CDCRTool():
     def taskhash(self, row):
         h = hashlib.new("sha256", row['URL'] + row['DOI'] + row['News Candidates'] + row['Abstract Candidates'])
         return h.hexdigest()
-
-
-
-
-            
-            
 
 
             

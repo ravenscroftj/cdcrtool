@@ -6,7 +6,7 @@ authors = ["James Ravenscroft <ravenscroftj@gmail.com>"]
 license = "MIT"
 
 packages = [
-    {include="cdcrapp"}
+    {include = "cdcrapp"}
 ]
 
 [tool.poetry.dependencies]
@@ -23,8 +23,10 @@ python-dotenv = "^0.13.0"
 google-api-python-client = "^1.8.0"
 google-auth-httplib2 = "^0.0.3"
 google-auth-oauthlib = "^0.4.1"
+tqdm = "^4.45.0"
 
 [tool.poetry.dev-dependencies]
+pylint = "^2.4.4"
 
 [build-system]
 requires = ["poetry>=0.12"]
