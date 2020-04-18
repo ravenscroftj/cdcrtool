@@ -5,7 +5,7 @@ services:
         restart: always
         environment: 
             - POSTGRES_PASSWORD=my-secret-pw
-            - POSTGRES_DB=colly
+            - POSTGRES_DB=cdcr
         ports: 
             - 5432:5432
         volumes:
