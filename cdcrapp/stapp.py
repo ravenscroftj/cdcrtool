@@ -132,7 +132,7 @@ class CDCRTool():
     def connect_buttons(self):
             self.yes_btn = self.yes_btn_ph.button("Yes")
             self.no_btn = self.no_btn_ph.button("No")
-            self.report_btn = self.report_btn_ph.button("Report Bad Task (Never see again)")
+            self.report_btn = self.report_btn_ph.button("Bad Example")
             
     def handle_sheet_updates(self, task):
             

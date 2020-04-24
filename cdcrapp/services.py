@@ -98,12 +98,17 @@ class TaskService(DBServiceBase):
         """Get task by hash"""
         return self.get_by_filter(Task, hash=hash)
     
-    def next_tasks_for_user(self, user: User) -> List[Task]:
+    def next_tasks_for_user(self, user: User) -> Task:
         """List tasks that a given user has not yet completed"""
         
         with self.session() as session:
             session.add(user)
             substmt = session.query(UserTask.task_id).filter(UserTask.user_id == user.id)
 
-            return session.query(Task).filter(~Task.id.in_(substmt), ~Task.is_bad).order_by(Task.is_iaa.desc()).first()
+            completed = session.query(Task.id).join(UserTask).filter(~Task.is_iaa)
+
+            return session.query(Task).filter(
+                ~Task.id.in_(substmt), 
+                ~Task.id.in_(completed),
+                ~Task.is_bad).order_by(Task.is_iaa.desc(), Task.similarity.desc()).first()
         
