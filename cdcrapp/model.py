@@ -20,6 +20,8 @@ class User(Base):
     tasks = relationship("Task", secondary="user_tasks")
     salt = Column(String(64))
     view_gsheets = Column(Boolean, default=False)
+    is_admin = Column(Boolean, default=False)
+    
     
 class Task(Base):
     

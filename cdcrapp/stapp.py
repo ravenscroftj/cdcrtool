@@ -35,6 +35,14 @@ FRAME_RANGE = os.environ.get("FRAME_RANGE")
 
 SECRET = os.environ.get("SECRET")
 
+IAA_GUIDE = """### Interpretation of Cohen's Kappa
+&lt0 - no agreement\n
+0-0.20 slight agreement\n
+0.21-0.40 fair agreement\n
+0.41-0.6 moderate agreement\n
+0.61-0.80 substantial agreement\n
+0.81 - 1.0 almost perfect agreement"""
+
 
 @st.cache(allow_output_mutation=True)
 def get_spreadsheet_client():
@@ -78,7 +86,7 @@ class CDCRTool():
         self.frame_btn = None
         self.sheet = Spreadsheet(SPREADSHEET_ID)
         
-        self.user = None
+        self.user : User = None
         self.redis = get_redis_connection()
         self.last_task_id = None
 
@@ -95,39 +103,83 @@ class CDCRTool():
         if not _usersvc.authenticate(user_selector, user_password):
             st.header("Log in")
             st.write("please provide the password now")
+            
         
         else:
             
             self.user = self.get_user_profile(user_selector)
             
             self.info_ph = st.sidebar.empty()
+            show_admin = False
             
-            self.nav_header_ph = st.sidebar.empty()
-            self.task_id_ph = st.sidebar.empty()
-            self.task_decide_ph = st.sidebar.empty()
-            self.task_decide = self.task_decide_ph.radio('Current task', ['random', 'from Task ID'])
+            if self.user.is_admin:
+                show_admin = st.sidebar.checkbox("Toggle Admin View")
+
             
-            self.task_question_ph = st.empty()
+            if show_admin:
+                self.display_admin_panel()
+            else:            
+                self.nav_header_ph = st.sidebar.empty()
+                self.task_id_ph = st.sidebar.empty()
+                self.task_decide_ph = st.sidebar.empty()
+                self.task_decide = self.task_decide_ph.radio('Current task', ['random', 'from Task ID'])
+                
+                self.task_question_ph = st.empty()
+                
+                st.markdown("Use the below button to add this task to the 'difficult' list. You need to do this before you give a Yes/No/Report answer if applicable.")
+                self.interesting_btn_ph = st.empty()
+                self.frame_btn_ph = st.empty()
+                
+                st.markdown("Use the buttons below to give a final Yes/No/Report answer")
+                self.yes_btn_ph = st.empty()
+                self.no_btn_ph = st.empty()
+                self.report_btn_ph = st.empty()
+                
+                
+                # set up task buttons
+                self.connect_buttons()
+                
+                self.task_markdown_ph = st.empty()
+                
+                #process any work (via redis)
+                self.handle_task_outcome()
+                
+                self.show_task() 
             
-            st.markdown("Use the below button to add this task to the 'difficult' list. You need to do this before you give a Yes/No/Report answer if applicable.")
-            self.interesting_btn_ph = st.empty()
-            self.frame_btn_ph = st.empty()
+    def display_admin_panel(self):
+        
+        st.markdown("# Admin View")
+        
+        # get user performance
+        
+        progress = _usersvc.get_all_user_progress()
+        
+        df = pd.DataFrame.from_records(progress, columns=['User','Completed Examples'])
+        
+        st.markdown("## Total Tasks")
+        
+        st.dataframe(df)
+        
+        st.markdown("## Pairwise IAA (Cohen's Kappa) \n\nSelect users to compare")
+
+        
+        users = self.user_list()
+        
+        username_a = st.selectbox(label="User A", options=users)
+        username_b = st.selectbox(label="User B", options=users)
+        
+        if username_a != "---" and username_b != "---":
             
-            st.markdown("Use the buttons below to give a final Yes/No/Report answer")
-            self.yes_btn_ph = st.empty()
-            self.no_btn_ph = st.empty()
-            self.report_btn_ph = st.empty()
+            if username_a == username_b:
+                st.markdown("You can't compare the user against themselves")
+            else:
             
+                iaa = _usersvc.get_pairwise_iaa(username_a,username_b)
             
-            # set up task buttons
-            self.connect_buttons()
-            
-            self.task_markdown_ph = st.empty()
-            
-            #process any work (via redis)
-            self.handle_task_outcome()
-            
-            self.show_task() 
+                st.markdown(f"IAA {username_a} <-> {username_b}: {iaa}")        
+        
+                
+        st.markdown(IAA_GUIDE)
             
     def connect_buttons(self):
             self.yes_btn = self.yes_btn_ph.button("Yes")

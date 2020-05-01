@@ -3,8 +3,12 @@ from sqlalchemy.orm import sessionmaker, Session
 from typing import List, Optional, ContextManager
 from cdcrapp.model import User, Task, UserTask, Base as ModelBase
 
+
+from sklearn.metrics import cohen_kappa_score
+
 from crypt import crypt, mksalt, METHOD_SHA512
 from contextlib import contextmanager
+from sqlalchemy import func
 
 class DBServiceBase(object):
     engine: Engine
@@ -15,7 +19,7 @@ class DBServiceBase(object):
         self.session_factory = sessionmaker(bind=self.engine)   
         
     @contextmanager
-    def session(self) -> ContextManager[Session]:
+    def session(self) -> Session:
 
         with self.engine.begin() as conn:
             session: Session = self.session_factory(bind=conn)
@@ -77,12 +81,56 @@ class UserService(DBServiceBase):
             return session.query(UserTask).filter(UserTask.user_id==user.id).count()
     
     def user_add_task(self, user: User, task: Task, answer: str) -> UserTask:
-        
+        from sqlalchemy import func
         with self.session() as session:
             ut = UserTask(task=task, user=user, answer=answer)
             session.add(ut)
             session.commit()
+    
+    
+    def get_all_user_progress(self) -> List[tuple]:
         
+        # session: Session 
+        with self.session() as session:
+            result = session.query(User.username, func.count(User.username)).join(UserTask).group_by(User.username).all()
+            
+        return result
+    
+    def get_pairwise_iaa(self, usernameA: str, usernameB: str) -> float:
+        
+        with self.session() as session:
+            q = session.query(UserTask)\
+                .join(User)\
+                .join(Task)\
+                .filter(
+                    (User.username==usernameA) | (User.username==usernameB),
+                    Task.is_iaa == True
+                )
+            
+            results = q.all()
+            
+            userA_answers = []
+            userB_answers = []
+            
+            for r in results:
+                if r.user.username == usernameA:
+                    userA_answers.append(r)
+                elif r.user.username == usernameB:
+                    userB_answers.append(r)
+            
+            intersection = set([ut.task_id for ut in userA_answers]).intersection([ut.task_id for ut in userB_answers])
+            
+            # sort answers by task id ascending
+            userA_answers = sorted(userA_answers, key=lambda x: x.task_id)
+            userB_answers = sorted(userB_answers,  key=lambda x: x.task_id)
+            
+            y_a = [ut.answer for ut in userA_answers if ut.task_id in intersection]
+            y_b = [ut.answer for ut in userB_answers if ut.task_id in intersection]
+        
+        return cohen_kappa_score(y_a, y_b)
+                    
+                
+ 
 
 class TaskService(DBServiceBase):
     
