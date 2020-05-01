@@ -33,7 +33,7 @@ class DBServiceBase(object):
             session.add(obj)
             session.commit()
         
-    def list(self, objtype: ModelBase, limit:int=None, offset:int=None) -> List[ModelBase]:
+    def list(self, objtype: ModelBase, limit:int=None, offset:int=None, orderby=None) -> List[ModelBase]:
         """List all items of given type"""
 
         with self.session() as session:
@@ -43,6 +43,9 @@ class DBServiceBase(object):
                 
             if offset is not None:
                 q = q.offset(limit)
+        
+            if orderby != None:
+                q.order_by(**orderby)
         
             return q.all()
         

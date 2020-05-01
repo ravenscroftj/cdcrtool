@@ -2,8 +2,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import relationship
 
-from sqlalchemy import Column, Integer, String, Text, Boolean, Table, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, Text, Boolean, Table, ForeignKey, Float, DateTime
 
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -22,6 +23,8 @@ class User(Base):
     view_gsheets = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
     
 class Task(Base):
     
@@ -39,6 +42,8 @@ class Task(Base):
     is_iaa = Column(Boolean, default=False)
     is_bad = Column(Boolean, default=False)
     
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
 
 class UserTask(Base):
     
@@ -51,3 +56,6 @@ class UserTask(Base):
     
     task = relationship("Task", backref="usertasks")
     user = relationship("User", backref="usertasks")
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
