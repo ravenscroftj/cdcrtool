@@ -239,7 +239,7 @@ class CDCRTool():
                 return
             
             # there is a random chance that this will become an IAA task
-            if np.random.random() < float(os.getenv('IAA_RATIO', 0.3)) and (not task.is_iaa):
+            if np.random.random() < float(os.getenv('IAA_RATIO', 0.05)) and (not task.is_iaa):
                 task.is_iaa = True
             
             if self.yes_btn:
@@ -343,21 +343,6 @@ class CDCRTool():
                 
         return options 
 
-
-        
-    def add_user(self, username):
-        user_file = os.path.join(DATA_DIR, "users.json")
-        
-        users = []
-        
-        if os.path.exists(user_file):
-            with open(user_file) as f:
-                users = json.load(f)
-                
-        users.append({"name": username})
-
-        with open(user_file,'w') as f:
-            json.dump(users, f)
             
     def get_user_profile(self, username) -> User:
         return _usersvc.get_by_username(username)
@@ -370,22 +355,6 @@ class CDCRTool():
             
         st.markdown("**If you are a returning user, select your username in the sidebar. Otherwise contact [James](twitter.com/jamesravey/) if you would like to get involved.**")
         
-        # username = st.text_input("Enter a username:")
-        # password = st.text_input("Enter a password:", type="password")
-        # conf_pw  = st.text_input("Confirm password:", type="password")
-        
-        # cb = st.button("Create a user profile")
-        
-        # if cb:
-        #     self.add_user(username)
-        #     st.write("Thank you for creating a new user... Please refresh your browser to log in.")
-        
-
-    def append_user_work(self, username, work):
-        data_file = os.path.join(DATA_DIR, f"user_{username}.jsonl")
-        
-        with open(data_file, "a") as f:
-            f.write(json.dumps(work) + "\n")
 
     def taskhash(self, row):
         h = hashlib.new("sha256", row['URL'] + row['DOI'] + row['News Candidates'] + row['Abstract Candidates'])
