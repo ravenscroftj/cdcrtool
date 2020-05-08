@@ -92,9 +92,9 @@ class CDCRTool():
 
     def init_ui(self):
 
-        st.sidebar.header("User Profile")
-        user_selector = st.sidebar.selectbox("User:", options=self.user_list())
-        user_password = st.sidebar.text_input("Password", type="password")
+        st.sidebar.header(body="User Profile")
+        user_selector = st.sidebar.selectbox(label="User:", options=self.user_list())
+        user_password = st.sidebar.text_input(label="Password", type="password")
         
         if user_selector == "---":
             self.show_front_page()
@@ -241,6 +241,7 @@ class CDCRTool():
             # there is a random chance that this will become an IAA task
             if np.random.random() < float(os.getenv('IAA_RATIO', 0.05)) and (not task.is_iaa):
                 task.is_iaa = True
+                task.is_iaa_priority = True
             
             if self.yes_btn:
                 lbl = 'yes'
@@ -284,8 +285,6 @@ class CDCRTool():
 
     def show_task(self):
         
-        task : Task = _tasksvc.next_tasks_for_user(self.user)
-        
         self.update_progress()
         
         next_task : Optional[Task] = self.manage_task_navigation()
@@ -302,8 +301,6 @@ class CDCRTool():
                 
                 sci_entity, start, end = next_task.sci_ent.split(";")
                 
-                abstract = next_task.sci_text.replace("\s+"," ")
-                
                 sci_buffer = next_task.sci_text[:int(start)].strip() + " **" + sci_entity + "** " + next_task.sci_text[int(end):].strip()
                 
                 self.task_question_ph.markdown(f"## Are *'{entity}'* and *'{sci_entity}'* mentions of the same thing?")
@@ -314,7 +311,7 @@ class CDCRTool():
                 st.markdown("There was a problem with this task. Click Report to continue.")
             
             #skip = st.button("Skip (you will see this again)")
-            sci_buffer = re.sub("^\s+","\n", sci_buffer, flags=re.MULTILINE)
+            sci_buffer = re.sub(r"^\s+","\n", sci_buffer, flags=re.MULTILINE)
         
             self.task_markdown_ph.markdown(f"## News Summary [[link]]({next_task.news_url})\n" 
                         + buffer 

@@ -39,7 +39,10 @@ class Task(Base):
     news_ent = Column(String(255))
     sci_ent = Column(String(255))
     similarity = Column(Float)
+    # If set can be used in IAA calculations 
     is_iaa = Column(Boolean, default=False)
+    # If set will be prioritised above "new" tasks by editor
+    is_iaa_priority = Column(Boolean, default=False)
     is_bad = Column(Boolean, default=False)
     
     created_at = Column(DateTime, default=datetime.utcnow)

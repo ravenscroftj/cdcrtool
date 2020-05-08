@@ -1,3 +1,5 @@
+import random
+
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 from typing import List, Optional, ContextManager
@@ -33,7 +35,7 @@ class DBServiceBase(object):
             session.add(obj)
             session.commit()
         
-    def list(self, objtype: ModelBase, limit:int=None, offset:int=None, orderby=None) -> List[ModelBase]:
+    def list(self, objtype: ModelBase, filters={}, limit:int=None, offset:int=None, orderby=None) -> List[ModelBase]:
         """List all items of given type"""
 
         with self.session() as session:
@@ -45,7 +47,10 @@ class DBServiceBase(object):
                 q = q.offset(limit)
         
             if orderby != None:
-                q.order_by(**orderby)
+                q = q.order_by(**orderby)
+
+            if len(filters) > 0:
+                q = q.filter_by(**filters)
         
             return q.all()
         
@@ -81,6 +86,7 @@ class UserService(DBServiceBase):
     
     def get_progress_for_user(self, user: User) -> int:
         with self.session() as session:
+            session.add(user)
             return session.query(UserTask).filter(UserTask.user_id==user.id).count()
     
     def user_add_task(self, user: User, task: Task, answer: str) -> UserTask:
@@ -154,12 +160,49 @@ class TaskService(DBServiceBase):
         
         with self.session() as session:
             session.add(user)
+
+            # list of user tasks that the current user has completed
             substmt = session.query(UserTask.task_id).filter(UserTask.user_id == user.id)
 
-            completed = session.query(Task.id).join(UserTask).filter(~Task.is_iaa)
+            # list of task ids completed by other users excluding those in the current IAA priority list
+            completed = session.query(Task.id).join(UserTask).filter(~Task.is_iaa_priority)
 
-            return session.query(Task).filter(
+            print(session.query(Task).filter(
                 ~Task.id.in_(substmt), 
                 ~Task.id.in_(completed),
-                ~Task.is_bad).order_by(Task.is_iaa.desc(), Task.similarity.desc()).first()
+                ~Task.is_bad)
+                .order_by(
+                    Task.is_iaa_priority.asc(), 
+                    Task.similarity.desc()
+                    ))
+
+            return (session.query(Task).filter(
+                ~Task.id.in_(substmt), 
+                ~Task.id.in_(completed),
+                ~Task.is_bad)
+                .order_by(
+                    Task.is_iaa_priority.desc(), 
+                    Task.similarity.desc()
+                    )).first()
         
+    def rebalance_iaa(self, max_priority_tasks: int = 150):
+        """Rebalance IAA tasks"""
+
+        with self.session() as session:
+
+            iaa_tasks = session.query(Task).filter(Task.is_iaa).all()
+            priority_tasks = session.query(Task).filter(Task.is_iaa_priority).all()
+
+            for task in priority_tasks:
+                task.is_iaa_priority = False
+
+            session.bulk_save_objects(priority_tasks)
+
+            new_pri_tasks = random.sample(iaa_tasks, max_priority_tasks)
+
+            for task in new_pri_tasks:
+                task.is_iaa_priority = True
+            
+            session.bulk_save_objects(new_pri_tasks)
+
+            session.commit()

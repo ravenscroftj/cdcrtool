@@ -117,7 +117,30 @@ def import_user(ctx: CLIContext, user_profile: str, username: str):
                     print(f"Mark IAA task where hash={work['hash']}")
                     task.is_iaa = True
                     ctx.tasksvc.update(task)
+
+@cli.command()
+@click.option("--new-count", type=int, default=150)
+@click.pass_obj
+def rebalance_iaa(ctx: CLIContext, new_count: int):
+    """Rebalance IAA tasks so that new users are not overwhelmed"""
+    from cdcrapp.services import TaskService
+    from cdcrapp.model import Task
+
+    # get tasks that are IAA
+
+    iaa_tasks = ctx.tasksvc.list(Task, filters={"is_iaa":True})
+    iaa_priority = ctx.tasksvc.list(Task, filters={"is_iaa_priority":True})
+
+    print(f"Found {len(iaa_tasks)} tasks marked is_iaa and {len(iaa_priority)} tasks marked is_iaa_priority")
+    print("Rebalance priority tasks to max of 150")
+
+    ctx.tasksvc.rebalance_iaa(new_count)
+
     
+
+
+
+
 
 @cli.command()
 @click.argument("task_csv", type=click.Path(exists=True))
