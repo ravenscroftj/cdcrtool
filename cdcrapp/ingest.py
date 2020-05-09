@@ -12,7 +12,7 @@ import numpy as np
 
 from scipy.spatial.distance import cosine
 from cdcrapp import CLIContext
-from cdcrapp.model import Task
+from cdcrapp.model import Task, NewsArticle, SciPaper
 from transformers import BertModel, BertTokenizerFast
 
 from spacy.tokens.span import Span
@@ -62,7 +62,7 @@ def process_pair(news_summary: str, abstract: str):
     model_inputs = tokenizer.encode_plus(text=news_summary, text_pair=abstract, 
     add_special_tokens=True, 
     return_offsets_mapping=True,
-    max_length=1024,
+    max_length=512,
     truncation_strategy='only_second')
 
     # run single pass of BERT with both documents to get attention matrices
@@ -74,6 +74,7 @@ def process_pair(news_summary: str, abstract: str):
             )
 
     state = hidden_state.squeeze()
+    
     
     # now find candidate phrases
     news_candidates = extract_mentions(news_summary)
@@ -87,9 +88,15 @@ def process_pair(news_summary: str, abstract: str):
         if len(n_tokens) < 1:
            print(f"[NEWS] No tokens found for {news_cand.text}")
            continue
-
-        n_v = np.mean(np.array([state[i].cpu().numpy() for (i,_) in n_tokens]), axis=0)
-
+        
+        try:
+            n_v = np.mean(np.array([state[i].cpu().numpy() for (i,_) in n_tokens]), axis=0)
+        except Exception as e:
+            print(hidden_state.shape)
+            print(state.cpu().shape)
+            print(n_tokens)
+            print(news_cand.text, news_cand.start_char, news_cand.end_char)
+            raise e
         ncandidates.append((news_cand, n_v))
 
     scandidates = []
@@ -167,10 +174,12 @@ def main(endpoint, summarizer_endpoint):
  
             #item must have at least 1 paper with an abstract
             hasAbstract = False
-            for paper in item['ScientificPapers']:
-                if paper['abstract'].strip() != "":
-                    hasAbstract = True
-                    break
+            if item['ScientificPapers'] is not None:
+
+                for paper in item['ScientificPapers']:
+                    if paper['abstract'].strip() != "":
+                        hasAbstract = True
+                        break
                 
             if not hasAbstract:
                 print(f"No papers with abstracts found for article {item['url']}")
@@ -181,7 +190,7 @@ def main(endpoint, summarizer_endpoint):
                 print(f"No content found in article {item['url']} so skipping it...")
                 continue
             
-            tasks = ctx.tasksvc.list(Task, filters={"news_url": item['url']})
+            tasks = ctx.tasksvc.list(Task, filters=[Task.newsarticle.has(url=item['url'])])
 
             if len(tasks) > 0:
                 print(f"Article {item['title']} - {item['url']} already in database")
@@ -191,8 +200,12 @@ def main(endpoint, summarizer_endpoint):
                 # tidy up abstract
                 abstract = tidy_abstract(paper['abstract'])
                 
+                #remove non-latin characters
+                import re
+                fullText = re.sub(r'[^\x00-\x7F\x80-\xFF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]', '', item['fullText']) 
+
                 # generate summary
-                r = requests.post(summarizer_endpoint, json={"text":item['fullText']})
+                r = requests.post(summarizer_endpoint, json={"text":fullText})
                 summary = r.json()['summary']
                 
                 print(f"Summary for {item['url']}: {summary}")
@@ -203,19 +216,26 @@ def main(endpoint, summarizer_endpoint):
 
                 print("Process document pair, generate comparisons...")
 
-                new_tasks = []
-                for news_cand, sci_cand, sim in process_pair(summary, abstract):
-                    
 
+
+                new_tasks = []
+
+                news_obj = NewsArticle(url=item['url'], summary=summary)
+                sp_obj = SciPaper(url=paper['doi'], abstract=abstract)
+
+                
+                pairgen = process_pair(summary, abstract)
+
+                for news_cand, sci_cand, sim in pairgen:
+                    
                     if sim > 0.3:
                         
                         task = Task()
-                        task.news_url = item['url']
-                        task.news_text = summary
                         task.news_ent = f"{news_cand.text};{news_cand.start_char};{news_cand.end_char}"
                         task.sci_ent = f"{sci_cand.text};{sci_cand.start_char};{sci_cand.end_char}"
-                        task.sci_text = abstract
-                        task.sci_url = paper['doi']
+                        task.newsarticle = news_obj
+                        task.scipaper = sp_obj
+
                         task.similarity = sim
                         task.hash = hashlib.new("sha256", task.news_url.encode() + 
                             task.sci_url.encode() + 

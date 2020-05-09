@@ -3,7 +3,7 @@ import random
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 from typing import List, Optional, ContextManager
-from cdcrapp.model import User, Task, UserTask, Base as ModelBase
+from cdcrapp.model import User, Task, UserTask, NewsArticle, SciPaper, Base as ModelBase
 
 
 from sklearn.metrics import cohen_kappa_score
@@ -50,9 +50,14 @@ class DBServiceBase(object):
                 q = q.order_by(**orderby)
 
             if len(filters) > 0:
-                q = q.filter_by(**filters)
+                if isinstance(filters, dict):
+                    q = q.filter_by(**filters)
+                elif isinstance(filters, list):
+                    q = q.filter(*filters)
         
             return q.all()
+
+
         
     def get_by_filter(self, objtype, **kwargs):
         """Get a database record by type using filters"""
@@ -147,7 +152,7 @@ class TaskService(DBServiceBase):
         """Bulk import tasks from external source"""
         
         with self.session() as session:
-            session.bulk_save_objects(tasks)
+            session.add_all(tasks)
             session.commit()
         
 
