@@ -151,6 +151,8 @@ def main(endpoint, summarizer_endpoint):
     
     pages = response['totalPages']
     page = 0
+
+    hashes = set()
     
     for page in range(pages):
         print(f"Page {page+1} of {pages}")
@@ -161,12 +163,12 @@ def main(endpoint, summarizer_endpoint):
             
             print("----------------------")
             
-            task = ctx.tasksvc.get_by_filter(Task, news_url=item['url'])
             
+ 
             #item must have at least 1 paper with an abstract
             hasAbstract = False
             for paper in item['ScientificPapers']:
-                if paper['abstract'] != "":
+                if paper['abstract'].strip() != "":
                     hasAbstract = True
                     break
                 
@@ -174,9 +176,14 @@ def main(endpoint, summarizer_endpoint):
                 print(f"No papers with abstracts found for article {item['url']}")
                 print("skipping...")
                 continue
+
+            if item['fullText'].strip() == "":
+                print(f"No content found in article {item['url']} so skipping it...")
+                continue
             
-            
-            if task is not None:
+            tasks = ctx.tasksvc.list(Task, filters={"news_url": item['url']})
+
+            if len(tasks) > 0:
                 print(f"Article {item['title']} - {item['url']} already in database")
             else:
                 print(f"Ingest {item['url']}")
@@ -196,10 +203,33 @@ def main(endpoint, summarizer_endpoint):
 
                 print("Process document pair, generate comparisons...")
 
+                new_tasks = []
                 for news_cand, sci_cand, sim in process_pair(summary, abstract):
+                    
 
-                    if sim > 0.5:
-                        print(news_cand.text, sci_cand.text, sim)
+                    if sim > 0.3:
+                        
+                        task = Task()
+                        task.news_url = item['url']
+                        task.news_text = summary
+                        task.news_ent = f"{news_cand.text};{news_cand.start_char};{news_cand.end_char}"
+                        task.sci_ent = f"{sci_cand.text};{sci_cand.start_char};{sci_cand.end_char}"
+                        task.sci_text = abstract
+                        task.sci_url = paper['doi']
+                        task.similarity = sim
+                        task.hash = hashlib.new("sha256", task.news_url.encode() + 
+                            task.sci_url.encode() + 
+                            task.news_ent.encode() + 
+                            task.sci_ent.encode()).hexdigest()
+
+                        if task.hash not in hashes:
+                            hashes.add(task.hash)
+                            new_tasks.append(task)
+
+                if len(new_tasks) > 0:
+                    print(f"Add {len(new_tasks)} new tasks to database")
+                    ctx.tasksvc.add_tasks(new_tasks)
+
 
 
 
