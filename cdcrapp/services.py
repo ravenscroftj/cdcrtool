@@ -78,7 +78,7 @@ class UserService(DBServiceBase):
         with self.session() as session:
             session.add(user)
             session.commit()
-            return u
+            return user
     
     def add_user(self, username, password, email) -> User:
         
