@@ -66,6 +66,19 @@ class DBServiceBase(object):
             return session.query(objtype).filter_by(**kwargs).one_or_none()
 
 class UserService(DBServiceBase):
+
+
+    def update_password(self, user: User, password: str) -> User:
+
+        salt = mksalt(METHOD_SHA512)
+
+        user.password = crypt(password, salt)
+        user.salt = salt
+        
+        with self.session() as session:
+            session.add(user)
+            session.commit()
+            return u
     
     def add_user(self, username, password, email) -> User:
         

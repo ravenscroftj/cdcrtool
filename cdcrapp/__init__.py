@@ -66,12 +66,21 @@ def set_user_permission(ctx: CLIContext, username: str, frame_button: bool, admi
     
 @cli.command()
 @click.option("--username", type=str, prompt='Username')
-@click.option("--password", type=str, hide_input=True, prompt='Password:')
+@click.password_option()
 @click.pass_obj
 def authenticate(ctx: CLIContext, username: str, password: str):
     
+    user : User = ctx.usersvc.get_by_username(username)
+
+    ctx.usersvc.update_password(user, password)
     print("login result: ", ctx.usersvc.authenticate(username,password))
     
+
+@cli.command()
+@click.option("--username", type=str, prompt='Username')
+@click.option("--password", type=str, hide_input=True, prompt='Password:')
+@click.pass_obj
+def change_password(ctx: CLIContext, username: str, password: str):
 
 @cli.command()
 @click.argument("user_profile", type=click.Path(exists=True))
