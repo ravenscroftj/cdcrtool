@@ -127,6 +127,29 @@ class UserService(DBServiceBase):
             
         return result
 
+    def get_user_statistics(self):
+        """List basic annotation stats for each user"""
+
+        with self.session() as session:
+
+            q = session.query(User.username, UserTask.answer, func.count(UserTask.user_id))\
+                .filter(User.id==UserTask.user_id)\
+                    .group_by(User.username, UserTask.answer)
+
+            user_answers = defaultdict(lambda:{})
+            for username, answer, count in q.all():
+                user_answers[username][answer] = count
+
+            for user in user_answers:
+                row = [user]
+                total = sum(user_answers[user].values())
+                
+                for answer in ['yes','no']:
+                    n = user_answers[user].get(answer,0)
+                    row.append(f"{round(n/total * 100, 2)} % ({n})")
+
+                yield row
+
     def get_fleiss_iaa(self) -> float:
 
         with self.session() as session:
@@ -159,7 +182,6 @@ class UserService(DBServiceBase):
                     removelist.add(g2)
 
         for group in removelist:
-            print(group)
             del grouped_tasks[group]
 
         for group, tasks in grouped_tasks.items():

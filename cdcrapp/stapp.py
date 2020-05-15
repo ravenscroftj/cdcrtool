@@ -161,6 +161,12 @@ class CDCRTool():
         
         st.dataframe(df)
 
+        st.markdown("## User Statistics")
+
+        user_stats = pd.DataFrame(data=_usersvc.get_user_statistics(), columns=['Username', 'yes', 'no'])
+
+        st.dataframe(user_stats)
+
         st.markdown("## Multi Annotator IAA (Fleiss' Kappa)")
 
         iaa_table = pd.DataFrame(data=_usersvc.get_fleiss_iaa(), columns=['Group', 'Samples', 'Fleiss IAA Score'])
