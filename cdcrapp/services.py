@@ -172,6 +172,10 @@ class UserService(DBServiceBase):
             if len(biggest_group) > 3:
                 for subgroup in combinations(biggest_group, 3):
                     grouped_tasks[subgroup].add(task_id)
+            
+            if len(biggest_group) > 2:
+                for subgroup in combinations(biggest_group, 2):
+                    grouped_tasks[subgroup].add(task_id)
 
         # tidy up subgroups that are the same as the biggest group
         removelist=set()
@@ -184,7 +188,7 @@ class UserService(DBServiceBase):
         for group in removelist:
             del grouped_tasks[group]
 
-        for group, tasks in grouped_tasks.items():
+        for group, tasks in sorted(grouped_tasks.items(), key=lambda x:len(x[0]), reverse=True):
 
             if len(group) < 2:
                 continue

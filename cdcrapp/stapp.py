@@ -18,6 +18,12 @@ from cdcrapp.model import User, Task, UserTask
 
 load_dotenv()
 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', 200)
+
+pd.options.display.max_colwidth = 200
+
+
 @st.cache(allow_output_mutation=True)
 def get_sql_engine():
     return create_engine(os.getenv("SQLALCHEMY_DB_URI"))

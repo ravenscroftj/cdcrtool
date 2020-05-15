@@ -40,7 +40,11 @@ def fleiss_kappa(ratings, n, k):
     
     P_bar = sum(P_i.values()) / (1.0*N)
     P_e_bar = sum(p_j[c]**2 for c in categories)
+
+    if P_bar == 1 and P_e_bar == 1:
+        return 0
     
+    print(f"P_bar: {P_bar}, P_e_bar: {P_e_bar}")
     kappa = (P_bar - P_e_bar) / (1 - P_e_bar)
     
     return kappa
