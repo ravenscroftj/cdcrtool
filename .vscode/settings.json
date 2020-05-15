@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "/home/james/.cache/pypoetry/virtualenvs/cdcrtool-zw9B2PJA-py3.6/bin/python",
+    "python.venvPath": "/home/james/.cache/pypoetry/virtualenvs/cdcrtool-zw9B2PJA-py3.6/",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true
+}

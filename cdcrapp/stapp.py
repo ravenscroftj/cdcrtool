@@ -35,7 +35,8 @@ FRAME_RANGE = os.environ.get("FRAME_RANGE")
 
 SECRET = os.environ.get("SECRET")
 
-IAA_GUIDE = """### Interpretation of Cohen's Kappa
+
+IAA_GUIDE = """## Interpretation of Kappa Scores (Applicable to Fleiss and Cohen scores)
 &lt0 - no agreement\n
 0-0.20 slight agreement\n
 0.21-0.40 fair agreement\n
@@ -159,6 +160,13 @@ class CDCRTool():
         st.markdown("## Total Tasks")
         
         st.dataframe(df)
+
+        st.markdown("## Multi Annotator IAA (Fleiss' Kappa)")
+
+        iaa_table = pd.DataFrame(data=_usersvc.get_fleiss_iaa(), columns=['Group', 'Samples', 'Fleiss IAA Score'])
+        
+        st.dataframe(iaa_table)
+
         
         st.markdown("## Pairwise IAA (Cohen's Kappa) \n\nSelect users to compare")
 
@@ -180,6 +188,8 @@ class CDCRTool():
         
                 
         st.markdown(IAA_GUIDE)
+
+
             
     def connect_buttons(self):
             self.yes_btn = self.yes_btn_ph.button("Yes")
@@ -219,7 +229,6 @@ class CDCRTool():
 
             
     def handle_task_outcome(self):
-        print("handle task outcome")
         if self.yes_btn or self.no_btn or self.report_btn:
             
             if self.redis.get(f"user_{self.user.id}_task_id") is not None:

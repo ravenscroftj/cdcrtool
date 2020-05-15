@@ -1,16 +1,20 @@
 import random
-
+import numpy as np
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 from typing import List, Optional, ContextManager
 from cdcrapp.model import User, Task, UserTask, NewsArticle, SciPaper, Base as ModelBase
 
+from collections import defaultdict, Counter
 
 from sklearn.metrics import cohen_kappa_score
+from itertools import combinations
 
 from crypt import crypt, mksalt, METHOD_SHA512
 from contextlib import contextmanager
 from sqlalchemy import func
+
+from kappa import fleiss_kappa
 
 class DBServiceBase(object):
     engine: Engine
@@ -122,6 +126,68 @@ class UserService(DBServiceBase):
             result = session.query(User.username, func.count(User.username)).join(UserTask).group_by(User.username).all()
             
         return result
+
+    def get_fleiss_iaa(self) -> float:
+
+        with self.session() as session:
+            q = session.query(UserTask)\
+                .join(User)\
+                .join(Task)
+
+            all_data = defaultdict(lambda: list())
+
+            for ut in q.all():
+                all_data[ut.task_id].append((ut.user.username, ut.answer))
+
+        grouped_tasks = defaultdict(lambda:set())
+
+        for task_id, answers in all_data.items():
+            biggest_group = tuple(sorted([username for (username,answer) in answers]))
+
+            grouped_tasks[biggest_group].add(task_id)
+
+            if len(biggest_group) > 3:
+                for subgroup in combinations(biggest_group, 3):
+                    grouped_tasks[subgroup].add(task_id)
+
+        # tidy up subgroups that are the same as the biggest group
+        removelist=set()
+        for i, (group, values) in enumerate(sorted(grouped_tasks.items(), key=lambda x:len(x[1]), reverse=True)):
+            for g2, vals2 in sorted(grouped_tasks.items(), key=lambda x:len(x[1]), reverse=True)[i+1:]:
+
+                if values == vals2:
+                    removelist.add(g2)
+
+        for group in removelist:
+            print(group)
+            del grouped_tasks[group]
+
+        for group, tasks in grouped_tasks.items():
+
+            if len(group) < 2:
+                continue
+
+            # generate matrix for answers
+            ratings = []
+
+            for t_id in tasks:
+                ratings.extend([(t_id, ans) for user,ans in all_data[t_id] if user in group])
+
+
+            #print(ratings)
+            k = fleiss_kappa(ratings, n=len(group), k=2)
+
+            yield (",".join(group), len(tasks), k)
+
+
+        #breakdown = {group:len(tasks) for group,tasks in grouped_tasks.items()}
+
+
+        #print(f"Found {len(all_data)}")
+
+
+        #print(f"Breakdown: {breakdown}")
+            
     
     def get_pairwise_iaa(self, usernameA: str, usernameB: str) -> float:
         
@@ -184,15 +250,6 @@ class TaskService(DBServiceBase):
 
             # list of task ids completed by other users excluding those in the current IAA priority list
             completed = session.query(Task.id).join(UserTask).filter(~Task.is_iaa_priority)
-
-            print(session.query(Task).filter(
-                ~Task.id.in_(substmt), 
-                ~Task.id.in_(completed),
-                ~Task.is_bad)
-                .order_by(
-                    Task.is_iaa_priority.asc(), 
-                    Task.similarity.desc()
-                    ))
 
             return (session.query(Task).filter(
                 ~Task.id.in_(substmt), 
