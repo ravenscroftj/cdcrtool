@@ -279,6 +279,12 @@ class TaskService(DBServiceBase):
         """Bulk remove tasks that tie together a particular pair of documents (erroneously)"""
 
         with self.session() as session:
+
+            # remove user tasks associated with tasks being deleted
+            session.query(UserTask).filter(UserTask.task_id.in_(session.query(Task.id)
+                .filter_by(news_article_id=news_article_id, sci_paper_id=sci_paper_id))
+                ).delete(synchronize_session='fetch')
+
             return session.query(Task).filter_by(news_article_id=news_article_id, sci_paper_id=sci_paper_id).delete()
     
     def next_tasks_for_user(self, user: User) -> Task:
