@@ -14,7 +14,7 @@ from sqlalchemy import create_engine
 
 from cdcrapp.gsheets import Spreadsheet
 from cdcrapp.services import UserService, TaskService
-from cdcrapp.model import User, Task, UserTask
+from cdcrapp.model import User, Task, UserTask, NewsArticle, SciPaper
 
 load_dotenv()
 
@@ -200,6 +200,49 @@ class CDCRTool():
         
                 
         st.markdown(IAA_GUIDE)
+
+
+        st.markdown("## Bad Tasks")
+
+        bad_tasks = _tasksvc.list(Task, filters={"is_bad": True}, joins=[NewsArticle, SciPaper])
+
+
+        rows = []
+        for task in bad_tasks:
+            rows.append({
+                "hash": task.hash,
+                "news_url": task.newsarticle.url,
+                "sci_url": task.scipaper.url
+            })
+
+        df = pd.DataFrame.from_records(rows)
+
+        st.dataframe(df)
+
+        st.markdown("## Bad Task Finder \n Enter task hash to find other news articles and scientific papers that share the same ")
+
+        bad_filter = st.text_input(label="Hash")
+
+        if bad_filter != "":
+            task = _tasksvc.get_by_hash(bad_filter, allow_wildcard=True)
+
+            if task is None:
+                st.markdown("Sorry, no task with that hash could be found")
+            else:
+                st.markdown("********")
+                st.markdown(f"Hash: {task.hash} \n\n News URL: {task.news_url} \n\n Science DOI: http://dx.doi.org/{task.sci_url}\n\n")
+                st.markdown(f"News Ent: {task.news_ent.split(';')[0]} \n\n Sci Ent: {task.sci_ent.split(';')[0]}\n")
+                st.markdown(f"News Text: {task.news_text} \n\n Science Text: {task.sci_text}")
+                st.markdown("## Danger Zone")
+
+                block_article_btn = st.button(label="Remove all tasks combining these articles")
+
+                if block_article_btn:
+
+                    _tasksvc.remove_tasks_by_doc_ids(task.news_article_id, task.sci_paper_id)
+
+                    st.markdown("Removed the task.")
+
 
 
             

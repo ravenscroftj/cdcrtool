@@ -39,7 +39,7 @@ class DBServiceBase(object):
             session.add(obj)
             session.commit()
         
-    def list(self, objtype: ModelBase, filters={}, limit:int=None, offset:int=None, orderby=None) -> List[ModelBase]:
+    def list(self, objtype: ModelBase, filters={}, limit:int=None, joins=[], offset:int=None, orderby=None) -> List[ModelBase]:
         """List all items of given type"""
 
         with self.session() as session:
@@ -58,6 +58,9 @@ class DBServiceBase(object):
                     q = q.filter_by(**filters)
                 elif isinstance(filters, list):
                     q = q.filter(*filters)
+
+            for join in joins:
+                q = q.join(join)
         
             return q.all()
 
@@ -261,9 +264,22 @@ class TaskService(DBServiceBase):
             session.commit()
         
 
-    def get_by_hash(self, hash) -> Optional[Task]:
+    def get_by_hash(self, hash:str, allow_wildcard: Optional[bool]=False) -> Optional[Task]:
         """Get task by hash"""
-        return self.get_by_filter(Task, hash=hash)
+
+        with self.session() as session:
+            if allow_wildcard:
+                q = session.query(Task).filter(Task.hash.ilike(f"{hash}%"))
+            else:
+                q = session.query(Task).filter(Task.hash==hash)
+            
+            return q.one_or_none()
+
+    def remove_tasks_by_doc_ids(self, news_article_id, sci_paper_id):
+        """Bulk remove tasks that tie together a particular pair of documents (erroneously)"""
+
+        with self.session() as session:
+            return session.query(Task).filter_by(news_article_id=news_article_id, sci_paper_id=sci_paper_id).delete()
     
     def next_tasks_for_user(self, user: User) -> Task:
         """List tasks that a given user has not yet completed"""
