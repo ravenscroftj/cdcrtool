@@ -149,14 +149,15 @@ def rebalance_iaa(ctx: CLIContext, new_count: int):
     
 
 @cli.command()
+@click.argument("output_file", type=click.Path(exists=False))
 @click.pass_obj
-def export_tasks(ctx: CLIContext):
+def export_tasks(ctx: CLIContext, output_file:str):
     """Export tasks to conll format"""
     t = ctx.tasksvc.get_annotated_tasks()
 
     from .export import export_to_conll
 
-    export_to_conll(t, "test.conll")
+    export_to_conll(t, output_file)
 
 
 @cli.command()

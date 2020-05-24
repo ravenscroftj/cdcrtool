@@ -100,7 +100,3 @@ def export_to_conll(tasks: List[Task], filename: str):
 
                         fp.write("\t".join(row) + "\n")
 
-        # 
-
-    print(len(task_map))
-    
