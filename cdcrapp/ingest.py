@@ -7,6 +7,7 @@ import re
 import torch
 import hashlib
 import itertools
+import sys
 from lxml import etree
 import numpy as np
 
@@ -135,7 +136,12 @@ def tidy_abstract(abstract: str) -> str:
         return text
 
     if "<p>" in abstract:
-        doc = etree.fromstring(f"<doc>{abstract}</doc>")
+        try:
+            parser = etree.HTMLParser()
+            doc = etree.fromstring(f"<doc>{abstract}</doc>", parser=parser)
+        except:
+            print(abstract)
+            sys.exit(1)
         ps = doc.findall(".//p")
         text = " ".join([" ".join(p.itertext()) for p in ps])
         return text
