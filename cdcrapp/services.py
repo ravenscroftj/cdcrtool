@@ -14,7 +14,7 @@ from crypt import crypt, mksalt, METHOD_SHA512
 from contextlib import contextmanager
 from sqlalchemy import func
 
-from kappa import fleiss_kappa
+from cdcrapp.kappa import fleiss_kappa
 
 class DBServiceBase(object):
     engine: Engine
@@ -308,6 +308,22 @@ class TaskService(DBServiceBase):
                     Task.similarity.desc()
                     )).first()
         
+    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None):
+        """Select tasks that have been annotate by at least 1 user"""
+
+        with self.session() as session:
+
+            ut_task_ids = session.query(UserTask.task_id).distinct().filter(UserTask.answer=="yes")
+            q = session.query(Task).filter(Task.id.in_(ut_task_ids)).join(NewsArticle).join(SciPaper).join(UserTask)
+
+            if limit is not None:
+                q = q.limit(limit)
+
+            if offset is not None:
+                q = q.offset(offset)
+
+            return q.all()
+
     def rebalance_iaa(self, max_priority_tasks: int = 150):
         """Rebalance IAA tasks"""
 
