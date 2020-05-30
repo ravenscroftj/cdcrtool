@@ -149,15 +149,26 @@ def rebalance_iaa(ctx: CLIContext, new_count: int):
     
 
 @cli.command()
+@click.argument("json_file", type=click.Path(exists=False))
 @click.argument("output_file", type=click.Path(exists=False))
 @click.pass_obj
-def export_tasks(ctx: CLIContext, output_file:str):
+def export_conll(ctx: CLIContext, json_file: str, output_file:str):
     """Export tasks to conll format"""
+
+    from cdcrapp.export import export_to_conll
+
+    export_to_conll(json_file, output_file)
+
+@cli.command()
+@click.argument("json_file", type=click.Path(exists=False))
+@click.pass_obj
+def export_json(ctx: CLIContext, json_file:str):
+    """Export json to conll format"""
     t = ctx.tasksvc.get_annotated_tasks()
 
-    from .export import export_to_conll
+    from .export import export_to_json
 
-    export_to_conll(t, output_file)
+    export_to_json(t, json_file)
 
 
 @cli.command()
