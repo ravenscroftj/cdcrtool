@@ -324,6 +324,20 @@ class TaskService(DBServiceBase):
 
             return q.all()
 
+    def get_answer_dists(self)  -> List[tuple]:
+        with self.session() as session:
+            q = session.query(UserTask.answer, func.count(UserTask.task_id.distinct())).join(Task).filter(~Task.is_bad).group_by(UserTask.answer)
+            return(q.all())
+            
+    def get_task_difficulty_dist(self) -> np.ndarray:
+        """Return a distribution of difficulties"""
+
+        with self.session() as session:
+            subq = session.query(UserTask.task_id.distinct())
+            q = session.query(Task).filter(Task.id.in_(subq), ~Task.is_bad)
+
+            return np.array([t.similarity for t in q.all()])
+
     def rebalance_iaa(self, max_priority_tasks: int = 150):
         """Rebalance IAA tasks"""
 

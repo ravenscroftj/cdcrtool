@@ -44,7 +44,7 @@ def fleiss_kappa(ratings, n, k):
     if P_bar == 1 and P_e_bar == 1:
         return 0
     
-    print(f"P_bar: {P_bar}, P_e_bar: {P_e_bar}")
+    #print(f"P_bar: {P_bar}, P_e_bar: {P_e_bar}")
     kappa = (P_bar - P_e_bar) / (1 - P_e_bar)
     
     return kappa
