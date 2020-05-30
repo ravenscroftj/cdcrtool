@@ -27,6 +27,8 @@ tqdm = "^4.45.0"
 newspaper3k = "^0.2.8"
 scikit-learn = "^0.22.2"
 transformers = "^2.9.0"
+matplotlib = "^3.2.1"
+seaborn = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"

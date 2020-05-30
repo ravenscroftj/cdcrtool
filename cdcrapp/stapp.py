@@ -8,6 +8,9 @@ import redis
 import re
 from dotenv import load_dotenv
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 from typing import Optional
 
 from sqlalchemy import create_engine
@@ -17,6 +20,8 @@ from cdcrapp.services import UserService, TaskService
 from cdcrapp.model import User, Task, UserTask, NewsArticle, SciPaper
 
 load_dotenv()
+
+sns.set_style()
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_colwidth', 200)
@@ -162,10 +167,27 @@ class CDCRTool():
         progress = _usersvc.get_all_user_progress()
         
         df = pd.DataFrame.from_records(progress, columns=['User','Completed Examples'])
+
         
         st.markdown("## Total Tasks")
         
         st.dataframe(df)
+
+        # get task difficulty
+        diffdist = _tasksvc.get_task_difficulty_dist()
+        
+        sns.distplot(diffdist)
+
+        st.markdown("### Total distinct answers")
+
+
+        dists_df = pd.DataFrame(data=_tasksvc.get_answer_dists(), columns=['Answer', 'Count'])
+        st.dataframe(dists_df)
+
+        st.markdown("### BERT Similarity distribution of Tasks")
+        st.pyplot()
+
+
 
         st.markdown("## User Statistics")
 
