@@ -5,9 +5,10 @@ Export CDCRApp annotations to CONLL format
 import spacy
 import json
 import os
+import random
 
 from tqdm.auto import tqdm
-from typing import List
+from typing import List, Optional
 from .model import Task, UserTask, NewsArticle, SciPaper
 from collections import defaultdict, OrderedDict
 from urllib.parse import urlparse
@@ -217,27 +218,15 @@ def export_to_conll(input_file:str, output_file: str):
 
         fp.write("#end document\n")
         
-
-def export_to_json(tasks: List[Task], output_file):
-    """Export to JSON format compatible with Arie's coref model"""
-
-    # first we generate arrays of words within files
-    nlp = spacy.load('en', disable=['textcat'])
-
-    task_map = defaultdict(lambda:[])
-
-    for task in tasks:
-        task_map[(task.news_article_id, task.sci_paper_id)].append(task)
+def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) -> (dict, List[dict]):
+    """Generate map of document words and entities"""
 
     doc_map = {}
-    entities = []
     doctypes =['news','science']
+    entities = []
 
-    task_map_items = map_and_sort(tasks)
-
-    for topic_idx, (topic_id, tasklist) in enumerate(tqdm(task_map_items)):
+    for topic_idx, (_, tasklist) in enumerate(tqdm(task_items)):
     #for topic_idx, (topic_id, tasklist) in enumerate(tqdm(task_map.items())):
-
 
         scidoc = nlp(tasklist[0].sci_text)
         newsdoc = nlp(tasklist[0].news_text)
@@ -246,6 +235,8 @@ def export_to_json(tasks: List[Task], output_file):
 
         docs = [newsdoc, scidoc]
 
+        
+
         bounds = map_pairs(tasklist)
 
         for doc_idx, doc in enumerate(docs):
@@ -253,14 +244,14 @@ def export_to_json(tasks: List[Task], output_file):
             doc_id = f'{topic_idx}_{doctypes[doc_idx]}_{doc_ids[doc_idx]}'
 
             word_rows = []
-            currentCluster = None
+            currentCluster: Optional[dict] = None
             tok_id = 0
             for sent_idx, sent in enumerate(doc.sents):
 
                 flag = check_sent_bounds(bounds[doc_idx], sent.start_char, sent.end_char) is not None
 
 
-                for word_idx, word in enumerate(sent, start=1):
+                for word in sent:
 
                     res = check_bounds(bounds[doc_idx], word.idx, len(word.text), retstr=False)
 
@@ -291,7 +282,7 @@ def export_to_json(tasks: List[Task], output_file):
                     elif currentCluster is not None:
 
                         for key in ['tags','tokens','lemmas']:
-                            currentCluster[key] = " ".join(currentCluster[key])
+                            currentCluster[key] = " ".join(currentCluster[key]) # pylint: disable=unsubscriptable-object,unsupported-assignment-operation
 
                         entities.append({x:y for x,y in currentCluster.items()})
                         currentCluster = None
@@ -308,13 +299,63 @@ def export_to_json(tasks: List[Task], output_file):
                     tok_id += 1
 
             doc_map[doc_id] = word_rows
+        # end doc loop
+    # end topic loop
+    return doc_map, entities
 
-    entities_file = os.path.join(os.path.dirname(output_file), os.path.splitext(os.path.basename(output_file))[0] + "_entities.json")
+def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
+    """Export to JSON format compatible with Arie's coref model"""
 
-    with open(output_file,"w") as f:
-        json.dump(doc_map,f, indent=2)
+    # first we generate arrays of words within files
+    nlp = spacy.load('en', disable=['textcat'])
 
-    with open(entities_file, "w") as f:
-        json.dump(entities,f, indent=2)
+    task_map = defaultdict(lambda:[])
 
-    # write entities
+    for task in tasks:
+        task_map[(task.news_article_id, task.sci_paper_id)].append(task)
+
+    doc_map = {}
+    
+
+    task_map_items = map_and_sort(tasks)
+
+    task_count = sum([len(x) for _,x in task_map_items])
+
+    print(f"Found {len(task_map_items)} containing {task_count} tasks")
+
+    # work out the split
+    train_amt = int(task_count * split)
+
+    print(f"Split into {train_amt} and {task_count-train_amt} or near as possible")
+
+    random.seed(seed)
+    random.shuffle(task_map_items)
+
+    # generate splits
+    train_set = []
+    train_task_count = 0
+    test_set = []
+
+    for topic_id, tasklist in task_map_items:
+        
+        if train_task_count < train_amt:
+            train_set.append((topic_id, tasklist))
+            train_task_count += len(tasklist)
+        else:
+            test_set.append((topic_id, tasklist))
+
+    outdir = os.path.dirname(output_file)
+    basename = os.path.basename(output_file)
+    namestub, ext = os.path.splitext(basename)
+
+    for split_name, items in zip(['train', 'test'], [train_set, test_set]):
+        outfile = os.path.join(outdir, f"{namestub}_{split_name}{ext}")
+        entfile = os.path.join(outdir, f"{namestub}_{split_name}_entities{ext}")
+
+        doc_map, entities = generate_json_maps(items, nlp)
+
+        with open(outfile,"w") as f:
+            json.dump(doc_map, f, indent=2)
+
+        with open(entfile, "w") as f:
+            json.dump(entities, f, indent=2)
