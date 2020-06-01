@@ -176,6 +176,19 @@ def export_json(ctx: CLIContext, json_file:str, seed:int, split:float):
 
 
 @cli.command()
+@click.argument("json_file", type=click.Path(exists=False))
+@click.option("--seed", type=int, default=42)
+@click.option("--split", type=float, default=0.7)
+@click.pass_obj
+def export_joshi(ctx: CLIContext, json_file:str, seed:int, split:float):
+    t = ctx.tasksvc.get_annotated_tasks()
+
+    from .export import export_to_joshi
+
+    export_to_joshi(t, json_file, split, seed)
+
+
+@cli.command()
 @click.argument("task_csv", type=click.Path(exists=True))
 @click.pass_obj
 def import_tasks(ctx: CLIContext, task_csv: str):

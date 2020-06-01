@@ -8,10 +8,12 @@ import os
 import random
 
 from tqdm.auto import tqdm
-from typing import List, Optional
+from typing import List, Optional, Iterator
 from .model import Task, UserTask, NewsArticle, SciPaper
 from collections import defaultdict, OrderedDict
 from urllib.parse import urlparse
+from transformers import BertModel, BertTokenizerFast
+
 
 
 def map_pairs(task_group: List[Task]):
@@ -253,6 +255,9 @@ def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) ->
 
                 for word in sent:
 
+                    if word.is_space:
+                        continue
+
                     res = check_bounds(bounds[doc_idx], word.idx, len(word.text), retstr=False)
 
                     if res is not None:
@@ -303,21 +308,9 @@ def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) ->
     # end topic loop
     return doc_map, entities
 
-def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
-    """Export to JSON format compatible with Arie's coref model"""
+def test_train_split(task_map_items: List[tuple], split:float, seed:int):
+    """Split a list of tasks pseudo-randomly"""
 
-    # first we generate arrays of words within files
-    nlp = spacy.load('en', disable=['textcat'])
-
-    task_map = defaultdict(lambda:[])
-
-    for task in tasks:
-        task_map[(task.news_article_id, task.sci_paper_id)].append(task)
-
-    doc_map = {}
-    
-
-    task_map_items = map_and_sort(tasks)
 
     task_count = sum([len(x) for _,x in task_map_items])
 
@@ -344,9 +337,31 @@ def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
         else:
             test_set.append((topic_id, tasklist))
 
+    return train_set, test_set
+
+def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
+    """Export to JSON format compatible with Arie's coref model"""
+
+    # first we generate arrays of words within files
+    nlp = spacy.load('en', disable=['textcat'])
+
+    task_map = defaultdict(lambda:[])
+
+    for task in tasks:
+        task_map[(task.news_article_id, task.sci_paper_id)].append(task)
+
+    doc_map = {}
+
+    task_map_items = map_and_sort(tasks)
+
+    train_set, test_set = test_train_split(task_map_items, split, seed)
+
     outdir = os.path.dirname(output_file)
     basename = os.path.basename(output_file)
     namestub, ext = os.path.splitext(basename)
+
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
     for split_name, items in zip(['train', 'test'], [train_set, test_set]):
         outfile = os.path.join(outdir, f"{namestub}_{split_name}{ext}")
@@ -359,3 +374,86 @@ def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
 
         with open(entfile, "w") as f:
             json.dump(entities, f, indent=2)
+
+def generate_joshi_jsondocs(task_map_items, tokenizer: BertTokenizerFast, nlp: spacy.language.Language) -> Iterator[dict]:
+    """Given a set of task items generate json docs to be serialised"""
+
+    for task_id, task_records in tqdm(task_map_items):
+
+        news_doc = nlp(task_records[0].news_text)
+        sci_doc = nlp(task_records[0].sci_text)
+
+        jsondoc = {
+            'doc_key': f"nw",
+            "clusters":[], 
+            'subtoken_map':[], 
+            'sentence_map':[], 
+            'sentences':[], 
+            'speakers':[],
+            "doc_ids":[f"news_{task_id[0]}", f"science_{task_id[0]}"],
+            'doc_boundaries':[]}
+
+        sent_id = 0
+        i = 0
+        for doc in [news_doc, sci_doc]:
+            
+            jsondoc['doc_boundaries'].append(i)
+            i = 0
+            for sent in doc.sents:
+                r = tokenizer.tokenize(sent.text, add_special_tokens=True)
+                
+                jsondoc['sentences'].append(r)
+
+                jsondoc['speakers'].append(['[SPL]'] + (['-'] * (len(r) - 2)) + ['[SPL]'])
+
+                for tok in r[:-1]:
+                    jsondoc['sentence_map'].append(sent_id)
+                    jsondoc['subtoken_map'].append(i)
+
+                    if tok not in ['[CLS]'] and not tok.startswith('##'):
+                        i+=1
+                
+                # increment sentence id 
+                sent_id += 1
+
+        yield jsondoc
+
+
+
+def export_to_joshi(tasks: List[Task], output_file: str, split:float,seed:int):
+    """Export to JOSHI jsonlines format"""
+
+    nlp = spacy.load('en', disable=['textcat'])
+    tokenizer = BertTokenizerFast.from_pretrained('../joshi_coref/data/spanbert_base')
+
+
+    task_map = defaultdict(lambda:[])
+
+    for task in tasks:
+        task_map[(task.news_article_id, task.sci_paper_id)].append(task)
+
+    task_map_items = map_and_sort(tasks)
+
+    train_set, test_set = test_train_split(task_map_items, split, seed)
+
+    basedir = os.path.dirname(output_file)
+    basename = os.path.basename(output_file)
+    namestub, ext = os.path.splitext(basename)
+
+    testname = os.path.join(basedir, f"{namestub}_test{ext}")
+    trainname = os.path.join(basedir, f"{namestub}_train{ext}")
+
+    for taskset, outname in zip([train_set, test_set], [trainname, testname]):
+
+        with open(outname,"w") as f:
+
+            for jsondoc in generate_joshi_jsondocs(taskset, tokenizer, nlp):                
+                f.write(json.dumps(jsondoc) + "\n")
+
+        #end for task (doc-pair)
+    #end with open output_file
+
+
+
+
+
