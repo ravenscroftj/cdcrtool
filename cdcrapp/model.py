@@ -1,16 +1,32 @@
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from sqlalchemy import Column, Integer, String, Text, Boolean, Table, ForeignKey, Float, DateTime
 
 from datetime import datetime
 
+from flask_security import RoleMixin, UserMixin
+
 Base = declarative_base()
 
-    
 
-class User(Base):
+roles_users = Table('roles_users', Base.metadata,
+        Column('user_id', Integer(), ForeignKey('users.id')),
+        Column('role_id', Integer(), ForeignKey('roles.id')))
+
+
+
+class Role(Base, RoleMixin):
+
+    __tablename__ = "roles"
+
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80), unique=True)
+    description = Column(String(255))
+
+
+class User(Base, UserMixin):
     
     __tablename__ = "users"
     
@@ -22,7 +38,11 @@ class User(Base):
     salt = Column(String(64))
     view_gsheets = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
-    
+
+    roles = relationship('Role', secondary=roles_users,
+                            backref=backref('users', lazy='dynamic'))
+
+    active = Column(Boolean())
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
     

@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
 
-    <title>Ranky</title>
+    <title>CDCR App</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/starter-template/">
 
@@ -16,6 +16,9 @@
 
     <!-- Custom styles for this template -->
     <link href="/static/css/main.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+  
 
     <!-- iconic -->
     <link href="/static/open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
@@ -26,7 +29,7 @@
   <body>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">CDCR App</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -74,5 +77,10 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="../../assets/js/vendor/popper.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
+    <script>
+      $( document ).click(function() {
+        $( "#toggle" ).addClass("bg-primary", "text-white", "p3")
+      });
+    </script>
   </body>
 </html>

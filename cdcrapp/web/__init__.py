@@ -46,6 +46,10 @@ def create_app():
 
     from .views import bp
 
+    from flaskext.markdown import Markdown
+
+    Markdown(app)
+
 
     # register routes
     app.register_blueprint(bp)
