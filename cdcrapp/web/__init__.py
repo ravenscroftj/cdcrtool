@@ -3,6 +3,7 @@ import flask
 import hashlib
 
 from flask_security import SQLAlchemySessionUserDatastore, Security
+from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,6 +28,8 @@ def create_app():
     static_folder=os.path.join(os.path.dirname(__file__), "static"),
     template_folder=os.path.join(os.path.dirname(__file__), "templates"))
 
+    CORS(app)
+    
     # configure app
     app.config.from_object("cdcrapp.settings")
 

@@ -468,8 +468,3 @@ def export_to_joshi(tasks: List[Task], output_file: str, split:float,seed:int):
 
         #end for task (doc-pair)
     #end with open output_file
-
-
-
-
-
