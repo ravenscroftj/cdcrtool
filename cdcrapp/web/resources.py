@@ -76,3 +76,17 @@ class AnswerResource(Resource):
         db_session.commit()
 
         return marshal(ut, self.ut_fields), 201
+
+
+class UserResource(Resource):
+
+    user_fields = {
+        'id': fields.Integer,
+        'email': fields.String,
+        'username': fields.String,
+        'total_annotations': fields.Integer
+    }
+
+    @auth_required('token')
+    def get(self):
+        return marshal(current_user, self.user_fields)

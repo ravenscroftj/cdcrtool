@@ -51,8 +51,9 @@ def create_app():
     security = Security(app, user_datastore)
 
     #from .views import bp
-    from .resources import TaskResource, AnswerResource
+    from .resources import TaskResource, AnswerResource, UserResource
 
+    api.add_resource(UserResource, "/user")
     api.add_resource(TaskResource, "/task", "/task/<task_hash>")
     api.add_resource(AnswerResource, "/task/<int:task_id>/answers")
 

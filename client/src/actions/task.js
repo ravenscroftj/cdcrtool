@@ -1,23 +1,13 @@
 import Axios from 'axios'
 import ApiEndpoints from '../ApiConfig';
 
+import {addAuthHeaders} from './auth';
+import {fetchCurrentUserProfile} from './user';
+
 const setFetchingTask = (isFetchingTask) => ({type:"IS_FETCHING_TASK", isFetchingTask});
 const setSendingAnswer = (isSendingAnswer) => ({type:"IS_SENDING_ANSWER", isSendingAnswer});
 const setCurrentTask = (task) => ({type: "SET_CURRENT_TASK", task});
 const setTaskError = (error) => ({type: "SET_TASK_ERROR", error});
-
-
-const addAuthHeaders = (state, headers) => {
-
-    if(typeof(headers) == 'underfined'){
-        headers = {};
-    }
-
-    return{...headers, 
-        "Authentication-Token": state.auth.token
-    }
-}
-
 
 const submitAnswer = (answer, task) => {
     return async(dispatch, getState) => {
@@ -27,6 +17,7 @@ const submitAnswer = (answer, task) => {
             const response = await Axios.post(`${ApiEndpoints.task}/${task.id}/answers`, {"answer": answer}, {headers: addAuthHeaders(getState())} );
 
             dispatch(fetchTask());
+            dispatch(fetchCurrentUserProfile())
 
         }catch(error) {
             dispatch(setTaskError(error));

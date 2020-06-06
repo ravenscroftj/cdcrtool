@@ -45,6 +45,10 @@ class User(Base, UserMixin):
     active = Column(Boolean())
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
+
+    @property
+    def total_annotations(self):
+        return UserTask.query.filter(UserTask.user_id==self.id).count()
     
 class Task(Base):
     

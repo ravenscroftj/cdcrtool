@@ -1,5 +1,28 @@
 import {combineReducers} from 'redux'
 
+
+const defaultUserState = {
+    isFetchingUserProfile: false,
+    user: null
+};
+
+const userReducer = function(state,action){
+    if (typeof(state) == 'undefined'){
+        return defaultUserState;
+    }
+
+    switch(action.type){
+        case "IS_FETCHING_USER_PROFILE":
+            return{...state, isFetchingUserProfile: action.isFetchingUserProfile};
+
+        case "SET_CURRENT_USER_PROFILE":
+            return {...state, user: action.user};
+            
+        default:
+            return state;
+    }
+};
+
 const defaultTaskState = {
     isFetchingTask: false,
     isSendingAnswer: false,
@@ -67,7 +90,7 @@ const authReducer = function(state, action){
     }
 };
 
-const cdcrReducer = combineReducers({'auth':authReducer, 'task':taskReducer});
+const cdcrReducer = combineReducers({'auth':authReducer, 'task':taskReducer, 'user':userReducer});
 
 
 export default cdcrReducer;

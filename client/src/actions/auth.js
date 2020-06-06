@@ -11,6 +11,17 @@ const setLoginError = (error) => ({type: "SET_LOGIN_ERROR", error});
 const setLoggedIn = (loggedIn) => ({type:"SET_LOGGED_IN", loggedIn});
 
 
+const addAuthHeaders = (state, headers) => {
+
+    if(typeof(headers) == 'underfined'){
+        headers = {};
+    }
+
+    return{...headers, 
+        "Authentication-Token": state.auth.token
+    }
+}
+
 function login(username, password){
 
     return async (dispatch) => {
@@ -43,4 +54,4 @@ function logout(){
     return setLoggedIn(false);
 }
 
-export {login, logout};
+export {login, logout, addAuthHeaders};
