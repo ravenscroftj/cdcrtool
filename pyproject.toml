@@ -36,6 +36,7 @@ bcrypt = "^3.1.7"
 Flask-Markdown = "^0.3"
 flask-restful = "^0.3.8"
 flask-cors = "^3.0.8"
+flask-login = "0.4.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"

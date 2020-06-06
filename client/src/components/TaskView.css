@@ -1,0 +1,12 @@
+.taskButtons{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+mark{
+    font-weight: bold;
+}
+
+.taskButtons button{
+    margin-right: 10px;
+}

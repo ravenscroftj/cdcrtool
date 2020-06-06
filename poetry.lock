@@ -418,7 +418,7 @@ description = "User session management for Flask"
 name = "flask-login"
 optional = false
 python-versions = "*"
-version = "0.5.0"
+version = "0.4.1"
 
 [package.dependencies]
 Flask = "*"
@@ -1922,7 +1922,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "b7a802039b53e0d5db2128cb4aae3fd70dba52cd8e525906e5ea908736a5c4cb"
+content-hash = "9478c4792ba9d59dafe86545225aef0455b1fd32cc82bfab73a729d96a3021d2"
 python-versions = "^3.6.1"
 
 [metadata.files]
@@ -2121,8 +2121,7 @@ flask-cors = [
     {file = "Flask_Cors-3.0.8-py2.py3-none-any.whl", hash = "sha256:f4d97201660e6bbcff2d89d082b5b6d31abee04b1b3003ee073a6fd25ad1d69a"},
 ]
 flask-login = [
-    {file = "Flask-Login-0.5.0.tar.gz", hash = "sha256:6d33aef15b5bcead780acc339464aae8a6e28f13c90d8b1cf9de8b549d1c0b4b"},
-    {file = "Flask_Login-0.5.0-py2.py3-none-any.whl", hash = "sha256:7451b5001e17837ba58945aead261ba425fdf7b4f0448777e597ddab39f4fba0"},
+    {file = "Flask-Login-0.4.1.tar.gz", hash = "sha256:c815c1ac7b3e35e2081685e389a665f2c74d7e077cb93cecabaea352da4752ec"},
 ]
 flask-mail = [
     {file = "Flask-Mail-0.9.1.tar.gz", hash = "sha256:22e5eb9a940bf407bcf30410ecc3708f3c56cc44b29c34e1726fe85006935f41"},

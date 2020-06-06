@@ -1,5 +1,40 @@
 import {combineReducers} from 'redux'
 
+const defaultTaskState = {
+    isFetchingTask: false,
+    isSendingAnswer: false,
+    currentTask: null,
+    error: null,
+    taskLastUpdated: null
+};
+
+const taskReducer = function(state, action) {
+
+    if (typeof(state) == 'undefined'){
+        return defaultTaskState;
+    }
+
+    switch(action.type){
+
+        case "IS_SENDING_ANSWER":
+            return {...state, isSendingAnswer: action.isSendingAnswer};
+
+        case "SET_CURRENT_TASK":
+            return {...state, currentTask: action.task, taskLastUpdated: Date.now()};
+
+        case "IS_FETCHING_TASK":
+            return {...state, isFetchingTask: action.isFetchingTask};
+
+        case "SET_TASK_ERROR":
+            return {...state, error: action.error}
+
+        default:
+            return state;
+    }
+
+}
+
+
 const defaultAuthState = {
     isLoggingIn: false,
     loggedIn: false,
@@ -32,7 +67,7 @@ const authReducer = function(state, action){
     }
 };
 
-const cdcrReducer = combineReducers({'auth':authReducer});
+const cdcrReducer = combineReducers({'auth':authReducer, 'task':taskReducer});
 
 
 export default cdcrReducer;

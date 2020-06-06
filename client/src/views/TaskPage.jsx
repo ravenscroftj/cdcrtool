@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import AuthenticatedPageContainer from '../components/AuthenticatedPageContainer';
+import TaskView from '../components/TaskView';
 
 class TaskPage extends Component {
     render(){
         return (
         <AuthenticatedPageContainer>
-            <div>Hello!</div>
+            <TaskView/>
         </AuthenticatedPageContainer>
         )
     }

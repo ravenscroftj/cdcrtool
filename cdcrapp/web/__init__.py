@@ -4,6 +4,7 @@ import hashlib
 
 from flask_security import SQLAlchemySessionUserDatastore, Security
 from flask_cors import CORS
+from flask_restful import Api
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -28,6 +29,8 @@ def create_app():
     static_folder=os.path.join(os.path.dirname(__file__), "static"),
     template_folder=os.path.join(os.path.dirname(__file__), "templates"))
 
+    api = Api(app, prefix='/api/v1')
+
     CORS(app)
     
     # configure app
@@ -47,7 +50,13 @@ def create_app():
     user_datastore =  SQLAlchemySessionUserDatastore(db_session, User, Role)
     security = Security(app, user_datastore)
 
-    from .views import bp
+    #from .views import bp
+    from .resources import TaskResource, AnswerResource
+
+    api.add_resource(TaskResource, "/task", "/task/<task_hash>")
+    api.add_resource(AnswerResource, "/task/<int:task_id>/answers")
+
+
 
     from flaskext.markdown import Markdown
 
@@ -55,7 +64,7 @@ def create_app():
 
 
     # register routes
-    app.register_blueprint(bp)
+    #app.register_blueprint(bp)
 
     #register gravatar function
     app.jinja_env.globals['gravatar_for_email'] = gravatar_for_email

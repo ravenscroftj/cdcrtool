@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import { Form, FormGroup, Button, Alert } from 'react-bootstrap';
 import './LoginForm.css';
 
-import {login, logout} from '../actions/auth'
+import {login} from '../actions/auth'
 
 class LoginForm extends React.Component{
 

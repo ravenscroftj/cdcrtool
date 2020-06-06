@@ -40,7 +40,7 @@ function login(username, password){
 }
 
 function logout(){
-
+    return setLoggedIn(false);
 }
 
 export {login, logout};

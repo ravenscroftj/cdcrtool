@@ -17,7 +17,7 @@ class AuthenticatedPageContainer extends React.Component{
 
         return(
             <PageContainer>
-                {loggedIn ? this.children : loginForm}
+                {loggedIn ? this.props.children : loginForm}
             </PageContainer>
         );
     }
