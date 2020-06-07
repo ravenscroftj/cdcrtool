@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+{% set news_ent_bits = task.news_ent.split(';') %}
+{% set sci_ent_bits = task.sci_ent.split(';') %}
+
+<div>
+  <div class="row">
+    <h2>Are <b>{{news_ent_bits[0]}}</b> and <b>{{sci_ent_bits[0]}}</b> the same?</h2>
+  </div>
+  <div class="row">
+    <form action="POST">
+      <div class="form-group">
+        <button class="btn" name="answer" value="yes">Yes</button>
+        <button class="btn" name="answer" value="no">No</button>
+        <button class="btn btn-danger" name="bad" value="true">Bad Task</button>
+      </div>
+    </form>
+  </div>
+
+  
+  <div class="flex-column row ">
+
+    <h1>News Summary</h1>  
+    <div id="scisummary">
+        Hello this is a<mark>test</mark> of highlighting.</p>
+    </div>
+   
+
+  </div>
+  
+  <div class="flex-column row ">
+
+    <h1>Science Summary</h1>  
+    <div id="scisummary">
+        Hello this is a<mark>test</mark> of highlighting.</p>
+    </div>
+   
+
+  </div>
+
+
+
+
+</div>
+{% endblock %}

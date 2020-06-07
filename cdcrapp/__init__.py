@@ -169,10 +169,20 @@ def export_json(ctx: CLIContext, json_file:str, seed:int, split:float):
     """Export json to conll format"""
     t = ctx.tasksvc.get_annotated_tasks()
 
-    from .export import export_to_json
-
+    from cdcrapp.export import export_to_json
 
     export_to_json(t, json_file, split=split, seed=seed)
+
+
+@cli.command()
+@click.argument("pkl_file", type=click.Path(exists=True))
+@click.pass_obj
+def compare(ctx: CLIContext, pkl_file:str):
+    t = ctx.tasksvc.get_annotated_tasks()
+
+    from cdcrapp.compare import compare
+    
+    compare(pkl_file, t)
 
 
 @cli.command()

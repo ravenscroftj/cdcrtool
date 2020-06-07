@@ -6,111 +6,50 @@ import spacy
 import json
 import os
 import random
-
+import itertools
 from tqdm.auto import tqdm
-from typing import List, Optional, Iterator
-from .model import Task, UserTask, NewsArticle, SciPaper
+from typing import List, Optional, Iterator, Dict
+from cdcrapp.model import Task, UserTask, NewsArticle, SciPaper
 from collections import defaultdict, OrderedDict
 from urllib.parse import urlparse
 from transformers import BertModel, BertTokenizerFast
 
+_next_cluster_id=0
 
+def get_next_cluster_id():
+    global _next_cluster_id
 
-def map_pairs(task_group: List[Task]):
+    _next_cluster_id += 1
+    return _next_cluster_id
+
+def map_pairs(task_group: List[Task], coref_chains: Dict[tuple, int]):
     """Map coreference pairs from annotations to the documents"""
     news_bounds = []
     sci_bounds = []
 
-    cluster2idx = {}
-
     for task in task_group:
+
         _,start,end = task.news_ent.split(";")
 
         start = int(start)
         end = int(end)
 
-        cluster_id = task.id
+        cluster_id = coref_chains[("news", task.news_ent)]
 
 
+        # append the mention and ID
         news_bounds.append((start,end, cluster_id))
-
-        cluster2idx[cluster_id] = len(news_bounds)-1
 
         _,start,end = task.sci_ent.split(";")
         start = int(start)
         end = int(end)
 
+        cluster_id = coref_chains[("sci", task.sci_ent)]
+
         sci_bounds.append((start,end, cluster_id))
-
-    smol2lrg = sorted(news_bounds, key=lambda x: x[2] - x[1])
-
-
-    merge = {}
-    # tidy overlapping boundaries 
-    for start, end, clusterid in sorted(news_bounds, key=lambda x: x[2] - x[1], reverse=True):
-        
-
-        if clusterid in merge:
-            continue
-
-        for nstart, nend, nclusterid in smol2lrg:
-
-            if (start,end,clusterid) == (nstart,nend, nclusterid):
-                continue
-            
-            if (start <= nstart) and (end >= nend):
-                merge[nclusterid] = clusterid
-                print(f"Merge news {nclusterid} -> {clusterid}")
-
-    news_bounds = [x for x in news_bounds if x[2] not in merge]
-
-    sci_bounds = [(start,end, merge[old_id]) if old_id in merge else (start,end,old_id) for start,end,old_id in sci_bounds]
-
-    sci_smol2lrg = sorted(sci_bounds, key=lambda x: x[2] - x[1])
-    
-    merge = {}
-    merged = {value:key for key,value in merge.items()}
-    prune = set()
-    for idx, (start,end,clusterid) in enumerate(sorted(sci_bounds, key=lambda x: x[2] - x[1], reverse=True)):
-
-        #if clusterid in merge:
-        #    continue
-
-        if idx in prune:
-            continue
-
-        for nidx, (nstart, nend, nclusterid) in enumerate(sci_smol2lrg):
-
-            if (start,end,clusterid) == (nstart,nend, nclusterid):
-                continue
-            
-            if (start <= nstart) and (end >= nend):
-                #merge[nclusterid] = clusterid
-
-                if nclusterid in merged:
-                     print(f"Map {clusterid} onto {merged[nclusterid]}")
-                     merge[clusterid] = merged[nclusterid]
-
-                prune.add(nidx)
-                print(f"Prune {nidx} (clusterid={nclusterid}) inside (clusterid={clusterid})")
-                #print(f"Merge science {nclusterid} -> {clusterid}")
-
-    new_sci_bounds = []
-
-    for idx, (start,end,clusterid) in enumerate(sci_smol2lrg):
-
-        if idx in prune:
-            continue
-
-        if clusterid in merge:
-            new_sci_bounds.append((start,end,merge[clusterid]))
-        else:
-            new_sci_bounds.append((start,end,clusterid))
-
-            
     
 
-    return news_bounds, new_sci_bounds
+    return news_bounds, sci_bounds
 
 
 def check_bounds(bounds, word_idx, word_len, retstr=True):
@@ -164,6 +103,7 @@ def map_and_sort(tasks: List[Task]) -> List[tuple]:
     task_map_items = sorted(task_map_items, key=lambda item: item[0][1])
 
     return task_map_items
+
 
 
 def export_to_conll(input_file:str, output_file: str):
@@ -220,6 +160,81 @@ def export_to_conll(input_file:str, output_file: str):
 
         fp.write("#end document\n")
         
+
+
+def generate_coref_chains(task_items: List[tuple]):
+
+    chains = {}
+    for task_group_id, tasks in task_items:
+        
+        groupchains = []
+        for task in tasks:
+            is_coref = False
+            # all tasks have at least 1 user task. 
+            # if there are more it is an IAA task so take the most common answer
+            if len(task.usertasks) > 1:
+                yeses = len([ans for ans in task.usertasks if ans.answer == "yes"])
+                nos = len([ans for ans in task.usertasks if ans.answer == "no"])
+                is_coref = yeses > nos
+
+            # in all other cases there will be 1 user answer so take that as the 'answer'
+            else:
+                is_coref = task.usertasks[0].answer == "yes"
+
+            ne_id = ("news", task.news_ent)
+            se_id = ("sci", task.sci_ent)
+
+            resolved_se = False
+            resolved_ne = False
+            for chain in groupchains:
+                if is_coref:
+                    if (ne_id in chain) or (se_id in chain):
+                        chain.add(ne_id)
+                        chain.add(se_id)
+                        resolved_se = True
+                        resolved_ne = True
+                
+                # else is_coref = False
+                else:
+                    if ne_id in chain:
+                        resolved_ne = True
+                    # controversially not an elif because someone else might have linked these two things
+                    if se_id in chain:
+                        resolved_se = True
+                    
+                if resolved_ne and resolved_se:
+                    break
+
+            if is_coref and not (resolved_ne or resolved_se):
+                groupchains.append(set([ne_id, se_id]))
+                resolved_ne = True
+                resolved_se = True
+
+            if not(resolved_ne or is_coref):
+                groupchains.append(set([ne_id]))
+
+            if not (resolved_se or is_coref):
+                groupchains.append(set([se_id]))
+            
+        # end for task in tasks
+
+        mention_map = {}
+        for chain in groupchains:
+            cluster_id = get_next_cluster_id()
+            for member in chain:
+                mention_map[member] = cluster_id
+
+        chains[task_group_id] = mention_map
+
+
+    # end for task sets
+    return chains
+
+                    
+
+        
+
+
 def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) -> (dict, List[dict]):
     """Generate map of document words and entities"""
 
@@ -227,8 +242,10 @@ def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) ->
     doctypes =['news','science']
     entities = []
 
-    for topic_idx, (_, tasklist) in enumerate(tqdm(task_items)):
-    #for topic_idx, (topic_id, tasklist) in enumerate(tqdm(task_map.items())):
+    coref_chains = generate_coref_chains(task_items)
+
+
+    for topic_idx, (task_group_id, tasklist) in enumerate(tqdm(task_items)):
 
         scidoc = nlp(tasklist[0].sci_text)
         newsdoc = nlp(tasklist[0].news_text)
@@ -237,9 +254,7 @@ def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) ->
 
         docs = [newsdoc, scidoc]
 
-        
-
-        bounds = map_pairs(tasklist)
+        bounds = map_pairs(tasklist, coref_chains[task_group_id])
 
         for doc_idx, doc in enumerate(docs):
 
@@ -339,20 +354,21 @@ def test_train_split(task_map_items: List[tuple], split:float, seed:int):
 
     return train_set, test_set
 
+
+
+
 def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
     """Export to JSON format compatible with Arie's coref model"""
 
     # first we generate arrays of words within files
     nlp = spacy.load('en', disable=['textcat'])
 
-    task_map = defaultdict(lambda:[])
-
-    for task in tasks:
-        task_map[(task.news_article_id, task.sci_paper_id)].append(task)
-
-    doc_map = {}
+    _next_cluster_id = max([task.id for task in tasks]) + 1
 
     task_map_items = map_and_sort(tasks)
+
+    # build coref chains
+
 
     train_set, test_set = test_train_split(task_map_items, split, seed)
 
@@ -452,8 +468,3 @@ def export_to_joshi(tasks: List[Task], output_file: str, split:float,seed:int):
 
         #end for task (doc-pair)
     #end with open output_file
-
-
-
-
-

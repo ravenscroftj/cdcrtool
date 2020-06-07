@@ -13,6 +13,7 @@ from itertools import combinations
 from crypt import crypt, mksalt, METHOD_SHA512
 from contextlib import contextmanager
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 
 from cdcrapp.kappa import fleiss_kappa
 
@@ -313,7 +314,7 @@ class TaskService(DBServiceBase):
 
         with self.session() as session:
 
-            ut_task_ids = session.query(UserTask.task_id).distinct().filter(UserTask.answer=="yes")
+            ut_task_ids = session.query(UserTask.task_id).distinct()
             q = session.query(Task).filter(Task.id.in_(ut_task_ids)).join(NewsArticle).join(SciPaper).join(UserTask)
 
             if limit is not None:
@@ -322,7 +323,7 @@ class TaskService(DBServiceBase):
             if offset is not None:
                 q = q.offset(offset)
 
-            return q.all()
+            return q.options(joinedload('usertasks')).all()
 
     def get_answer_dists(self)  -> List[tuple]:
         with self.session() as session:
@@ -359,3 +360,16 @@ class TaskService(DBServiceBase):
             session.bulk_save_objects(new_pri_tasks)
 
             session.commit()
+
+class FlaskUserService(UserService):
+
+    @contextmanager
+    def session(self):
+        from cdcrapp.web import db_session
+        yield db_session
+
+class FlaskTaskService(TaskService):
+    @contextmanager
+    def session(self):
+        from cdcrapp.web import db_session
+        yield db_session

@@ -1,16 +1,32 @@
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from sqlalchemy import Column, Integer, String, Text, Boolean, Table, ForeignKey, Float, DateTime
 
 from datetime import datetime
 
+from flask_security import RoleMixin, UserMixin
+
 Base = declarative_base()
 
-    
 
-class User(Base):
+roles_users = Table('roles_users', Base.metadata,
+        Column('user_id', Integer(), ForeignKey('users.id')),
+        Column('role_id', Integer(), ForeignKey('roles.id')))
+
+
+
+class Role(Base, RoleMixin):
+
+    __tablename__ = "roles"
+
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80), unique=True)
+    description = Column(String(255))
+
+
+class User(Base, UserMixin):
     
     __tablename__ = "users"
     
@@ -22,9 +38,17 @@ class User(Base):
     salt = Column(String(64))
     view_gsheets = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
-    
+
+    roles = relationship('Role', secondary=roles_users,
+                            backref=backref('users', lazy='dynamic'))
+
+    active = Column(Boolean())
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
+
+    @property
+    def total_annotations(self):
+        return UserTask.query.filter(UserTask.user_id==self.id).count()
     
 class Task(Base):
     
@@ -32,10 +56,6 @@ class Task(Base):
     
     id = Column(Integer, primary_key=True)
     hash = Column(String(64), unique=True)
-    #news_text = Column(Text)
-    #sci_text = Column(Text)
-    #news_url = Column(String(255))
-    #sci_url = Column(String(150))
     news_ent = Column(String(255))
     sci_ent = Column(String(255))
     similarity = Column(Float)
@@ -44,6 +64,9 @@ class Task(Base):
     # If set will be prioritised above "new" tasks by editor
     is_iaa_priority = Column(Boolean, default=False)
     is_bad = Column(Boolean, default=False)
+    is_bad_user_id = Column(ForeignKey("users.id"))
+    is_bad_reason = Column(String(255))
+    is_bad_reported_at = Column(DateTime, nullable=True)
 
     sci_paper_id = Column(ForeignKey("scipapers.id"))
     scipaper = relationship("SciPaper", lazy="joined")
