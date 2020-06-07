@@ -1,3 +1,6 @@
+import os
+import numpy as np
+
 from datetime import datetime
 
 from flask import current_app
@@ -107,9 +110,20 @@ class AnswerResource(Resource):
         parser.add_argument('answer', type=str, required=True, choices=['yes','no'])
         args = parser.parse_args()
 
+        task = Task.query.get(task_id)
+
+        if task is None:
+            return {"error": f"No task with ID={task_id} exists"}, 404
+
         ut = UserTask(task_id=task_id, user_id=current_user.id, answer=args.answer)
 
         db_session.add(ut)
+
+        # there is a random chance that this will become an IAA task
+        if np.random.random() < float(os.getenv('IAA_RATIO', 0.05)) and (not task.is_iaa):
+            task.is_iaa = True
+            task.is_iaa_priority = True
+        
         db_session.commit()
 
         return marshal(ut, self.ut_fields), 201
