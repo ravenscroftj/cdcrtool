@@ -42,7 +42,7 @@ class PageContainer extends React.Component {
         const loginBar = this.props.loggedIn ? (
             <Navbar.Collapse className="justify-content-end">
                 <Navbar.Text>
-                {isFetchingUserProfile ? 
+                { (isFetchingUserProfile || !currentUser) ? 
                 (<Spinner animation="border" role="status"><span className="sr-only">Loading...</span></Spinner>) : 
                 ( <span>Welcome <b>{currentUser.username}</b>. You have completed <b>{currentUser.total_annotations}</b> examples.</span>)}
                 </Navbar.Text>

@@ -8,6 +8,7 @@
      login: `${apiRoot}/login`,
      task: `${apiRoot}/api/v1/task`,
      user: `${apiRoot}/api/v1/user`,
+     entities: `${apiRoot}/api/v1/entities`,
  };
 
  export default Endpoints;

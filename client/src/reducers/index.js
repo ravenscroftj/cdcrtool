@@ -90,7 +90,31 @@ const authReducer = function(state, action){
     }
 };
 
-const cdcrReducer = combineReducers({'auth':authReducer, 'task':taskReducer, 'user':userReducer});
+const defaultEntityState = {
+    editorState: {start:null, end:null, target:null, fullText:null, originalEntity:null, docID: null},
+    isSavingEntity: false,
+    entityError: null,
+};
+
+const entityReducer = (state, action)=>{
+
+    if (typeof(state) == 'undefined'){
+        return defaultEntityState;
+    }
+
+    switch(action.type){
+        case 'UPDATE_ENTITY_EDITOR_STATE':
+            return {...state, editorState: action.state};
+        case 'SET_ENTITY_IS_UPDATING':
+            return {...state, isSavingEntity: action.isSavingEntity};
+        case 'SET_ENTITY_ERROR':
+            return {...state, entityError: action.error};
+        default:
+            return state;
+    }
+};
+
+const cdcrReducer = combineReducers({'auth':authReducer, 'task':taskReducer, 'user':userReducer, 'entity': entityReducer});
 
 
 export default cdcrReducer;

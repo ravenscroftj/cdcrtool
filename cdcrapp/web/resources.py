@@ -3,6 +3,8 @@ import numpy as np
 
 from datetime import datetime
 
+from sqlalchemy import update
+
 from flask import current_app
 from flask_restful import Resource, fields, marshal, reqparse
 from flask_security import auth_required, current_user
@@ -25,6 +27,7 @@ class TaskResource(Resource):
         "is_bad_reason": fields.String,
         "is_bad_user_id": fields.Integer,
         "is_bad_reported_at": fields.DateTime,
+        "news_article_id": fields.Integer,
         "sci_paper_id": fields.Integer,
         "news_url": fields.String,
         "news_text": fields.String,
@@ -128,6 +131,34 @@ class AnswerResource(Resource):
 
         return marshal(ut, self.ut_fields), 201
 
+
+class EntityResource(Resource):
+
+    def patch(self, doc_type, doc_id):
+        """Update entity"""
+        parser = reqparse.RequestParser()
+        parser.add_argument('oldEntity', type=str, required=True)
+        parser.add_argument('newEntity', type=str, required=True)
+        args = parser.parse_args()
+
+        base_query = Task.query
+
+        if(doc_type == "news"):
+            base_query = base_query.filter(Task.news_article_id==doc_id, Task.news_ent==args.oldEntity)
+        elif(doc_type == "science"):
+            base_query = base_query.filter(Task.sci_paper_id==doc_id, Task.sci_ent==args.oldEntity)
+        else:
+            return {"error":"Type of document must be 'news' or 'science"}, 400
+
+        if doc_type == "news":
+            affected = base_query.update({Task.news_ent:args.newEntity})
+        else:
+            affected = base_query.update({Task.sci_ent:args.newEntity})
+
+        db_session.commit()
+
+        return {"updated_rows":affected}
+        
 
 class UserResource(Resource):
 
