@@ -27,7 +27,8 @@ class LoginForm extends React.Component{
         this.submitLogin = this.submitLogin.bind(this);
     }
 
-    submitLogin = () => {
+    submitLogin = (evt) => {
+        evt.preventDefault();
         console.log(this.state.formControls);
         this.props.login(this.state.formControls.email.value, this.state.formControls.password.value);
     };
@@ -48,19 +49,27 @@ class LoginForm extends React.Component{
         const {loginError} = this.props;
 
         if (loginError.response) {
-            const errors = loginError.response.data.response.errors;
+
+            if (loginError.response.status == 500){
+                return(<Alert varient="danger">Login server is giving an internal server error. Contact Admin.</Alert>)
+            }
+
+            if (loginError.response.data.response) {
+                const errors = loginError.response.data.response.errors;
             
-            return(
-                <div>
-                <Alert varient="danger">
-                    <ul>
-            {Object.keys(errors).map( (key, idx) => (
-               <li key={idx}>{errors[key][0]}</li>
-            ))}
-                    </ul>
-                </Alert>
-                </div>
-            )
+                return(
+                    <div>
+                    <Alert varient="danger">
+                        <ul>
+                {Object.keys(errors).map( (key, idx) => (
+                   <li key={idx}>{errors[key][0]}</li>
+                ))}
+                        </ul>
+                    </Alert>
+                    </div>
+                )
+            }
+
         }
     }
 
@@ -96,7 +105,7 @@ class LoginForm extends React.Component{
 
                 </FormGroup>
                 <FormGroup>
-                    <Button onClick={this.submitLogin} disabled={this.loggingIn}>Log In</Button>
+                    <Button type="submit" disabled={this.loggingIn}>Log In</Button>
                 </FormGroup>
             </Form>
             </div>

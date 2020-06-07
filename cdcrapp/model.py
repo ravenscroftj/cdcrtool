@@ -56,10 +56,6 @@ class Task(Base):
     
     id = Column(Integer, primary_key=True)
     hash = Column(String(64), unique=True)
-    #news_text = Column(Text)
-    #sci_text = Column(Text)
-    #news_url = Column(String(255))
-    #sci_url = Column(String(150))
     news_ent = Column(String(255))
     sci_ent = Column(String(255))
     similarity = Column(Float)
@@ -68,6 +64,9 @@ class Task(Base):
     # If set will be prioritised above "new" tasks by editor
     is_iaa_priority = Column(Boolean, default=False)
     is_bad = Column(Boolean, default=False)
+    is_bad_user_id = Column(ForeignKey("users.id"))
+    is_bad_reason = Column(String(255))
+    is_bad_reported_at = Column(DateTime, nullable=True)
 
     sci_paper_id = Column(ForeignKey("scipapers.id"))
     scipaper = relationship("SciPaper", lazy="joined")

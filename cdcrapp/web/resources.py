@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import current_app
 from flask_restful import Resource, fields, marshal, reqparse
 from flask_security import auth_required, current_user
@@ -17,6 +19,9 @@ class TaskResource(Resource):
         "is_iaa": fields.Boolean,
         "is_iaa_priority": fields.Boolean,
         "is_bad": fields.Boolean,
+        "is_bad_reason": fields.String,
+        "is_bad_user_id": fields.Integer,
+        "is_bad_reported_at": fields.DateTime,
         "sci_paper_id": fields.Integer,
         "news_url": fields.String,
         "news_text": fields.String,
@@ -46,6 +51,38 @@ class TaskResource(Resource):
 
 
         return marshal(t, self.task_fields)
+
+    @auth_required('token')
+    def post(self):
+        """Give user the opportunity to report a task as 'bad'"""
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('task_id', type=str, required=True)
+        parser.add_argument('is_bad', type=bool, required=False, default=False)
+        parser.add_argument('is_bad_reason', type=str, required=False)
+
+        args = parser.parse_args()
+
+        t = db_session.query(Task).filter(Task.id==args.task_id).one_or_none()
+
+        if not t:
+            return {"error":f"No such task with id={args.task_id}"}, 404
+        else:
+            t.is_bad = args.is_bad
+            if args.is_bad:
+                t.is_bad_reason = args.is_bad_reason
+                t.is_bad_user_id = current_user.id
+                t.is_bad_reported_at = datetime.now()
+            else:
+                t.is_bad_reason = None
+                t.is_bad_user_id = None
+                t.is_bad_reported_at = None
+            
+        db_session.add(t)
+        db_session.commit()
+
+        return marshal(t, self.task_fields)
+
 
 
 class AnswerResource(Resource):

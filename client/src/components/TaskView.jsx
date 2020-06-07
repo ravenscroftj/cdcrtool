@@ -6,8 +6,9 @@ import {Container, Navbar, NavItem, NavDropdown, Form, Button, Alert, FormGroup,
 
 import "./TaskView.css"
 
-import {fetchTask, setTaskError, submitAnswer} from '../actions/task';
+import {fetchTask, setTaskError, submitAnswer, reportBadTask} from '../actions/task';
 import { AlertHeading } from 'react-bootstrap/Alert';
+import BadTaskModal from './BadTaskModal';
 
 
 class TaskView extends React.Component {
@@ -18,7 +19,8 @@ class TaskView extends React.Component {
         this.handleAnswerButton = this.handleAnswerButton.bind(this);
 
         this.state = {
-            answerButtonsDisabled: false
+            answerButtonsDisabled: false,
+            showBadExampleModal: false
         }
     }
 
@@ -136,7 +138,7 @@ class TaskView extends React.Component {
                                 <div className="taskButtons">
                             <Button onClick={()=>{this.handleAnswerButton('yes')}}>Yes</Button>
                             <Button onClick={()=>{this.handleAnswerButton('no')}}>No</Button>
-                            <Button>Bad Example</Button>
+                            <Button onClick={()=>{this.setState({showBadExampleModal: true})}}>Bad Example</Button>
                             </div>
                             )}
 
@@ -160,6 +162,10 @@ class TaskView extends React.Component {
 
                     </div>
                 )}
+                <BadTaskModal 
+                show={this.state.showBadExampleModal} 
+                submitCallback={(reason)=>{this.props.reportBadTask(currentTask, reason)}}
+                hideCallback={()=>this.setState({showBadExampleModal:false})} />
             </div>
         );
     }
@@ -174,6 +180,6 @@ const mapStateToProps = (state) => ({
     taskError: state.task.error
 });
 
-const mapDispatchToProps = {fetchTask, setTaskError, submitAnswer};
+const mapDispatchToProps = {fetchTask, setTaskError, submitAnswer, reportBadTask};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskView);
