@@ -25,9 +25,10 @@ def gravatar_for_email(email):
 
 def create_app():
 
-    app = flask.Flask(import_name="cdcrapp", 
-    static_folder=os.path.join(os.path.dirname(__file__), "static"),
-    template_folder=os.path.join(os.path.dirname(__file__), "templates"))
+    client_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../client/build"))
+
+    app = flask.Flask(import_name="cdcrapp", static_url_path='',
+    static_folder=client_path)
 
     api = Api(app, prefix='/api/v1')
 
@@ -35,6 +36,8 @@ def create_app():
     
     # configure app
     app.config.from_object("cdcrapp.settings")
+
+
 
 
     from cdcrapp.model import Base, User, Role
@@ -45,6 +48,7 @@ def create_app():
     def shutdown_session(exception=None):
         db_session.remove()
 
+    
 
     # Setup Flask-Security
     user_datastore =  SQLAlchemySessionUserDatastore(db_session, User, Role)
@@ -52,6 +56,7 @@ def create_app():
 
     #from .views import bp
     from .resources import TaskResource, AnswerResource, UserResource, EntityResource
+
 
     api.add_resource(UserResource, "/user")
     api.add_resource(TaskResource, "/task", "/task/<task_hash>")
@@ -71,4 +76,9 @@ def create_app():
     #register gravatar function
     app.jinja_env.globals['gravatar_for_email'] = gravatar_for_email
 
+    @app.route("/")
+    def root():
+        return flask.current_app.send_static_file('index.html')
+
+    #print(app.url_map)
     return app

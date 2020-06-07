@@ -2,7 +2,8 @@
  * Endpoint config for API calls
  */
 
- const apiRoot = "http://localhost:5000";
+
+const apiRoot = (window.location.host == "localhost:3000") ? "http://localhost:5000" : `${window.location.protocol}//${window.location.host}`;
 
  const Endpoints = {
      login: `${apiRoot}/login`,
