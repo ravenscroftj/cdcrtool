@@ -159,15 +159,18 @@ class UserService(DBServiceBase):
         with self.session() as session:
             q = session.query(UserTask)\
                 .join(User)\
-                .join(Task)
+                .join(UserTask.task)
 
             all_data = defaultdict(lambda: list())
+
+            print(q)
 
             for ut in q.all():
                 all_data[ut.task_id].append((ut.user.username, ut.answer))
 
         grouped_tasks = defaultdict(lambda:set())
 
+        print(len(all_data))
         for task_id, answers in all_data.items():
             biggest_group = tuple(sorted([username for (username,answer) in answers]))
 
