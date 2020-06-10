@@ -159,6 +159,32 @@ class EntityResource(Resource):
 
         return {"updated_rows":affected}
         
+ut_fields = {
+    'task_id': fields.Integer,
+    'answer': fields.String,
+    'task': fields.Nested(TaskResource.task_fields),
+    'created_at': fields.DateTime
+}
+
+class UserTaskListResource(Resource):
+
+    @auth_required('token')
+    def get(self):
+
+        ap = reqparse.RequestParser()
+        ap.add_argument("offset", required=False, type=int, default=0)
+        ap.add_argument("limit", required=False, type=int, default=25)
+
+        args = ap.parse_args()
+
+        user_tasks = UserTask.query.join(Task.usertasks).filter(UserTask.user==current_user).order_by(UserTask.created_at.desc())
+
+        total = user_tasks.count()
+
+        uts = [marshal(ut, ut_fields) for ut in user_tasks.offset(args.offset).limit(args.limit).all()]
+    
+
+        return {"total":total, "offset":args.offset, "limit": args.limit, "tasks":uts}
 
 class UserResource(Resource):
 
