@@ -7,6 +7,7 @@ const apiRoot = (window.location.host == "localhost:3000") ? "http://localhost:5
 
  const Endpoints = {
      login: `${apiRoot}/login`,
+     logout: `${apiRoot}/logout`,
      task: `${apiRoot}/api/v1/task`,
      user: `${apiRoot}/api/v1/user`,
      entities: `${apiRoot}/api/v1/entities`,
