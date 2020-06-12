@@ -37,10 +37,7 @@ class TaskView extends React.Component {
     }
 
     componentDidMount() {
-        this.checkTaskUpdate();
-        if (!this.props.isFetchingTask) {
-            this.props.fetchTask();
-        }
+        this.props.fetchTask(this.props.taskHash);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -48,11 +45,16 @@ class TaskView extends React.Component {
     }
 
     checkTaskUpdate() {
+        console.log(this.props.taskHash);
+        
+
         const timeoutThreshold = (Date.now() - (300 * 1000));
-        const { isFetchingTask, taskLastUpdated, currentTask, taskError } = this.props;
-        if ((!currentTask || (taskLastUpdated < timeoutThreshold)) && !(isFetchingTask || taskError)) {
-            console.log("Fetch task")
-            this.props.fetchTask();
+        const { isFetchingTask, taskLastUpdated, currentTask, taskError, taskHash } = this.props;
+
+
+        if ((!currentTask || (taskHash && taskHash !== currentTask.hash) || (taskLastUpdated < timeoutThreshold)) && !(isFetchingTask || taskError)) {
+            console.log("Fetch task", taskHash)
+            this.props.fetchTask(taskHash);
         }
     }
 

@@ -42,9 +42,8 @@ ReactDOM.render(
           <Route path="/tasks">
             <UserTaskPage/>
           </Route>
-          <Route path="/">
-            <TaskPage/>
-          </Route>
+          <Route path="/task/:hash" component={TaskPage}/>
+          <Route path="/" component={TaskPage} />
         </Switch>
       </Router>
       </PersistGate>
