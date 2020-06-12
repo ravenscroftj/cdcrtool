@@ -58,11 +58,10 @@ class TaskResource(Resource):
 
             t = tasksvc.next_tasks_for_user(current_user)
 
-        tfields = self.task_fields
+        tfields = dict(**self.task_fields)
 
-        if t.current_user_answer != None:
+        if t.current_user_answer != None and t.current_user_answer.task_id != 0:
             tfields['current_user_answer'] = fields.Nested({
-                'id': fields.Integer,
                 'task_id': fields.Integer,
                 'answer': fields.String,
                 'created_at': fields.DateTime

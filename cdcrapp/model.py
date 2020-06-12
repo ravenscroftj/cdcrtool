@@ -77,6 +77,8 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+    _current_user_answer = None
+
     @property
     def news_text(self):
         return self.newsarticle.summary
@@ -95,7 +97,10 @@ class Task(Base):
 
     @property
     def current_user_answer(self):
-        return UserTask.query.filter(UserTask.task_id==self.id, UserTask.user_id == current_user.id).one_or_none()
+        if self._current_user_answer is None:
+            self._current_user_answer = UserTask.query.filter(UserTask.task_id==self.id, UserTask.user_id == current_user.id).one_or_none()
+        
+        return self._current_user_answer
 
 class NewsArticle(Base):
 
