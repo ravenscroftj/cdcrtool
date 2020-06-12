@@ -25,8 +25,11 @@ const userReducer = function(state,action){
 
 const defaultTaskState = {
     isFetchingTask: false,
+    isFetchingTaskList: false,
     isSendingAnswer: false,
     currentTask: null,
+    currentTaskList: [],
+    currentTaskListNavigation:{offset:0, limit:100} ,
     error: null,
     taskLastUpdated: null
 };
@@ -45,11 +48,20 @@ const taskReducer = function(state, action) {
         case "SET_CURRENT_TASK":
             return {...state, currentTask: action.task, taskLastUpdated: Date.now()};
 
+        case "SET_CURRENT_TASK_LIST":
+            return {...state, currentTaskList: action.taskList};
+
         case "IS_FETCHING_TASK":
             return {...state, isFetchingTask: action.isFetchingTask};
 
+        case "IS_FETCHING_TASK_LIST":
+            return {...state, isFetchingTaskList: action.isFetchingTaskList};
+
         case "SET_TASK_ERROR":
             return {...state, error: action.error}
+
+        case "SET_TASKLIST_NAVIGATION":
+            return {...state, currentTaskListNavigation: action.navigation};
 
         default:
             return state;

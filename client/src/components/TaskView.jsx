@@ -1,5 +1,6 @@
 import React from 'react';
 
+import moment from 'moment';
 import { connect } from 'react-redux';
 
 import { Container, Navbar, NavItem, NavDropdown, Form, Button, Alert, FormGroup, FormControl, Spinner, Row, Collapse, Dropdown, Col } from 'react-bootstrap'
@@ -37,10 +38,7 @@ class TaskView extends React.Component {
     }
 
     componentDidMount() {
-        this.checkTaskUpdate();
-        if (!this.props.isFetchingTask) {
-            this.props.fetchTask();
-        }
+        this.props.fetchTask(this.props.taskHash);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -48,11 +46,16 @@ class TaskView extends React.Component {
     }
 
     checkTaskUpdate() {
+        console.log(this.props.taskHash);
+        
+
         const timeoutThreshold = (Date.now() - (300 * 1000));
-        const { isFetchingTask, taskLastUpdated, currentTask, taskError } = this.props;
-        if ((!currentTask || (taskLastUpdated < timeoutThreshold)) && !(isFetchingTask || taskError)) {
-            console.log("Fetch task")
-            this.props.fetchTask();
+        const { isFetchingTask, taskLastUpdated, currentTask, taskError, taskHash } = this.props;
+
+
+        if ((!currentTask || (taskHash && taskHash !== currentTask.hash) || (taskLastUpdated < timeoutThreshold)) && !(isFetchingTask || taskError)) {
+            console.log("Fetch task", taskHash)
+            this.props.fetchTask(taskHash);
         }
     }
 
@@ -157,11 +160,17 @@ class TaskView extends React.Component {
             </Spinner>)
         }
 
+        const currentAnsBlock = (currentTask.current_user_answer) ? (
+        <Alert variant="info">You are amending an answer. You previously answered <b>{currentTask.current_user_answer.answer}</b> to this {moment(currentTask.current_user_answer.created_at).fromNow()}</Alert>
+        ) : "";
+
 
         return (
             <div>
                 {taskError ? errorBlock : (
                     <div>
+
+                        {currentAnsBlock}
                         {this.renderQuestion()}
 
 

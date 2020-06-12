@@ -2,7 +2,7 @@ import React from 'react';
 
 import {connect} from 'react-redux';
 
-import {Container, Navbar, NavItem, NavDropdown, Form, Button, Spinner} from 'react-bootstrap'
+import {Container, Navbar, NavItem, NavDropdown, Form, Button, Spinner, NavLink, Nav} from 'react-bootstrap'
 
 import {login, logout} from '../actions/auth';
 
@@ -55,6 +55,13 @@ class PageContainer extends React.Component {
         return(<div className="pagecontainer">
             <Navbar bg="dark" variant="dark">
                 <Navbar.Brand>CDCRApp</Navbar.Brand>
+                <Navbar.Collapse className="justify-content-start">
+                    <Nav className="mrAuto">
+                        <NavLink href="/">Home</NavLink>
+                        <NavLink href="/tasks">My Tasks</NavLink>
+                    </Nav>
+                    
+                </Navbar.Collapse>
                 {loginBar}
             </Navbar>
             <Container className="maincontainer">

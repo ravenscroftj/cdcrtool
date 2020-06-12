@@ -20,6 +20,7 @@ import TaskPage from './views/TaskPage';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import logger from 'redux-logger';
+import UserTaskPage from './views/UserTaskPage';
 
 
 const persistConfig = {
@@ -38,9 +39,11 @@ ReactDOM.render(
       <PersistGate loading={null} persistor={persistor}>
       <Router>
         <Switch>
-          <Route path="/">
-            <TaskPage/>
+          <Route path="/tasks">
+            <UserTaskPage/>
           </Route>
+          <Route path="/task/:hash" component={TaskPage}/>
+          <Route path="/" component={TaskPage} />
         </Switch>
       </Router>
       </PersistGate>

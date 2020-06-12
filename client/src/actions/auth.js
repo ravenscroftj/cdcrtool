@@ -51,7 +51,20 @@ function login(username, password){
 }
 
 function logout(){
-    return setLoggedIn(false);
+
+    return async(dispatch) => {
+        
+        try{
+            const response = await Axios.get(ApiEndpoints.logout);
+
+            dispatch(setLoggedIn(false));
+            dispatch(setUserCredentials(null,null));
+        }catch(err){
+            dispatch(setLoginError(err));
+        }
+
+        
+    }
 }
 
 export {login, logout, addAuthHeaders};

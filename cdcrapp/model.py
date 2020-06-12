@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Text, Boolean, Table, ForeignKey
 
 from datetime import datetime
 
-from flask_security import RoleMixin, UserMixin
+from flask_security import RoleMixin, UserMixin, current_user
 
 Base = declarative_base()
 
@@ -77,6 +77,8 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+    _current_user_answer = None
+
     @property
     def news_text(self):
         return self.newsarticle.summary
@@ -93,6 +95,12 @@ class Task(Base):
     def sci_url(self):
         return self.scipaper.url
 
+    @property
+    def current_user_answer(self):
+        if self._current_user_answer is None:
+            self._current_user_answer = UserTask.query.filter(UserTask.task_id==self.id, UserTask.user_id == current_user.id).one_or_none()
+        
+        return self._current_user_answer
 
 class NewsArticle(Base):
 

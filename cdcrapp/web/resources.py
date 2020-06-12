@@ -13,6 +13,9 @@ from cdcrapp.services import FlaskTaskService
 from cdcrapp.model import Task, UserTask
 from cdcrapp.web import db_session
 
+        
+
+
 class TaskResource(Resource):
 
     task_fields = {
@@ -55,8 +58,16 @@ class TaskResource(Resource):
 
             t = tasksvc.next_tasks_for_user(current_user)
 
+        tfields = dict(**self.task_fields)
 
-        return marshal(t, self.task_fields)
+        if t.current_user_answer != None and t.current_user_answer.task_id != 0:
+            tfields['current_user_answer'] = fields.Nested({
+                'task_id': fields.Integer,
+                'answer': fields.String,
+                'created_at': fields.DateTime
+            })
+
+        return marshal(t,  tfields)
 
     @auth_required('token')
     def post(self):
@@ -91,7 +102,7 @@ class TaskResource(Resource):
 
 
 
-class AnswerResource(Resource):
+class AnswerListResource(Resource):
 
     ut_fields = {
         "task_id": fields.Integer,
@@ -106,6 +117,26 @@ class AnswerResource(Resource):
         answers = [marshal(ans, self.ut_fields) for ans in task.usertasks]
 
         return answers
+
+
+    @auth_required('token')
+    def patch(self, task_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('answer', type=str, required=True, choices=['yes','no'])
+        args = parser.parse_args()
+
+        ans = UserTask.query.filter(UserTask.task_id==task_id, UserTask.user_id==current_user.id).one_or_none()
+
+        if ans is None:
+            return {"error":f"No answer with task={task_id} and user_id={current_user.id} exists"}, 404
+
+        ans.answer = args.answer
+        ans.created_at = datetime.now()
+
+        db_session.add(ans)
+        db_session.commit()
+
+        return marshal(ans, self.ut_fields), 200
 
     @auth_required('token')
     def post(self, task_id):
@@ -130,6 +161,9 @@ class AnswerResource(Resource):
         db_session.commit()
 
         return marshal(ut, self.ut_fields), 201
+
+
+
 
 
 class EntityResource(Resource):
@@ -159,6 +193,32 @@ class EntityResource(Resource):
 
         return {"updated_rows":affected}
         
+ut_fields = {
+    'task_id': fields.Integer,
+    'answer': fields.String,
+    'task': fields.Nested(TaskResource.task_fields),
+    'created_at': fields.DateTime
+}
+
+class UserTaskListResource(Resource):
+
+    @auth_required('token')
+    def get(self):
+
+        ap = reqparse.RequestParser()
+        ap.add_argument("offset", required=False, type=int, default=0)
+        ap.add_argument("limit", required=False, type=int, default=25)
+
+        args = ap.parse_args()
+
+        user_tasks = UserTask.query.join(Task.usertasks).filter(UserTask.user==current_user).order_by(UserTask.created_at.desc())
+
+        total = user_tasks.count()
+
+        uts = [marshal(ut, ut_fields) for ut in user_tasks.offset(args.offset).limit(args.limit).all()]
+    
+
+        return {"total":total, "offset":args.offset, "limit": args.limit, "tasks":uts}
 
 class UserResource(Resource):
 
