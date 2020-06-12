@@ -39,8 +39,17 @@ const submitAnswer = (answer, task) => {
     return async(dispatch, getState) => {
         dispatch(setSendingAnswer(true));
         
+
         try{
-            const response = await Axios.post(`${ApiEndpoints.task}/${task.id}/answers`, {"answer": answer}, {headers: addAuthHeaders(getState())} );
+
+            const response = await Axios.request({
+                method: task.current_user_answer ? 'patch' : 'post',
+                url: `${ApiEndpoints.task}/${task.id}/answers`,
+                headers: addAuthHeaders(getState()),
+                data: {"answer": answer}
+            })
+
+            
 
             dispatch(fetchTask());
             dispatch(fetchCurrentUserProfile())

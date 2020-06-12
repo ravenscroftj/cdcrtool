@@ -88,6 +88,18 @@ docs = ["sphinx", "zope.interface"]
 tests = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 
 [[package]]
+category = "dev"
+description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
+name = "autopep8"
+optional = false
+python-versions = "*"
+version = "1.5.3"
+
+[package.dependencies]
+pycodestyle = ">=2.6.0"
+toml = "*"
+
+[[package]]
 category = "main"
 description = "Internationalization utilities"
 name = "babel"
@@ -1256,6 +1268,14 @@ version = "0.2.8"
 pyasn1 = ">=0.4.6,<0.5.0"
 
 [[package]]
+category = "dev"
+description = "Python style guide checker"
+name = "pycodestyle"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "2.6.0"
+
+[[package]]
 category = "main"
 description = "C parser in Python"
 name = "pycparser"
@@ -1922,7 +1942,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "9478c4792ba9d59dafe86545225aef0455b1fd32cc82bfab73a729d96a3021d2"
+content-hash = "02eb287360d76a1bbf880d1f8c4d59fdb1472c9bcba010035a6dc340c440406d"
 python-versions = "^3.6.1"
 
 [metadata.files]
@@ -1952,6 +1972,9 @@ astroid = [
 attrs = [
     {file = "attrs-19.3.0-py2.py3-none-any.whl", hash = "sha256:08a96c641c3a74e44eb59afb61a24f2cb9f4d7188748e76ba4bb5edfa3cb7d1c"},
     {file = "attrs-19.3.0.tar.gz", hash = "sha256:f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72"},
+]
+autopep8 = [
+    {file = "autopep8-1.5.3.tar.gz", hash = "sha256:60fd8c4341bab59963dafd5d2a566e94f547e660b9b396f772afe67d8481dbf0"},
 ]
 babel = [
     {file = "Babel-2.8.0-py2.py3-none-any.whl", hash = "sha256:d670ea0b10f8b723672d3a6abeb87b565b244da220d76b4dba1b66269ec152d4"},
@@ -2582,6 +2605,10 @@ pyasn1-modules = [
     {file = "pyasn1_modules-0.2.8-py3.5.egg", hash = "sha256:426edb7a5e8879f1ec54a1864f16b882c2837bfd06eee62f2c982315ee2473ed"},
     {file = "pyasn1_modules-0.2.8-py3.6.egg", hash = "sha256:cbac4bc38d117f2a49aeedec4407d23e8866ea4ac27ff2cf7fb3e5b570df19e0"},
     {file = "pyasn1_modules-0.2.8-py3.7.egg", hash = "sha256:c29a5e5cc7a3f05926aff34e097e84f8589cd790ce0ed41b67aed6857b26aafd"},
+]
+pycodestyle = [
+    {file = "pycodestyle-2.6.0-py2.py3-none-any.whl", hash = "sha256:2295e7b2f6b5bd100585ebcb1f616591b652db8a741695b3d8f5d28bdc934367"},
+    {file = "pycodestyle-2.6.0.tar.gz", hash = "sha256:c58a7d2815e0e8d7972bf1803331fb0152f867bd89adf8a01dfd55085434192e"},
 ]
 pycparser = [
     {file = "pycparser-2.20-py2.py3-none-any.whl", hash = "sha256:7582ad22678f0fcd81102833f60ef8d0e57288b6b5fb00323d101be910e35705"},

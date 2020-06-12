@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Text, Boolean, Table, ForeignKey
 
 from datetime import datetime
 
-from flask_security import RoleMixin, UserMixin
+from flask_security import RoleMixin, UserMixin, current_user
 
 Base = declarative_base()
 
@@ -93,6 +93,9 @@ class Task(Base):
     def sci_url(self):
         return self.scipaper.url
 
+    @property
+    def current_user_answer(self):
+        return UserTask.query.filter(UserTask.task_id==self.id, UserTask.user_id == current_user.id).one_or_none()
 
 class NewsArticle(Base):
 

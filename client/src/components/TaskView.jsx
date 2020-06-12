@@ -1,5 +1,6 @@
 import React from 'react';
 
+import moment from 'moment';
 import { connect } from 'react-redux';
 
 import { Container, Navbar, NavItem, NavDropdown, Form, Button, Alert, FormGroup, FormControl, Spinner, Row, Collapse, Dropdown, Col } from 'react-bootstrap'
@@ -159,11 +160,17 @@ class TaskView extends React.Component {
             </Spinner>)
         }
 
+        const currentAnsBlock = (currentTask.current_user_answer) ? (
+        <Alert variant="info">You are amending an answer. You previously answered <b>{currentTask.current_user_answer.answer}</b> to this {moment(currentTask.current_user_answer.created_at).fromNow()}</Alert>
+        ) : "";
+
 
         return (
             <div>
                 {taskError ? errorBlock : (
                     <div>
+
+                        {currentAnsBlock}
                         {this.renderQuestion()}
 
 
