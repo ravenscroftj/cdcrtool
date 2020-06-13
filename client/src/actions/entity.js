@@ -18,7 +18,7 @@ const saveUpdatedEntity = (entityEditorState) => {
         const newEntity = `${fullText.substring(start,end)};${start};${end}`;
 
         try{
-            const response = await Axios.patch(`${ApiEndpoints.entities}/${target}/${docID}`, {oldEntity:originalEntity, newEntity});
+            const response = await Axios.patch(`${ApiEndpoints.entities}/${target}/${docID}`, {oldEntity:originalEntity, newEntity}, {headers:addAuthHeaders(getState())});
             dispatch(fetchTask());
         }catch(error){
 
@@ -31,7 +31,17 @@ const saveUpdatedEntity = (entityEditorState) => {
 
 const getEntitiesForDocument = (docType, docID) => {
     return async(dispatch, getState) => {
+        dispatch(setEntityUpdating(true));
+        
 
+        try{
+            const response = await Axios.get(`${ApiEndpoints.entities}/${docType}/${docID}`, {headers:addAuthHeaders(getState())});
+
+        }catch(error){
+
+        }
+
+        dispatch(setEntityUpdating(false));
     };
 };
 
