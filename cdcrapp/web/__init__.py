@@ -77,9 +77,12 @@ def create_app():
     #register gravatar function
     app.jinja_env.globals['gravatar_for_email'] = gravatar_for_email
 
-    @app.route("/")
-    def root():
+    @app.route('/', defaults={'u_path': ''})
+    @app.route('/<u_path>')
+    def catch_all(u_path):
+        print(u_path)
         return flask.current_app.send_static_file('index.html')
+
 
     #print(app.url_map)
     return app
