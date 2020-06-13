@@ -30,13 +30,14 @@ def create_app():
     app = flask.Flask(import_name="cdcrapp", 
     static_folder=client_path)
 
-
+    
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def catch_all(path):
 
+        print(path)
 
-        if os.path.exists(os.path.join(flask.current_app.static_folder, path)):
+        if path != "" and os.path.exists(os.path.join(flask.current_app.static_folder, path)):
             return flask.current_app.send_static_file(path)
         else:
             return flask.current_app.send_static_file("index.html")
@@ -88,7 +89,5 @@ def create_app():
 
     #register gravatar function
     app.jinja_env.globals['gravatar_for_email'] = gravatar_for_email
-
-    print(app.url_map)
 
     return app
