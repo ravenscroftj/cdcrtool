@@ -29,7 +29,7 @@ const defaultTaskState = {
     isSendingAnswer: false,
     currentTask: null,
     currentTaskList: [],
-    currentTaskListNavigation:{offset:0, limit:100} ,
+    currentTaskListNavigation:{offset:0, limit:200, total:0} ,
     error: null,
     taskLastUpdated: null
 };
@@ -106,6 +106,7 @@ const defaultEntityState = {
     editorState: {start:null, end:null, target:null, fullText:null, originalEntity:null, docID: null},
     isSavingEntity: false,
     entityError: null,
+    docEntities:{ newsDoc: [], sciDoc: [] }
 };
 
 const entityReducer = (state, action)=>{
@@ -115,6 +116,8 @@ const entityReducer = (state, action)=>{
     }
 
     switch(action.type){
+        case 'SET_IS_GETTING_ENTITIES':
+            return {...state, }
         case 'UPDATE_ENTITY_EDITOR_STATE':
             return {...state, editorState: action.state};
         case 'SET_ENTITY_IS_UPDATING':

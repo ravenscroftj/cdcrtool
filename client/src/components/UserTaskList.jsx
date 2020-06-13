@@ -1,9 +1,9 @@
 import React from 'react';
 import moment from 'moment';
-import { Modal, Form, Col, Row, Button, Accordion, Card, AccordionToggle, Spinner } from 'react-bootstrap';
+import { Modal, Form, Col, Row, Button, Accordion, Card, AccordionToggle, Spinner, Pagination } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import {fetchUserTaskList} from '../actions/task';
+import {fetchUserTaskList, navigateTaskList} from '../actions/task';
 
 class UserTaskList extends React.Component {
 
@@ -14,11 +14,21 @@ class UserTaskList extends React.Component {
 
     componentDidMount(){
         this.props.fetchUserTaskList();
+
+        this.movePage = this.movePage.bind(this);
+    }
+
+    movePage(pageNo) {
+        const {currentTaskListNavigation} = this.props;
+
+        let offset = pageNo * currentTaskListNavigation.limit;
+
+        this.props.navigateTaskList(offset, currentTaskListNavigation.limit);
     }
 
     render() {
 
-        const {currentTaskList, isFetchingTaskList} = this.props;
+        const {currentTaskList, isFetchingTaskList, currentTaskListNavigation} = this.props;
 
 
         if (isFetchingTaskList || !currentTaskList) {
@@ -39,13 +49,13 @@ class UserTaskList extends React.Component {
         }
 
         const cards = Object.entries(buckets).map((bucket,idx) => (           
-            <Card>
+            <Card key={idx}>
                 <Card.Header><AccordionToggle as={Button} variant="link" eventKey={idx}>{bucket[0]}</AccordionToggle></Card.Header>
                 <Accordion.Collapse eventKey={idx}>
                 <Card.Body>
                     <ul>
-                        {bucket[1].map((item) => (
-                        <li>
+                        {bucket[1].map((item, linkIdx) => (
+                        <li key={linkIdx}>
                             <b><a href={"/task/"+item.task.hash}>{moment(item.created_at).format("HH:mm:ss")}</a></b>
                         <mark>{item.task.news_ent.split(";")[0]}</mark> and <mark>{item.task.sci_ent.split(";")[0]}</mark> (<b>{item.answer}</b>)
                         </li>))}
@@ -55,13 +65,27 @@ class UserTaskList extends React.Component {
             </Card>
         ));
 
+        const pages = Math.ceil(currentTaskListNavigation.total / currentTaskListNavigation.limit);
+        const currentPage = currentTaskListNavigation.offset / currentTaskListNavigation.limit;
 
+        let paginationPages = [];
+
+        console.log("Current task nav:",currentTaskListNavigation);
+
+        for(let i=0; i < pages; i++) {
+            paginationPages.push(<Pagination.Item key={i} active={i===currentPage} onClick={() => this.movePage(i)}>{(i+1)}</Pagination.Item>);
+        }
 
         return (
             <div>
             <Accordion defaultActiveKey={0}>
                 {cards}
             </Accordion>
+            <Row className="align-content-center">
+            <Pagination>
+            {paginationPages}
+            </Pagination>
+            </Row>
             </div>
 
         )
@@ -80,7 +104,7 @@ const mapStateToProps = function(state){
     }
 };
 
-const mapDispatchToProps = {fetchUserTaskList};
+const mapDispatchToProps = {fetchUserTaskList, navigateTaskList};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserTaskList);

@@ -16,11 +16,11 @@ class TaskView extends React.Component {
     }
 
     updateMentionStart(e) {
-        this.props.updateEntityEditor({ ...this.props.editorState, start: e.target.value });
+        this.props.updateEntityEditor({ ...this.props.editorState, start: parseInt(e.target.value) });
     }
 
     updateMentionEnd(e) {
-        this.props.updateEntityEditor({ ...this.props.editorState, end: e.target.value });
+        this.props.updateEntityEditor({ ...this.props.editorState, end: parseInt(e.target.value) });
     }
 
     renderMentionEditorPreview() {

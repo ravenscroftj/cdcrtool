@@ -10,7 +10,7 @@ from flask_restful import Resource, fields, marshal, reqparse
 from flask_security import auth_required, current_user
 
 from cdcrapp.services import FlaskTaskService
-from cdcrapp.model import Task, UserTask
+from cdcrapp.model import Task, UserTask, NewsArticle, SciPaper
 from cdcrapp.web import db_session
 
         
@@ -167,6 +167,27 @@ class AnswerListResource(Resource):
 
 
 class EntityResource(Resource):
+
+    def get(self, doc_type, doc_id):
+        """Get entities for doc type"""
+
+        if doc_type == "news":
+            base_query = Task.query.filter(Task.news_article_id==doc_id)
+
+        elif doc_type == "science":
+            base_query = Task.query.filter(Task.sci_paper_id==doc_id)
+        else:
+            return {"error":"Type of document must be 'news' or 'science"}, 404
+
+        tasks = base_query.all()
+
+        if doc_type == "news":
+            entities = set([task.news_ent for task in tasks])
+        else:
+            entities = set([task.sci_ent for task in tasks])
+        
+        return {"entities":list(entities)}
+
 
     def patch(self, doc_type, doc_id):
         """Update entity"""
