@@ -228,7 +228,7 @@ class UserTaskListResource(Resource):
 
         ap = reqparse.RequestParser()
         ap.add_argument("offset", required=False, type=int, default=0)
-        ap.add_argument("limit", required=False, type=int, default=25)
+        ap.add_argument("limit", required=False, type=int, default=200)
 
         args = ap.parse_args()
 
