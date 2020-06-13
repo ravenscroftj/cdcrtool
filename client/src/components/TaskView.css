@@ -7,6 +7,11 @@ mark{
     font-weight: bold;
 }
 
+.text-info :hover{
+    background-color: aqua;
+    color: blue;
+}
+
 .taskButtons button{
     margin-right: 10px;
 }

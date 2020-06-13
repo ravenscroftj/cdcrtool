@@ -3,6 +3,8 @@ import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
+import {EntityNode, EntityTree} from '../util/enttree';
+
 import { Container, Navbar, NavItem, NavDropdown, Form, Button, Alert, FormGroup, FormControl, Spinner, Row, Collapse, Dropdown, Col } from 'react-bootstrap'
 
 import "./TaskView.css"
@@ -13,7 +15,6 @@ import {updateEntityEditor} from '../actions/entity';
 import { AlertHeading } from 'react-bootstrap/Alert';
 import BadTaskModal from './BadTaskModal';
 import EntityEditor from './EntityEditor';
-
 
 class TaskView extends React.Component {
 
@@ -78,42 +79,38 @@ class TaskView extends React.Component {
         )
     }
 
-    renderNewsSummary() {
+    renderEntitiesDoc(fullText, ents, primaryEnt){
         const { currentTask } = this.props;
-        const newsEntBits = currentTask.news_ent.split(";");
 
-        const start = parseInt(newsEntBits[1]);
-        const end = parseInt(newsEntBits[2]);
+        const sortFunc = (a,b) => (parseInt(a.split(";")[1])-parseInt(b.split(";")[1]));
+        
+        const entities = ents.sort(sortFunc);
+        const entTree = new EntityTree(fullText);
+
+        for (const ent of entities) {
+            const entBits = ent.split(";");
+            entTree.insert(new EntityNode(entBits[1], entBits[2], entBits[0], ent==primaryEnt));
+        }
+
+        console.log(entTree);
 
         return (
             <p>
-                {currentTask.news_text.substring(0, start)}
-                <mark>
-                    {currentTask.news_text.substring(start, end)}
-                </mark>
-                {currentTask.news_text.substring(end)}
+                {entTree.render()}
             </p>
         );
     }
 
+    
+
     renderScienceSummary() {
         const { currentTask } = this.props;
-        const sciEntBits = currentTask.sci_ent.split(";");
+        return this.renderEntitiesDoc(currentTask.sci_text, currentTask.sci_ents, currentTask.sci_ent);
+    }
 
-        const start = parseInt(sciEntBits[1]);
-        const end = parseInt(sciEntBits[2]);
-
-
-
-        return (
-            <p>
-                {currentTask.sci_text.substring(0, start)}
-                <mark>
-                    {currentTask.sci_text.substring(start, end)}
-                </mark>
-                {currentTask.sci_text.substring(end)}
-            </p>
-        );
+    renderNewsSummary(){
+        const { currentTask } = this.props;
+        return this.renderEntitiesDoc(currentTask.news_text, currentTask.news_ents, currentTask.news_ent);
     }
 
     showMentionEditor(target){

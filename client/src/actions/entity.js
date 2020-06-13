@@ -45,4 +45,4 @@ const getEntitiesForDocument = (docType, docID) => {
     };
 };
 
-export {updateEntityEditor, saveUpdatedEntity};
+export {updateEntityEditor, saveUpdatedEntity, getEntitiesForDocument};
