@@ -109,7 +109,10 @@ const fetchUserTaskList = () => {
             const params = getState().task.currentTaskListNavigation;
             let response = await Axios.get(ApiEndpoints.userTasks, {params:params, headers:addAuthHeaders(getState())});
 
-            dispatch(setCurrentTaskList(response.data.tasks));
+            
+            let {offset,limit,total, tasks} = response.data;
+            dispatch(setCurrentTaskList(tasks));
+            dispatch(setTaskListNavigation({offset,limit,total}));
 
         }
         catch(error){
@@ -125,7 +128,7 @@ const fetchUserTaskList = () => {
 const navigateTaskList = (offset, limit) => {
     return async(dispatch) =>{
 
-        dispatch(setTaskListNavigation(offset,limit));
+        dispatch(setTaskListNavigation({offset,limit}));
         dispatch(fetchUserTaskList());
     }
 };

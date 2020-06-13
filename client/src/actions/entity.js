@@ -29,4 +29,10 @@ const saveUpdatedEntity = (entityEditorState) => {
     }
 };
 
+const getEntitiesForDocument = (docType, docID) => {
+    return async(dispatch, getState) => {
+
+    };
+};
+
 export {updateEntityEditor, saveUpdatedEntity};
