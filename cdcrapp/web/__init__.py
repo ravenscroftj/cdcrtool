@@ -27,8 +27,20 @@ def create_app():
 
     client_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../client/build"))
 
-    app = flask.Flask(import_name="cdcrapp", static_url_path='',
+    app = flask.Flask(import_name="cdcrapp", 
     static_folder=client_path)
+
+
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def catch_all(path):
+
+
+        if os.path.exists(os.path.join(flask.current_app.static_folder, path)):
+            return flask.current_app.send_static_file(path)
+        else:
+            return flask.current_app.send_static_file("index.html")
+
 
     api = Api(app, prefix='/api/v1')
 
@@ -77,12 +89,6 @@ def create_app():
     #register gravatar function
     app.jinja_env.globals['gravatar_for_email'] = gravatar_for_email
 
-    @app.route('/', defaults={'u_path': ''})
-    @app.route('/<u_path>')
-    def catch_all(u_path):
-        print(u_path)
-        return flask.current_app.send_static_file('index.html')
+    print(app.url_map)
 
-
-    #print(app.url_map)
     return app
