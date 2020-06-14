@@ -64,7 +64,9 @@ class TaskView extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         this.checkTaskUpdate();
-        if(!prevProps.currentTask || this.props.currentTask.id !== prevProps.currentTask.id) {
+
+
+        if( (!prevProps.currentTask && this.props.currentTask) || (this.props.currentTask && this.props.currentTask.id !== prevProps.currentTask.id ) ){
             this.setState({dirtyTask:false});
             this.initSecondaryHighlights();
         }
@@ -73,6 +75,11 @@ class TaskView extends React.Component {
     initSecondaryHighlights(){
         const {currentTask} = this.props;
         const secondaryEntities = {news: new Set(), science: new Set()};
+
+        if(!currentTask){
+            return;
+        }
+
         for (const task of currentTask.related_answers) {
 
             if(task.answer === "no"){
