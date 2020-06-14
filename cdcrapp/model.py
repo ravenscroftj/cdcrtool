@@ -102,6 +102,25 @@ class Task(Base):
         
         return self._current_user_answer
 
+    @property
+    def news_ents(self):
+        base_query = Task.query.filter(Task.news_article_id==self.news_article_id)
+        return list(set([t.news_ent for t in base_query.all()]))
+
+    @property
+    def sci_ents(self):
+        base_query = Task.query.filter(Task.sci_paper_id==self.sci_paper_id)
+        return list(set([t.sci_ent for t in base_query.all()]))
+
+    @property
+    def related_answers(self):
+        """Get all yes/no pairs for current user and news/sci doc"""
+        q = UserTask.query.join(Task.usertasks).filter(Task.sci_paper_id==self.sci_paper_id,
+            Task.news_article_id==self.news_article_id,
+            UserTask.user_id==current_user.id)
+
+        return [{"news_ent":ut.task.news_ent, "sci_ent":ut.task.sci_ent, "answer": ut.answer} for ut in q.all()]
+
 class NewsArticle(Base):
 
     __tablename__ = "newsarticles"

@@ -7,6 +7,19 @@ mark{
     font-weight: bold;
 }
 
-.taskButtons button{
+.text-muted :hover{
+    text-decoration: underline;
+}
+
+.taskButtons .btn-group{
     margin-right: 10px;
+}
+
+.entTree div {
+    display: inline;
+}
+
+.entTree .text-muted{
+    border: 1px solid darkblue;
+    padding: 1px;
 }

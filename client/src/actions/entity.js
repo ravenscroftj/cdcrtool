@@ -13,13 +13,14 @@ const saveUpdatedEntity = (entityEditorState) => {
     return async(dispatch, getState) => {
 
         dispatch(setEntityUpdating(true));
-        
+
+        const taskHash  = getState().task.currentTask.hash;
         const {start,end,fullText,originalEntity,docID,target} = entityEditorState;
         const newEntity = `${fullText.substring(start,end)};${start};${end}`;
 
         try{
             const response = await Axios.patch(`${ApiEndpoints.entities}/${target}/${docID}`, {oldEntity:originalEntity, newEntity}, {headers:addAuthHeaders(getState())});
-            dispatch(fetchTask());
+            dispatch(fetchTask(taskHash));
         }catch(error){
 
         }
@@ -45,4 +46,4 @@ const getEntitiesForDocument = (docType, docID) => {
     };
 };
 
-export {updateEntityEditor, saveUpdatedEntity};
+export {updateEntityEditor, saveUpdatedEntity, getEntitiesForDocument};
