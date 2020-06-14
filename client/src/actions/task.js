@@ -75,9 +75,19 @@ const submitAnswer = (answer, task, secondaryEntities) => {
 
         }
 
-        for(const sci_ent of secondaryEntities.science) {
-            for(const news_ent of secondaryEntities.news) {
+        const allScienceEnts = Array.from(secondaryEntities.science).concat([task.sci_ent]);
+        const allNewsEnts = Array.from(secondaryEntities.news).concat([task.news_ent]);
+
+        for(const sci_ent of allScienceEnts) {
+            for(const news_ent of allNewsEnts) {
+
+                if(sci_ent == task.sci_ent && news_ent == task.news_ent){
+                    continue;
+                }
+
                 const relatedTask = {news_ent, sci_ent, answer:"yes"};
+
+                console.log(relatedTask,relatedTaskSet.has(relatedTask));
 
                 if(!relatedTaskSet.has(relatedTask)){
                     toUpdate.push(relatedTask);
@@ -86,12 +96,15 @@ const submitAnswer = (answer, task, secondaryEntities) => {
         }
 
 
-
-        if(toUpdate.size > 0){
+        console.log(toUpdate);
+        if(toUpdate.length > 0){
             console.log("Batch update")
+            
+            // append 'current task' to batch
+            const {news_ent, sci_ent} = task;
+            toUpdate.push({news_ent, sci_ent, answer});
             //batch update
             try{
-                console.log(toUpdate.values());
                 const response = await Axios.request({
                     method: 'post',
                     url: `${ApiEndpoints.answers}`,
@@ -109,6 +122,7 @@ const submitAnswer = (answer, task, secondaryEntities) => {
 
 
         }else{
+            console.log("Single update")
             //single update
             try{
 
