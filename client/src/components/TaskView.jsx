@@ -5,14 +5,13 @@ import { connect } from 'react-redux';
 
 import {EntityNode, EntityTree} from '../util/enttree';
 
-import { Container, Navbar, NavItem, NavDropdown, Form, Button, Alert, FormGroup, FormControl, Spinner, Row, Collapse, Dropdown, Col } from 'react-bootstrap'
+import { Form, Button, Alert, FormGroup, FormControl, Spinner, Row,  Dropdown,  ButtonGroup, SplitButton } from 'react-bootstrap'
 
 import "./TaskView.css"
 
 import { fetchTask, setTaskError, submitAnswer, reportBadTask } from '../actions/task';
 import {updateEntityEditor} from '../actions/entity';
 
-import { AlertHeading } from 'react-bootstrap/Alert';
 import BadTaskModal from './BadTaskModal';
 import EntityEditor from './EntityEditor';
 
@@ -25,11 +24,31 @@ class TaskView extends React.Component {
         this.showMentionEditor = this.showMentionEditor.bind(this);
         this.updateMentionEnd = this.updateMentionEnd.bind(this);
         this.updateMentionStart = this.updateMentionStart.bind(this);
+        this.refreshTaskWithNewEntities = this.refreshTaskWithNewEntities.bind(this);
+        this.resetTask = this.resetTask.bind(this);
+        this.editPrimaryEnts = this.editPrimaryEnts.bind(this);
+        this.editSecondaryEnts = this.editSecondaryEnts.bind(this);
+        this.storeSecondaryEntities = this.storeSecondaryEntities.bind(this);
 
         this.state = {
             answerButtonsDisabled: false,
             showBadExampleModal: false,
             mentionEditorShow: false,
+            showAllEntities: false,
+            changePrimaryEnts: false,
+            changeSecondaryEnts: false,
+            dirtyTask: false,
+
+            originalEntities:{
+                science: "",
+                news: "",
+            },
+
+            secondaryEntities: {
+                science: new Set(),
+                news: new Set()
+            },
+
             mentionEditorMention:{
                 target: null,
                 start: 0,
@@ -40,22 +59,43 @@ class TaskView extends React.Component {
 
     componentDidMount() {
         this.props.fetchTask(this.props.taskHash);
+        this.initSecondaryHighlights();
     }
 
     componentDidUpdate(prevProps, prevState) {
         this.checkTaskUpdate();
+        if(!prevProps.currentTask || this.props.currentTask.id !== prevProps.currentTask.id) {
+            this.setState({dirtyTask:false});
+            this.initSecondaryHighlights();
+        }
+    }
+
+    initSecondaryHighlights(){
+        const {currentTask} = this.props;
+        const secondaryEntities = {news: new Set(), science: new Set()};
+        for (const task of currentTask.related_answers) {
+
+            if(task.answer === "no"){
+                continue;
+            }
+
+            if (task.news_ent === currentTask.news_ent && task.sci_ent !== currentTask.sci_ent){
+                secondaryEntities.science.add(task.sci_ent);
+            }else if(task.sci_ent === currentTask.sci_ent && task.news_ent !== currentTask.news_ent) {
+                secondaryEntities.news.add(task.news_ent);
+            }
+        }
+
+        this.setState({secondaryEntities});
     }
 
     checkTaskUpdate() {
-        console.log(this.props.taskHash);
-        
 
         const timeoutThreshold = (Date.now() - (300 * 1000));
         const { isFetchingTask, taskLastUpdated, currentTask, taskError, taskHash } = this.props;
 
 
         if ((!currentTask || (taskHash && taskHash !== currentTask.hash) || (taskLastUpdated < timeoutThreshold)) && !(isFetchingTask || taskError)) {
-            console.log("Fetch task", taskHash)
             this.props.fetchTask(taskHash);
         }
     }
@@ -65,7 +105,43 @@ class TaskView extends React.Component {
     }
 
     handleAnswerButton(answer) {
-        this.props.submitAnswer(answer, this.props.currentTask);
+        this.props.submitAnswer(answer, this.props.currentTask, this.state.secondaryEntities);
+    }
+
+    editSecondaryEnts(){
+        this.setState({
+            changeSecondaryEnts: true,
+            showAllEntities:true, 
+            originalEntities: {
+                science:this.props.currentTask.sci_ent,
+                news: this.props.currentTask.news_ent
+            } 
+        });
+    }
+
+    editPrimaryEnts(){
+        this.setState({
+            changePrimaryEnts: true,
+            showAllEntities: true,
+            originalEntities: {
+                science:this.props.currentTask.sci_ent,
+                news: this.props.currentTask.news_ent
+            }
+        });
+    }
+
+
+    resetTask(){
+
+        this.props.currentTask.sci_ent = this.state.originalEntities.science;
+        this.props.currentTask.news_ent = this.state.originalEntities.news;
+
+        this.setState({changePrimaryEnts: false,
+            changeSecondaryEnts: false, 
+            showAllEntities:false
+        });
+
+        this.initSecondaryHighlights();
     }
 
     renderQuestion() {
@@ -79,7 +155,7 @@ class TaskView extends React.Component {
         )
     }
 
-    renderEntitiesDoc(fullText, ents, primaryEnt){
+    renderEntitiesDoc(fullText, ents, primaryEnts, secondaryEnts, onClickCallback, secondaryClass){
         const { currentTask } = this.props;
 
         const sortFunc = (a,b) => (parseInt(a.split(";")[1])-parseInt(b.split(";")[1]));
@@ -87,30 +163,99 @@ class TaskView extends React.Component {
         const entities = ents.sort(sortFunc);
         const entTree = new EntityTree(fullText);
 
+
         for (const ent of entities) {
+            
+            if(!this.state.showAllEntities && !(primaryEnts.has(ent) || secondaryEnts.has(ent))){
+                continue;
+            }
             const entBits = ent.split(";");
-            entTree.insert(new EntityNode(entBits[1], entBits[2], entBits[0], ent==primaryEnt));
+            entTree.insert(new EntityNode(entBits[1], entBits[2], entBits[0], primaryEnts.has(ent), secondaryEnts.has(ent), onClickCallback, secondaryClass));
         }
 
-        console.log(entTree);
 
         return (
-            <p>
+            <div>
                 {entTree.render()}
-            </p>
+            </div>
         );
     }
 
     
 
-    renderScienceSummary() {
+    renderSummary(docType) {
         const { currentTask } = this.props;
-        return this.renderEntitiesDoc(currentTask.sci_text, currentTask.sci_ents, currentTask.sci_ent);
+        let {secondaryEntities} = this.state;
+
+        const callback = (ent) => {
+
+            if(this.state.changePrimaryEnts){
+                if(docType == 'news'){
+                    this.props.currentTask.news_ent = ent;
+                }
+                else{
+                    this.props.currentTask.sci_ent = ent;
+                }
+                
+                this.setState({dirtyTask:true});
+
+
+            }else if(this.state.changeSecondaryEnts) {
+
+
+               
+                if(secondaryEntities[docType].has(ent)){
+                    secondaryEntities[docType].delete(ent);
+                }else{
+                    secondaryEntities[docType].add(ent);
+                }
+
+                this.setState({secondaryEntities})
+            }
+        };
+
+        const primaryEntities = new Set();
+        //primaryEntities.
+        if (docType == 'news'){
+            primaryEntities.add(currentTask.news_ent);
+        }else{
+            primaryEntities.add(currentTask.sci_ent);
+        }
+        
+
+        if(this.state.changePrimaryEnts) {
+            secondaryEntities = {news: new Set(), science: new Set()};
+
+            for (const task of currentTask.related_answers) {
+                secondaryEntities.news.add(task.news_ent);
+                secondaryEntities.science.add(task.sci_ent);
+            }
+
+        }
+
+        const fullText = (docType=='news')?currentTask.news_text:currentTask.sci_text;
+        const allEnts = (docType=='news')?currentTask.news_ents:currentTask.sci_ents;
+        
+        const secondaryClass = this.state.changePrimaryEnts ? 'text-primary' : 'text-success';
+        return this.renderEntitiesDoc(fullText, allEnts, primaryEntities, secondaryEntities[docType], callback, secondaryClass);
     }
 
     renderNewsSummary(){
         const { currentTask } = this.props;
-        return this.renderEntitiesDoc(currentTask.news_text, currentTask.news_ents, currentTask.news_ent);
+        const {secondaryEntities} = this.state;
+
+        const callback = (ent) => {
+
+            if(this.state.changePrimaryEnts){
+                this.props.currentTask.news_ent = ent;
+                this.setState({dirtyTask:true});
+            }
+        };
+
+        const primaryEntities = new Set();
+        primaryEntities.add(currentTask.news_ent);
+        const secondaryClass = this.state.changePrimaryEnts ? 'text-primary' : 'text-success';
+        return this.renderEntitiesDoc(currentTask.news_text, currentTask.news_ents,  primaryEntities, secondaryEntities.news, callback, secondaryClass);
     }
 
     showMentionEditor(target){
@@ -133,6 +278,91 @@ class TaskView extends React.Component {
 
     updateMentionEnd(e) {
         this.setState({mentionEditorMention:{...this.state.mentionEditorMention, end: e.target.value}});
+    }
+
+
+    refreshTaskWithNewEntities(){
+        const {currentTask} = this.props;
+        this.setState({changePrimaryEnts: false, showAllEntities:false});
+        this.props.fetchTask(null, currentTask.news_article_id, currentTask.sci_paper_id, currentTask.news_ent, currentTask.sci_ent);
+    }
+
+
+    storeSecondaryEntities(){
+        this.setState({changeSecondaryEnts: false, showAllEntities:false});
+    }
+
+    renderTaskControlBlock(){
+
+        if(this.state.changePrimaryEnts) {
+            return(<div>
+                
+                <ButtonGroup>
+                    <Button variant="success" onClick={this.refreshTaskWithNewEntities}>Confirm</Button>
+                    <Button variant="danger" onClick={this.resetTask}>Cancel</Button>
+                </ButtonGroup>
+
+                <p>Please select which entities you want to use instead and click confirm.</p>
+                <p>Mentions highlighted <span className="text-primary">blue</span> have already been annotated by you on a previous occasion.</p>
+            </div>)
+        } else if (this.state.changeSecondaryEnts) {
+
+            return(<div>
+                
+
+                <ButtonGroup>
+                    <Button variant="success" onClick={this.storeSecondaryEntities}>Confirm</Button>
+                    <Button variant="danger" onClick={this.resetTask}>Cancel</Button>
+                </ButtonGroup>
+
+                <p>Click other entities that also co-refer to these phrases and click confirm. Click a <span className="text-success">green</span> mention to de-select it.</p>
+            </div>)
+
+
+        } else if(this.props.isSendingAnswer) {
+            return (
+                <Spinner animation="border" role="status">
+                    <span className="sr-only">Submitting Answer...</span>
+                </Spinner>
+            );
+        }else{
+            return (
+                <div>
+                    <Row className="taskButtons">
+
+                        <ButtonGroup>
+                         <Button onClick={() => { this.handleAnswerButton('yes') }}>Yes</Button>
+                        </ButtonGroup>
+
+                        <ButtonGroup>
+                        <Button onClick={() => { this.handleAnswerButton('no') }}>No</Button>
+                        </ButtonGroup>
+
+                        <ButtonGroup>
+                        <Button onClick={() => { this.setState({ showBadExampleModal: true }) }}>Bad Example</Button>
+                        </ButtonGroup>
+
+                        <Dropdown>
+                            <Dropdown.Toggle>Options</Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                <Dropdown.Item as="button"
+                                onClick={()=>this.showMentionEditor("news")}>Move/Resize News Mention</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={()=>this.showMentionEditor("science")}>Move/Resize Science Mention</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.editPrimaryEnts}>Swap Question Entities</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.editSecondaryEnts}>Add/Remove co-referring entities</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </Row>
+
+                    <EntityEditor show={this.state.mentionEditorShow} hideCallback={()=>this.setState({mentionEditorShow:false})}/>
+
+                    <p>Mentions shown highlighted in <span className="text-success">green</span> are mentions that you have previously annotated as coreferent to one of the two entities.</p>
+                        <p>You can add or remove these secondary mentions using the Options menu.</p>
+                </div>
+
+                
+            )
+        }
     }
 
     render() {
@@ -162,6 +392,7 @@ class TaskView extends React.Component {
         ) : "";
 
 
+
         return (
             <div>
                 {taskError ? errorBlock : (
@@ -170,46 +401,18 @@ class TaskView extends React.Component {
                         {currentAnsBlock}
                         {this.renderQuestion()}
 
-
-                        {this.props.isSendingAnswer ? (
-                            <Spinner animation="border" role="status">
-                                <span className="sr-only">Submitting Answer...</span>
-                            </Spinner>
-                        ) : (
-                                <div>
-                                    <Row className="taskButtons">
-                                        <Button onClick={() => { this.handleAnswerButton('yes') }}>Yes</Button>
-                                        <Button onClick={() => { this.handleAnswerButton('no') }}>No</Button>
-                                        <Button onClick={() => { this.setState({ showBadExampleModal: true }) }}>Bad Example</Button>
-
-                                        <Dropdown>
-                                            <Dropdown.Toggle>Change Entities</Dropdown.Toggle>
-                                            <Dropdown.Menu>
-                                                <Dropdown.Item as="button"
-                                                onClick={()=>this.showMentionEditor("news")}>Mention 1</Dropdown.Item>
-                                                <Dropdown.Item as="button" onClick={()=>this.showMentionEditor("science")}>Mention 2</Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </Row>
-
-                                    <EntityEditor show={this.state.mentionEditorShow} hideCallback={()=>this.setState({mentionEditorShow:false})}/>
-                                </div>
-
-                                
-                            )}
-
-
+                        {this.renderTaskControlBlock()}
 
                         <h3>
                             News Summary
-                            <small class="text-muted"><a href={currentTask.news_url} target="_blank">[Full Text]</a></small>
+                            <small className="text-muted"><a href={currentTask.news_url} target="_blank">[Full Text]</a></small>
                         </h3>
-                        {this.renderNewsSummary()}
+                        <div className="entTree">{this.renderSummary('news')}</div>
 
                         <h3> Science Summary
-                        <small class="text-muted"><a href={"http://dx.doi.org/" + currentTask.sci_url} target="_blank">[Full Text]</a></small>
+                        <small className="text-muted"><a href={"http://dx.doi.org/" + currentTask.sci_url} target="_blank">[Full Text]</a></small>
                         </h3>
-                        {this.renderScienceSummary()}
+                        <div className="entTree">{this.renderSummary('science')}</div>
 
                         <FormGroup>
                             <Form.Label>Task Hash</Form.Label>

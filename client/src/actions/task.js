@@ -35,28 +35,98 @@ const reportBadTask = (task, reason) => {
     };
 }
 
-const submitAnswer = (answer, task) => {
+const submitAnswer = (answer, task, secondaryEntities) => {
     return async(dispatch, getState) => {
         dispatch(setSendingAnswer(true));
-        
 
-        try{
+        let toUpdate = [];
 
-            const response = await Axios.request({
-                method: task.current_user_answer ? 'patch' : 'post',
-                url: `${ApiEndpoints.task}/${task.id}/answers`,
-                headers: addAuthHeaders(getState()),
-                data: {"answer": answer}
-            })
+        const relatedTaskSet = new Set(task.related_answers);
 
+        // calculate whether we need to batch update or not
+        for(const relatedTask of relatedTaskSet.values()) {
+            const {news_ent, sci_ent} = relatedTask;
+
+            // skip the current task if it appears (e.g. if we're amending)
+            if(task.news_ent === relatedTask.news_ent && task.sci_ent === relatedTask.sci_ent){
+                continue;
+            }
             
+            if(task.news_ent === relatedTask.news_ent ){
 
-            dispatch(fetchTask());
-            dispatch(fetchCurrentUserProfile())
+                if(relatedTask.answer === "yes" && !secondaryEntities.science.has(sci_ent)) {
+                    toUpdate.push({news_ent, sci_ent, answer:"no"});
+                }
 
-        }catch(error) {
-            dispatch(setTaskError(error));
+                if(relatedTask.answer === "no" && secondaryEntities.science.has(sci_ent)) {
+                    toUpdate.push({news_ent, sci_ent, answer:"yes"});
+                }
+
+            }else if(task.sci_ent == relatedTask.sci_ent) {
+
+                if(relatedTask.answer === "yes" && !secondaryEntities.news.has(news_ent)) {
+                    toUpdate.push({news_ent, sci_ent, answer:"no"});
+                }
+
+                if(relatedTask.answer === "no" && secondaryEntities.news.has(news_ent)) {
+                    toUpdate.push({news_ent, sci_ent, answer:"yes"});
+                }
+            }
+
         }
+
+        for(const sci_ent of secondaryEntities.science) {
+            for(const news_ent of secondaryEntities.news) {
+                const relatedTask = {news_ent, sci_ent, answer:"yes"};
+
+                if(!relatedTaskSet.has(relatedTask)){
+                    toUpdate.push(relatedTask);
+                }
+            }
+        }
+
+
+
+        if(toUpdate.size > 0){
+            console.log("Batch update")
+            //batch update
+            try{
+                console.log(toUpdate.values());
+                const response = await Axios.request({
+                    method: 'post',
+                    url: `${ApiEndpoints.answers}`,
+                    headers: addAuthHeaders(getState()),
+                    data: {"answers": toUpdate, "news_article_id": task.news_article_id, "sci_paper_id": task.sci_paper_id}
+                })
+    
+                dispatch(fetchTask());
+                dispatch(fetchCurrentUserProfile())
+    
+            }catch(error) {
+                dispatch(setTaskError(error));
+            }
+
+
+
+        }else{
+            //single update
+            try{
+
+                const response = await Axios.request({
+                    method: task.current_user_answer ? 'patch' : 'post',
+                    url: `${ApiEndpoints.task}/${task.id}/answers`,
+                    headers: addAuthHeaders(getState()),
+                    data: {"answer": answer}
+                })
+    
+                dispatch(fetchTask());
+                dispatch(fetchCurrentUserProfile())
+    
+            }catch(error) {
+                dispatch(setTaskError(error));
+            }
+        }
+
 
         dispatch(setSendingAnswer(false));
 
@@ -64,14 +134,21 @@ const submitAnswer = (answer, task) => {
 }
 
 
-const fetchTask = (hash)=> {
+const fetchTask = (hash, news_id, science_id, news_ent, sci_ent)=> {
 
     return async(dispatch, getState) => {
 
         dispatch(setFetchingTask(true));
 
         const {auth} = getState();
-        const params = typeof(hash) != 'undefined' ? {hash} : {};
+
+        let params = {};
+
+        if(hash){
+            params = {hash};
+        }else if(news_id) {
+            params = {news_id, science_id, news_ent, sci_ent};
+        }
 
  
         try{

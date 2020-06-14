@@ -35,7 +35,7 @@ class TaskResource(Resource):
         "news_url": fields.String,
         "news_text": fields.String,
         "sci_url":fields.String,
-        "sci_text":fields.String
+        "sci_text":fields.String,
     }
 
     @auth_required('token')
@@ -43,6 +43,10 @@ class TaskResource(Resource):
 
         parser = reqparse.RequestParser()
         parser.add_argument('hash', type=str, required=False)
+        parser.add_argument('news_id', type=int, required=False)
+        parser.add_argument('science_id', type=int, required=False)
+        parser.add_argument('news_ent',type=str,required=False)
+        parser.add_argument('sci_ent',type=str,required=False)
 
         args = parser.parse_args()
 
@@ -51,6 +55,37 @@ class TaskResource(Resource):
 
             if not t:
                 return {"error":f"No task exists with hash={args.hash}"}, 404
+
+        elif args.news_id is not None or args.science_id is not None or args.news_ent is not None or args.sci_ent is not None:
+
+            # we need all 4 to be able to continue
+            errors = []
+
+            if args.news_id is None:
+                errors.append("You must set news_id")
+            if args.science_id is None:
+                errors.append("You must set science_id")
+            if args.news_ent is None:
+                errors.append("You must set news_ent")
+            if args.sci_ent is None:
+                errors.append("You must set sci_ent")
+
+            if len(errors) > 0:
+                errorstring = ";".join(errors)
+                return {"error":f"In order to use this endpoint to find specific tasks by entity, {errorstring}"}, 400
+
+
+            print(args)
+            t = db_session.query(Task).filter(Task.news_article_id==args.news_id, 
+                Task.sci_paper_id==args.science_id, 
+                Task.news_ent==args.news_ent, 
+                Task.sci_ent==args.sci_ent).one_or_none()
+
+            if not t:
+                return {"error":"cannot find a task with that combination of entities and articles."},404
+            
+
+
         else:
 
             # get user's current next task
@@ -59,6 +94,12 @@ class TaskResource(Resource):
             t = tasksvc.next_tasks_for_user(current_user)
 
         tfields = dict(**self.task_fields)
+        
+        tfields.update({ 
+            'sci_ents': fields.List(fields.String),
+            'news_ents': fields.List(fields.String),
+            "related_answers": fields.Raw
+        })
 
         if t.current_user_answer != None and t.current_user_answer.task_id != 0:
             tfields['current_user_answer'] = fields.Nested({
@@ -66,7 +107,7 @@ class TaskResource(Resource):
                 'answer': fields.String,
                 'created_at': fields.DateTime
             })
-
+        
         return marshal(t,  tfields)
 
     @auth_required('token')
@@ -162,6 +203,63 @@ class AnswerListResource(Resource):
 
         return marshal(ut, self.ut_fields), 201
 
+
+class BatchAnswerResource(Resource):
+    """Provide an endpoint for updating multiple answers relating to the same news/science doc combo"""
+
+    def post(self):
+        ap = reqparse.RequestParser()
+        ap.add_argument("news_article_id", type=int, required=True)
+        ap.add_argument("sci_paper_id", type=int, required=True)
+        ap.add_argument("answers", action='append',type=dict, required=True)
+
+        args = ap.parse_args()
+
+        tasks = db_session.query(Task).filter(
+            Task.news_article_id==args.news_article_id, 
+            Task.sci_paper_id==args.sci_paper_id).all()
+
+
+        taskmap = {}
+
+        for task in tasks:
+            taskmap[(task.news_ent, task.sci_ent)] = task
+
+        dbanswers = []
+        for answer in args.answers:
+
+            t = taskmap.get((answer['news_ent'],answer['sci_ent']))
+            existing_answer = False
+
+            if t is None:
+                print("create task")
+                t = Task(news_article_id=args.news_article_id, 
+                sci_paper_id=args.sci_paper_id, 
+                news_ent=answer['news_ent'],
+                sci_ent=answer['sci_ent'])
+
+                db_session.add(t)
+            
+            for ut in t.usertasks:
+                if ut.user_id == current_user.id:
+                    ut.answer = answer['answer']
+                    ut.created_at = datetime.now()
+                    existing_answer = True
+                    print("Update existing answer")
+                    dbanswers.append(ut)
+                    break
+            
+            if not existing_answer:
+                print("create answer")
+                ut = UserTask(answer=answer['answer'], user_id=current_user.id, task=t, created_at=datetime.now())
+                db_session.add(ut)
+
+                dbanswers.append(ut)
+
+        db_session.commit()
+
+        return {"answers":[marshal(ut, ut_fields) for ut in dbanswers]}
+        
 
 
 

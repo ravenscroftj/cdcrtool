@@ -7,11 +7,19 @@ mark{
     font-weight: bold;
 }
 
-.text-info :hover{
-    background-color: aqua;
-    color: blue;
+.text-muted :hover{
+    text-decoration: underline;
 }
 
-.taskButtons button{
+.taskButtons .btn-group{
     margin-right: 10px;
+}
+
+.entTree div {
+    display: inline;
+}
+
+.entTree .text-muted{
+    border: 1px solid darkblue;
+    padding: 1px;
 }
