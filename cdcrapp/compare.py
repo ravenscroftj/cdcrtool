@@ -103,14 +103,15 @@ def compare(pklfile: str, task_group: List[Task]):
                     break
 
             if not resolved:
-                print("Found a new candidate task")
+                #print("Found a new candidate task")
                 
                 candidates.append((news_id, sci_id, news_text, sci_text))
 
             #relevent_tasks = task_items[(news_id, sci_id)]
     # end for cluster
-
-    print(f"Found {len(candidates)} candidate tasks")
+    logger.info(f"Found {len(candidates)} candidate tasks")
+    #print()
+    return candidates
 
 
 

@@ -4,6 +4,7 @@ import tqdm
 import os
 import random
 import json
+import hashlib
 import pandas as pd
 from typing import List
 
@@ -183,6 +184,31 @@ def compare(ctx: CLIContext, pkl_file:str):
     from cdcrapp.compare import compare
     
     compare(pkl_file, t)
+
+
+@cli.command()
+@click.argument("pkl_file", type=click.Path(exists=True))
+@click.pass_obj
+def import_model_results(ctx: CLIContext, pkl_file:str):
+    from cdcrapp.compare import compare
+    
+    t = ctx.tasksvc.get_annotated_tasks()
+    candidates = compare(pkl_file, t)
+
+    
+
+    with ctx.tasksvc.session() as session:
+        for news_id, sci_id, news_ent, sci_ent in candidates:
+            task = Task(news_article_id=news_id,sci_paper_id=sci_id, news_ent=news_ent, sci_ent=sci_ent, priority=5)
+            session.add(task)
+            task.hash = hashlib.new("sha256", task.news_url.encode() + 
+                task.sci_url.encode() + 
+                task.news_ent.encode() + 
+                task.sci_ent.encode()).hexdigest()
+
+            print(task.hash)
+
+
 
 
 @cli.command()
