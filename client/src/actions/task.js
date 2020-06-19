@@ -45,7 +45,7 @@ const reportDifficultTask = (task) => {
                {"task_id":task.id, "is_difficult":true},
                {headers: addAuthHeaders(getState())});
 
-            dispatch(fetchTask());
+            dispatch(fetchTask(task.hash));
             dispatch(fetchCurrentUserProfile());
         }catch(error) {
             dispatch(setTaskError(error));
@@ -173,8 +173,6 @@ const fetchTask = (hash, news_id, science_id, news_ent, sci_ent)=> {
     return async(dispatch, getState) => {
 
         dispatch(setFetchingTask(true));
-
-        const {auth} = getState();
 
         let params = {};
 
