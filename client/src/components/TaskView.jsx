@@ -166,7 +166,7 @@ class TaskView extends React.Component {
 
         const sortFunc = (a,b) => (parseInt(a.split(";")[1])-parseInt(b.split(";")[1]));
         
-        const entities = ents.sort(sortFunc);
+        const entities = ents? ents.sort(sortFunc) : [];
         const entTree = new EntityTree(fullText);
 
 
