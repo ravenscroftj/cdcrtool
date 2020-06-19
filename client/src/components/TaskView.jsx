@@ -9,7 +9,7 @@ import { Form, Button, Alert, FormGroup, FormControl, Spinner, Row,  Dropdown,  
 
 import "./TaskView.css"
 
-import { fetchTask, setTaskError, submitAnswer, reportBadTask } from '../actions/task';
+import { fetchTask, setTaskError, submitAnswer, reportBadTask, reportDifficultTask } from '../actions/task';
 import {updateEntityEditor} from '../actions/entity';
 
 import BadTaskModal from './BadTaskModal';
@@ -349,6 +349,14 @@ class TaskView extends React.Component {
                         <Button onClick={() => { this.setState({ showBadExampleModal: true }) }}>Bad Example</Button>
                         </ButtonGroup>
 
+                        {!this.props.currentTask.is_difficult ? (
+                            <ButtonGroup>
+                            <Button onClick={()=>this.props.reportDifficultTask(this.props.currentTask)}>This task is hard to think about</Button>
+                            </ButtonGroup>
+                        ) : ""}
+                        
+
+
                         <Dropdown>
                             <Dropdown.Toggle>Options</Dropdown.Toggle>
                             <Dropdown.Menu>
@@ -363,8 +371,12 @@ class TaskView extends React.Component {
 
                     <EntityEditor show={this.state.mentionEditorShow} hideCallback={()=>this.setState({mentionEditorShow:false})}/>
 
+                    {this.props.currentTask.is_difficult ? (
+                        <p>This task was marked as difficult to think about by <b>{this.props.currentTask.is_difficult_user}</b> on <b>{moment(this.props.currentTask.is_difficult_reported_at).format("LLL")}</b> </p>
+                    ) : ""}
+
                     <p>Mentions shown highlighted in <span className="text-success">green</span> are mentions that you have previously annotated as coreferent to one of the two entities.</p>
-                        <p>You can add or remove these secondary mentions using the Options menu.</p>
+                    <p>You can add or remove these secondary mentions using the Options menu.</p>
                 </div>
 
                 
@@ -446,6 +458,6 @@ const mapStateToProps = (state) => ({
     taskError: state.task.error
 });
 
-const mapDispatchToProps = { fetchTask, setTaskError, submitAnswer, reportBadTask, updateEntityEditor };
+const mapDispatchToProps = { fetchTask, setTaskError, submitAnswer, reportBadTask, updateEntityEditor, reportDifficultTask };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskView);

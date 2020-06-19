@@ -28,6 +28,9 @@ class TaskResource(Resource):
         "is_iaa_priority": fields.Boolean,
         "is_bad": fields.Boolean,
         "is_bad_reason": fields.String,
+        "is_difficult": fields.Boolean,
+        "is_difficult_user": fields.String(attribute="is_difficult_user.username"),
+        "is_difficult_reported_at": fields.DateTime,
         "is_bad_user_id": fields.Integer,
         "is_bad_reported_at": fields.DateTime,
         "news_article_id": fields.Integer,
@@ -116,8 +119,9 @@ class TaskResource(Resource):
 
         parser = reqparse.RequestParser()
         parser.add_argument('task_id', type=str, required=True)
-        parser.add_argument('is_bad', type=bool, required=False, default=False)
+        parser.add_argument('is_bad', type=bool, required=False, default=None)
         parser.add_argument('is_bad_reason', type=str, required=False)
+        parser.add_argument('is_difficult', type=bool, required=False, default=False)
 
         args = parser.parse_args()
 
@@ -126,15 +130,30 @@ class TaskResource(Resource):
         if not t:
             return {"error":f"No such task with id={args.task_id}"}, 404
         else:
-            t.is_bad = args.is_bad
-            if args.is_bad:
-                t.is_bad_reason = args.is_bad_reason
-                t.is_bad_user_id = current_user.id
-                t.is_bad_reported_at = datetime.now()
-            else:
-                t.is_bad_reason = None
-                t.is_bad_user_id = None
-                t.is_bad_reported_at = None
+            
+            if args.is_bad is not None:
+                t.is_bad = args.is_bad
+                if args.is_bad:
+                    t.is_bad_reason = args.is_bad_reason
+                    t.is_bad_user_id = current_user.id
+                    t.is_bad_reported_at = datetime.utcnow()
+                else:
+                    t.is_bad_reason = None
+                    t.is_bad_user_id = None
+                    t.is_bad_reported_at = None
+            
+            if args.is_difficult is not None:
+                t.is_difficult = args.is_difficult
+
+                if t.is_difficult:
+                    t.is_difficult_user_id = current_user.id
+                    t.is_difficult_reported_at = datetime.utcnow()
+                else:
+                    t.is_difficult_user_id = None
+                    t.is_difficult_reported_at = None
+
+
+            
             
         db_session.add(t)
         db_session.commit()
@@ -172,7 +191,7 @@ class AnswerListResource(Resource):
             return {"error":f"No answer with task={task_id} and user_id={current_user.id} exists"}, 404
 
         ans.answer = args.answer
-        ans.created_at = datetime.now()
+        ans.created_at = datetime.utcnow()
 
         db_session.add(ans)
         db_session.commit()
@@ -242,8 +261,7 @@ class BatchAnswerResource(Resource):
             
             for ut in t.usertasks:
                 if ut.user_id == current_user.id:
-                    ut.answer = answer['answer']
-                    ut.created_at = datetime.now()
+                    ut.answer = answer['answer'],
                     existing_answer = True
                     print("Update existing answer")
                     dbanswers.append(ut)
@@ -251,7 +269,7 @@ class BatchAnswerResource(Resource):
             
             if not existing_answer:
                 print("create answer")
-                ut = UserTask(answer=answer['answer'], user_id=current_user.id, task=t, created_at=datetime.now())
+                ut = UserTask(answer=answer['answer'], user_id=current_user.id, task=t, created_at=datetime.utcnow())
                 db_session.add(ut)
 
                 dbanswers.append(ut)

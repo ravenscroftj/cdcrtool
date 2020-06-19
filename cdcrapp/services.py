@@ -308,6 +308,7 @@ class TaskService(DBServiceBase):
                 ~Task.id.in_(completed),
                 ~Task.is_bad)
                 .order_by(
+                    Task.priority.desc(),
                     Task.is_iaa_priority.desc(), 
                     Task.similarity.desc()
                     )).first()

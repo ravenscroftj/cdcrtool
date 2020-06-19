@@ -68,6 +68,10 @@ class Task(Base):
     is_bad_reason = Column(String(255))
     is_bad_reported_at = Column(DateTime, nullable=True)
 
+    is_difficult = Column(Boolean, default=False)
+    is_difficult_user_id = Column(ForeignKey("users.id"))
+    is_difficult_reported_at = Column(DateTime, nullable=True)
+
     sci_paper_id = Column(ForeignKey("scipapers.id"))
     scipaper = relationship("SciPaper", lazy="joined")
 
@@ -77,7 +81,11 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+    priority = Column(Integer, default=0)
+
     _current_user_answer = None
+
+    is_difficult_user = relationship("User", backref="difficult_tasks", foreign_keys=is_difficult_user_id)
 
     @property
     def news_text(self):

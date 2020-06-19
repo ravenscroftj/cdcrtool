@@ -5,6 +5,7 @@ import os
 import random
 import json
 import hashlib
+import datetime
 import pandas as pd
 from typing import List
 
@@ -13,7 +14,7 @@ from tqdm.auto import tqdm
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from cdcrapp.services import UserService, TaskService
-from cdcrapp.model import Task, UserTask, User
+from cdcrapp.model import Task, UserTask, User, NewsArticle, SciPaper
     
 dotenv.load_dotenv()
 
@@ -198,15 +199,36 @@ def import_model_results(ctx: CLIContext, pkl_file:str):
     
 
     with ctx.tasksvc.session() as session:
+        
         for news_id, sci_id, news_ent, sci_ent in candidates:
-            task = Task(news_article_id=news_id,sci_paper_id=sci_id, news_ent=news_ent, sci_ent=sci_ent, priority=5)
-            session.add(task)
+
+            news_article = session.query(NewsArticle).get(news_id)
+
+            if news_article is None:
+                print(f"Failed to find news article {news_id} - skipping...")
+                continue
+
+            sci_paper = session.query(SciPaper).get(sci_id)
+
+            if sci_paper is None:
+                print(f"Failed to find science paper {sci_id}. Skipping...")
+                continue
+
+            task = Task(scipaper=sci_paper, newsarticle=news_article, news_ent=news_ent, sci_ent=sci_ent, priority=5)
+            
             task.hash = hashlib.new("sha256", task.news_url.encode() + 
                 task.sci_url.encode() + 
                 task.news_ent.encode() + 
                 task.sci_ent.encode()).hexdigest()
 
-            print(task.hash)
+            existing_task = session.query(Task).filter(Task.hash==task.hash).one_or_none()
+
+            if existing_task:
+                existing_task.priorty=5
+                print(f"Update priority for task {existing_task.hash}")
+            else:
+                session.add(task)
+                print(f"Add new task {task.hash}")
 
 
 
@@ -222,6 +244,39 @@ def export_joshi(ctx: CLIContext, json_file:str, seed:int, split:float):
     from .export import export_to_joshi
 
     export_to_joshi(t, json_file, split, seed)
+
+@cli.command()
+@click.argument("sheet_id", type=str)
+@click.argument("sheet_range", type=str)
+@click.pass_obj
+def import_difficult_tasks(ctx: CLIContext, sheet_id: str, sheet_range:str):
+    """Get difficult tasks from google sheets and update in db"""
+
+    from cdcrapp.gsheets import Spreadsheet
+
+    sheet = Spreadsheet(sheet_id)
+    sheet.connect()
+
+    with ctx.tasksvc.session() as session:
+        for hash,username,_ in sheet.get_range(sheet_range)['values']:
+            user = session.query(User).filter(User.username==username.strip().lower()).one_or_none()
+
+            if user is None:
+                print(f"Could not find user {username.strip().lower()} skipping task...")
+                continue
+            
+            task = session.query(Task).filter(Task.hash==hash).one_or_none()
+
+            if task is None:
+                print(f"Could not find task with hash {hash}. Skipping task...")
+                continue
+
+            task.is_difficult = True
+            task.is_difficult_user = user
+            task.is_difficult_reported_at = datetime.datetime.utcnow()
+
+        session.commit()
+
 
 
 @cli.command()

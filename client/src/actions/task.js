@@ -19,11 +19,31 @@ const reportBadTask = (task, reason) => {
         dispatch(setSendingAnswer(true));
 
         try{
-            const response = await Axios.post(`${ApiEndpoints.task}`,
+            await Axios.post(`${ApiEndpoints.task}`,
                {"task_id":task.id, "is_bad":true, "is_bad_reason": reason},
                {headers: addAuthHeaders(getState())});
 
             console.log(reason);
+
+            dispatch(fetchTask());
+            dispatch(fetchCurrentUserProfile());
+        }catch(error) {
+            dispatch(setTaskError(error));
+        }
+
+        dispatch(setSendingAnswer(false));
+    };
+}
+
+
+const reportDifficultTask = (task) => {
+    return async(dispatch, getState) => {
+        dispatch(setSendingAnswer(true));
+
+        try {
+            await Axios.post(`${ApiEndpoints.task}`,
+               {"task_id":task.id, "is_difficult":true},
+               {headers: addAuthHeaders(getState())});
 
             dispatch(fetchTask());
             dispatch(fetchCurrentUserProfile());
@@ -224,4 +244,4 @@ const navigateTaskList = (offset, limit) => {
     }
 };
 
-export {fetchTask, setTaskError, submitAnswer, reportBadTask, fetchUserTaskList, navigateTaskList};
+export {fetchTask, setTaskError, submitAnswer, reportBadTask, reportDifficultTask, fetchUserTaskList, navigateTaskList};
