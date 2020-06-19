@@ -137,6 +137,21 @@ class TaskResource(Resource):
                     t.is_bad_reason = args.is_bad_reason
                     t.is_bad_user_id = current_user.id
                     t.is_bad_reported_at = datetime.utcnow()
+
+                    if t.is_bad_reason == "bad sci ent":
+                        # update all tasks with same sci ent
+                        db_session.query(Task)\
+                          .filter(Task.sci_ent==t.sci_ent, Task.sci_paper_id==t.sci_paper_id)\
+                          .update({"is_bad":True, "is_bad_reason": t.is_bad_reason})
+
+                    elif t.is_bad_reason == "bad news ent":
+                        #update all tasks with same news ent
+                        db_session.query(Task)\
+                          .filter(Task.news_ent==t.news_ent, Task.news_article_id==t.news_article_id)\
+                          .update({"is_bad":True, 
+                              "is_bad_reason": t.is_bad_reason, 
+                              "is_bad_reported_at": t.is_bad_reported_at,
+                              "is_bad_user_id": t.is_bad_user_id })
                 else:
                     t.is_bad_reason = None
                     t.is_bad_user_id = None
@@ -348,7 +363,9 @@ class UserTaskListResource(Resource):
 
         args = ap.parse_args()
 
-        user_tasks = UserTask.query.join(Task.usertasks).filter(UserTask.user==current_user).order_by(UserTask.created_at.desc())
+        user_tasks = UserTask.query.join(Task.usertasks)\
+            .filter(UserTask.user==current_user)\
+            .order_by(UserTask.created_at.desc())
 
         total = user_tasks.count()
 

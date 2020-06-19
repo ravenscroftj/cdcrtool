@@ -51,6 +51,18 @@ class BadTaskModal extends React.Component {
                                     checked={this.state.reason=="garbled"}
                                     name="badExampleReason"
                                     value="garbled"/>
+                                    <Form.Check type="radio" 
+                                    onChange={this.updateReason} 
+                                    label="News entity is non-sensical" 
+                                    checked={this.state.reason=="bad news ent"}
+                                    name="badExampleReason"
+                                    value="bad news ent"/>
+                                    <Form.Check type="radio" 
+                                    onChange={this.updateReason} 
+                                    label="Science entity is non-sensical" 
+                                    checked={this.state.reason=="bad sci ent"}
+                                    name="badExampleReason"
+                                    value="bad sci ent"/>
                                     <Row>
                                         <Col xs="auto">
                                             <Form.Check type="radio" 
