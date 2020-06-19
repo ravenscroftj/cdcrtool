@@ -98,11 +98,10 @@ class TaskView extends React.Component {
 
     checkTaskUpdate() {
 
-        const timeoutThreshold = (Date.now() - (300 * 1000));
         const { isFetchingTask, taskLastUpdated, currentTask, taskError, taskHash } = this.props;
 
 
-        if ((!currentTask || (taskHash && taskHash !== currentTask.hash) || (taskLastUpdated < timeoutThreshold)) && !(isFetchingTask || taskError)) {
+        if ((!currentTask || (taskHash && taskHash !== currentTask.hash)) && !(isFetchingTask || taskError)) {
             this.props.fetchTask(taskHash);
         }
     }
