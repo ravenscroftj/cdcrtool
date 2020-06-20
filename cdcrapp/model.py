@@ -125,7 +125,7 @@ class Task(Base):
         """Get all yes/no pairs for current user and news/sci doc"""
         q = UserTask.query.join(Task.usertasks).filter(Task.sci_paper_id==self.sci_paper_id,
             Task.news_article_id==self.news_article_id,
-            UserTask.user_id==current_user.id)
+            UserTask.user_id==current_user.id, ~Task.is_bad)
 
         return [{"news_ent":ut.task.news_ent, "sci_ent":ut.task.sci_ent, "answer": ut.answer} for ut in q.all()]
 

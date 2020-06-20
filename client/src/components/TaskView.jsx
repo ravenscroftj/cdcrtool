@@ -98,7 +98,7 @@ class TaskView extends React.Component {
 
     checkTaskUpdate() {
 
-        const { isFetchingTask, taskLastUpdated, currentTask, taskError, taskHash } = this.props;
+        const { isFetchingTask, currentTask, taskError, taskHash } = this.props;
 
 
         if ((!currentTask || (taskHash && taskHash !== currentTask.hash)) && !(isFetchingTask || taskError)) {
@@ -271,8 +271,9 @@ class TaskView extends React.Component {
         const entBits = originalEntity.split(";");
         const fullText = target === "news" ? currentTask.news_text : currentTask.sci_text;
         const docID = target === "news" ? currentTask.news_article_id : currentTask.sci_paper_id;
+        const existingEnts = target === "news" ? currentTask.news_ents : currentTask.sci_ents;
 
-        this.props.updateEntityEditor({target, fullText, originalEntity, docID, start: parseInt(entBits[1]), end: parseInt(entBits[2])})
+        this.props.updateEntityEditor({target, fullText, originalEntity, docID, existingEnts, start: parseInt(entBits[1]), end: parseInt(entBits[2])})
         
         this.setState({mentionEditorShow:true})
 

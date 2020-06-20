@@ -103,7 +103,7 @@ const authReducer = function(state, action){
 };
 
 const defaultEntityState = {
-    editorState: {start:null, end:null, target:null, fullText:null, originalEntity:null, docID: null},
+    editorState: {start:null, end:null, target:null, fullText:null, originalEntity:null, docID: null, existingEnts: null},
     isSavingEntity: false,
     entityError: null,
     docEntities:{ newsDoc: [], sciDoc: [] }

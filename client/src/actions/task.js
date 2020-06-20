@@ -191,10 +191,12 @@ const fetchTask = (hash, news_id, science_id, news_ent, sci_ent)=> {
 
         }catch(error) {
 
-            if (error.response.status == 401){
+            if (error.response && error.response.status == 401){
                 dispatch(logout());
+            }else{
+                dispatch(setTaskError(error));
             }
-            dispatch(setTaskError(error));
+            
             
         }
 

@@ -184,7 +184,8 @@ def compare(ctx: CLIContext, pkl_file:str):
 
     from cdcrapp.compare import compare
     
-    compare(pkl_file, t)
+    for news_id, sci_id, news_ent, sci_ent in compare(pkl_file, t):
+        print(news_id, sci_id, news_ent, sci_ent)
 
 
 @cli.command()

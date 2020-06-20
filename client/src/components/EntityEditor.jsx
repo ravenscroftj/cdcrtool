@@ -1,9 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, ModalBody, Col, Row, FormGroup, Form, Button } from 'react-bootstrap';
+import { Modal, ModalBody, Col, Row, FormGroup, Form, Button, Alert } from 'react-bootstrap';
 import ModalHeader from 'react-bootstrap/ModalHeader';
 import { updateEntityEditor, saveUpdatedEntity } from '../actions/entity';
 
+
+// if editor colides with an existing entity other than the original value
+const COLLISION_EXISTING = "COLLISION_EXISTING";
+// if editor collides with the original value (usually means the user didn't do anything)
+const COLLISION_ORIGINAL  = "COLLISION_ORIGINAL";
+// if there is no collision
+const COLLISION_NONE = "COLLISION_NONE";
 
 class TaskView extends React.Component {
     constructor() {
@@ -13,6 +20,7 @@ class TaskView extends React.Component {
         this.updateMentionStart = this.updateMentionStart.bind(this);
         this.renderMentionEditorPreview = this.renderMentionEditorPreview.bind(this);
         this.submitUpdateEntity = this.submitUpdateEntity.bind(this);
+        this.checkForCollision = this.checkForCollision.bind(this);
     }
 
     updateMentionStart(e) {
@@ -44,17 +52,35 @@ class TaskView extends React.Component {
         )
     }
 
+    checkForCollision(){
+        const {start,end,fullText, existingEnts, originalEntity} = this.props.editorState;
+
+
+        const entStr = `${fullText.substring(start,end)};${start};${end}`;
+
+        if (entStr === originalEntity){
+            return COLLISION_ORIGINAL;
+        }
+
+        const existing = new Set(existingEnts);
+        return existing.has(entStr) ? COLLISION_EXISTING : COLLISION_NONE;
+    }
+
     submitUpdateEntity(){
         this.props.saveUpdatedEntity(this.props.editorState);
         this.props.hideCallback();
     }
 
     render() {
+
+        const collisionState = this.checkForCollision();
+
         return (<Modal show={this.props.show} onHide={this.props.hideCallback}>
             <ModalHeader closeButton>
                 Edit Entity
             </ModalHeader>
             <ModalBody>
+
                 <FormGroup>
                     <Row>
                         <Col sm={6}>
@@ -80,10 +106,21 @@ class TaskView extends React.Component {
 
 
                 </FormGroup>
+                {collisionState == COLLISION_EXISTING? (
+                    <Alert variant="warning">
+                        <p>You can't save this entity because another one with the same boundaries exists. Try using "Swap Question Entities" instead.</p>
+                    </Alert>
+                ) : ""}
+                {collisionState == COLLISION_ORIGINAL? (
+                    <Alert variant="primary">
+                        <p>Move the entity boundaries and click 'Confirm' to save.</p>
+                    </Alert>
+                ) : ""}
+
             </ModalBody>
             <Modal.Footer>
                 <Button variant="secondary" onClick={this.props.hideCallback}>Cancel</Button>
-                <Button variant="primary" onClick={this.submitUpdateEntity}>Confirm</Button>
+                <Button variant="primary" onClick={this.submitUpdateEntity} disabled={collisionState !== COLLISION_NONE}>Confirm</Button>
             </Modal.Footer>
         </Modal>)
     }

@@ -3,6 +3,7 @@ import numpy as np
 
 from datetime import datetime
 
+from collections import defaultdict
 from sqlalchemy import update
 
 from flask import current_app
@@ -39,6 +40,7 @@ class TaskResource(Resource):
         "news_text": fields.String,
         "sci_url":fields.String,
         "sci_text":fields.String,
+        "priority": fields.Integer
     }
 
     @auth_required('token')
@@ -86,7 +88,6 @@ class TaskResource(Resource):
 
             if not t:
                 return {"error":"cannot find a task with that combination of entities and articles."},404
-            
 
 
         else:
@@ -254,40 +255,42 @@ class BatchAnswerResource(Resource):
             Task.sci_paper_id==args.sci_paper_id).all()
 
 
-        taskmap = {}
+        taskmap = defaultdict(lambda:[])
 
         for task in tasks:
-            taskmap[(task.news_ent, task.sci_ent)] = task
+            taskmap[(task.news_ent, task.sci_ent)].append(task)
 
         dbanswers = []
         for answer in args.answers:
 
-            t = taskmap.get((answer['news_ent'],answer['sci_ent']))
+            tasks = taskmap.get((answer['news_ent'],answer['sci_ent']))
             existing_answer = False
 
-            if t is None:
-                print("create task")
+            if len(tasks) < 1:
+                print("create new task")
                 t = Task(news_article_id=args.news_article_id, 
                 sci_paper_id=args.sci_paper_id, 
                 news_ent=answer['news_ent'],
                 sci_ent=answer['sci_ent'])
 
                 db_session.add(t)
-            
-            for ut in t.usertasks:
-                if ut.user_id == current_user.id:
-                    ut.answer = answer['answer'],
-                    existing_answer = True
-                    print("Update existing answer")
-                    dbanswers.append(ut)
-                    break
-            
-            if not existing_answer:
-                print("create answer")
-                ut = UserTask(answer=answer['answer'], user_id=current_user.id, task=t, created_at=datetime.utcnow())
-                db_session.add(ut)
+            else:
+                for t in tasks:
 
-                dbanswers.append(ut)
+
+                    for ut in t.usertasks:
+                        if ut.user_id == current_user.id:
+                            ut.answer = answer['answer'],
+                            existing_answer = True
+                            print(f"Update existing answer (news_ent={t.news_ent}, sci_ent={t.sci_ent}, answer={answer['answer']})")
+                            dbanswers.append(ut)
+            
+                    if not existing_answer:
+                        print(f"create answer (news_ent={t.news_ent}, sci_ent={t.sci_ent}, answer={answer['answer']})")
+                        ut = UserTask(answer=answer['answer'], user_id=current_user.id, task=t, created_at=datetime.utcnow())
+                        db_session.add(ut)
+
+                        dbanswers.append(ut)
 
         db_session.commit()
 
