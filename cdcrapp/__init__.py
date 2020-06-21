@@ -323,8 +323,59 @@ def import_tasks(ctx: CLIContext, task_csv: str):
             tasks = []
     
     print("Import complete")
-        
-        
+
+@cli.command()
+@click.pass_obj        
+def tidy_duplicate_tasks(ctx: CLIContext):
+    """Remove duplicate tasks"""
+    from sqlalchemy import desc
+    from sqlalchemy.sql.functions import count
+
+    with ctx.tasksvc.session() as session:
+        q = session.query(count(Task.hash).label('total'), Task.news_article_id, Task.sci_paper_id, Task.news_ent, Task.sci_ent)\
+              .group_by(Task.news_article_id, Task.sci_paper_id, Task.news_ent, Task.sci_ent).order_by(desc('total'))
+
+        for total, news_id, sci_id, news_ent, sci_ent in q.all():
+            
+            # We're sorted in descending order by total and we only
+            # care about dupes so break when we get to 1
+            if total < 2:
+                break
+
+            # we should end up with the most important task at the top (e.g. IAA tasks or recently created ones)
+            tasks = session.query(Task)\
+                .filter(Task.news_article_id==news_id, Task.sci_paper_id==sci_id, Task.sci_ent==sci_ent, Task.news_ent==news_ent)\
+                    .order_by(Task.is_iaa.desc(), Task.created_at.desc()).all()
+
+            deleted_one = False
+            for task in tasks:
+                if len(task.usertasks) < 1:
+                    print(f"Remove duplicate task {task.id}")
+                    session.delete(task)
+                    deleted_one = True
+                    break
+            
+            if not deleted_one:
+                print(f"Was unable to delete a task for {news_id},{sci_id},{news_ent},{sci_ent}")
+                print(f"Move all links from {tasks[-1].id} -> {tasks[0].id}")
+
+                existing_uts = set()
+                for ut in tasks[0].usertasks:
+                    existing_uts.add((ut.user_id,ut.task_id))
+
+                for ut in tasks[-1].usertasks:
+                    if (ut.user_id, tasks[0].id) in existing_uts:
+                        print(f"Remove duplicate UT {ut.user_id},{ut.task_id}")
+                        session.delete(ut)
+                    else:
+                        print(f"Move UT from task {ut.task_id} to {tasks[0].id}")
+                        ut.task_id = tasks[0].id
+                        existing_uts.add((ut.user_id, tasks[0].id))
+
+            
+
+        session.commit()
+
 
 if __name__ == "__main__":
     cli() #pylint: disable=no-value-for-parameter
