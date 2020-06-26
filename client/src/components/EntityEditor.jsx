@@ -55,6 +55,11 @@ class TaskView extends React.Component {
     checkForCollision(){
         const {start,end,fullText, existingEnts, originalEntity} = this.props.editorState;
 
+        // if the editor is not initialised yet then return "no change" collision state
+        if(!fullText){
+            return COLLISION_ORIGINAL;
+        }
+
 
         const entStr = `${fullText.substring(start,end)};${start};${end}`;
 
