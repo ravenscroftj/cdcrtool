@@ -5,6 +5,8 @@
 import Axios from 'axios'
 import ApiEndpoints from '../ApiConfig';
 
+import {fetchCurrentUserProfile} from './user';
+
 const toggleLoggingIn = (isLoggingIn) => ({type: "TOGGLE_LOGGING_IN", isLoggingIn});
 const setUserCredentials = (token, userID) => ({type: "SET_USER_CREDENTIALS", token, userID});
 const setLoginError = (error) => ({type: "SET_LOGIN_ERROR", error});
