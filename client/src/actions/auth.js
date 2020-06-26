@@ -45,6 +45,7 @@ function login(username, password){
     
 
         dispatch(toggleLoggingIn(false));
+        dispatch(fetchCurrentUserProfile());
 
     };
 
