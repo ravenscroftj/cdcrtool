@@ -313,12 +313,12 @@ class TaskService(DBServiceBase):
                     Task.similarity.desc()
                     )).first()
         
-    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None):
+    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None, exclude_users=[]):
         """Select tasks that have been annotate by at least 1 user"""
 
         with self.session() as session:
 
-            ut_task_ids = session.query(UserTask.task_id).distinct()
+            ut_task_ids = session.query(UserTask.task_id).distinct().filter(~UserTask.user_id.in_(exclude_users))
             q = session.query(Task).filter(Task.id.in_(ut_task_ids)).join(NewsArticle).join(SciPaper).join(UserTask)
 
             if limit is not None:

@@ -110,8 +110,13 @@ class TaskView extends React.Component {
         this.props.setTaskError(null);
     }
 
-    handleAnswerButton(answer) {
-        this.props.submitAnswer(answer, this.props.currentTask, this.state.secondaryEntities);
+    handleAnswerButton(answer, changePrimaryEnts) {
+        this.props.submitAnswer(answer, this.props.currentTask, this.state.secondaryEntities, !changePrimaryEnts);
+
+        if(changePrimaryEnts){
+            this.editPrimaryEnts();
+        }
+        
     }
 
     editSecondaryEnts(){
@@ -341,9 +346,9 @@ class TaskView extends React.Component {
                          <Button onClick={() => { this.handleAnswerButton('yes') }}>Yes</Button>
                         </ButtonGroup>
 
-                        <ButtonGroup>
-                        <Button onClick={() => { this.handleAnswerButton('no') }}>No</Button>
-                        </ButtonGroup>
+                        <SplitButton title="No"  onClick={() => { this.handleAnswerButton('no') }}> 
+                        <Dropdown.Item eventKey="Primary" onSelect={() => { this.handleAnswerButton('no', true) }}>No but let me choose a different entity</Dropdown.Item> 
+                        </SplitButton> 
 
                         <ButtonGroup>
                         <Button onClick={() => { this.setState({ showBadExampleModal: true }) }}>Bad Example</Button>

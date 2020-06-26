@@ -55,7 +55,7 @@ const reportDifficultTask = (task) => {
     };
 }
 
-const submitAnswer = (answer, task, secondaryEntities) => {
+const submitAnswer = (answer, task, secondaryEntities, getNextTask) => {
     return async(dispatch, getState) => {
         dispatch(setSendingAnswer(true));
 
@@ -132,7 +132,7 @@ const submitAnswer = (answer, task, secondaryEntities) => {
                     data: {"answers": toUpdate, "news_article_id": task.news_article_id, "sci_paper_id": task.sci_paper_id}
                 })
     
-                dispatch(fetchTask());
+                dispatch(fetchTask(getNextTask ? null : task.hash));
                 dispatch(fetchCurrentUserProfile())
     
             }catch(error) {
@@ -153,7 +153,9 @@ const submitAnswer = (answer, task, secondaryEntities) => {
                     data: {"answer": answer}
                 })
     
-                dispatch(fetchTask());
+                
+
+                dispatch(fetchTask(getNextTask ? null : task.hash));
                 dispatch(fetchCurrentUserProfile())
     
             }catch(error) {

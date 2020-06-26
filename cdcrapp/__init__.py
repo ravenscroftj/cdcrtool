@@ -166,10 +166,11 @@ def export_conll(ctx: CLIContext, json_file: str, output_file:str):
 @click.argument("json_file", type=click.Path(exists=False))
 @click.option("--seed", type=int, default=42)
 @click.option("--split", type=float, default=0.7)
+@click.option("--exclude-user", type=int, multiple=True )
 @click.pass_obj
-def export_json(ctx: CLIContext, json_file:str, seed:int, split:float):
+def export_json(ctx: CLIContext, json_file:str, seed:int, split:float, exclude_user: List[int]):
     """Export json to conll format"""
-    t = ctx.tasksvc.get_annotated_tasks()
+    t = ctx.tasksvc.get_annotated_tasks(exclude_users=exclude_user)
 
     from cdcrapp.export import export_to_json
 
