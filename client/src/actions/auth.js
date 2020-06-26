@@ -57,11 +57,12 @@ function logout(){
         try{
             const response = await Axios.get(ApiEndpoints.logout);
 
-            dispatch(setLoggedIn(false));
             dispatch(setUserCredentials(null,null));
         }catch(err){
             dispatch(setLoginError(err));
         }
+
+        dispatch(setLoggedIn(false));
 
         
     }
