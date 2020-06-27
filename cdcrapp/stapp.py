@@ -103,60 +103,8 @@ class CDCRTool():
         self.last_task_id = None
 
     def init_ui(self):
+        self.display_admin_panel()
 
-        st.sidebar.header(body="User Profile")
-        user_selector = st.sidebar.selectbox(label="User:", options=self.user_list())
-        user_password = st.sidebar.text_input(label="Password", type="password")
-        
-        if user_selector == "---":
-            self.show_front_page()
-        
-        
-        if not _usersvc.authenticate(user_selector, user_password):
-            st.header("Log in")
-            st.write("please provide the password now")
-            
-        
-        else:
-            
-            self.user = self.get_user_profile(user_selector)
-            
-            self.info_ph = st.sidebar.empty()
-            show_admin = False
-            
-            if self.user.is_admin:
-                show_admin = st.sidebar.checkbox("Toggle Admin View")
-
-            
-            if show_admin:
-                self.display_admin_panel()
-            else:            
-                self.nav_header_ph = st.sidebar.empty()
-                self.task_id_ph = st.sidebar.empty()
-                self.task_decide_ph = st.sidebar.empty()
-                self.task_decide = self.task_decide_ph.radio('Current task', ['random', 'from Task ID'])
-                
-                self.task_question_ph = st.empty()
-                
-                st.markdown("Use the below button to add this task to the 'difficult' list. You need to do this before you give a Yes/No/Report answer if applicable.")
-                self.interesting_btn_ph = st.empty()
-                self.frame_btn_ph = st.empty()
-                
-                st.markdown("Use the buttons below to give a final Yes/No/Report answer")
-                self.yes_btn_ph = st.empty()
-                self.no_btn_ph = st.empty()
-                self.report_btn_ph = st.empty()
-                
-                
-                # set up task buttons
-                self.connect_buttons()
-                
-                self.task_markdown_ph = st.empty()
-                
-                #process any work (via redis)
-                self.handle_task_outcome()
-                
-                self.show_task() 
             
     def display_admin_panel(self):
         

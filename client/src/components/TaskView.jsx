@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import {EntityNode, EntityTree} from '../util/enttree';
 
-import { Form, Button, Alert, FormGroup, FormControl, Spinner, Row,  Dropdown,  ButtonGroup, SplitButton } from 'react-bootstrap'
+import { Form, Button, Alert, FormGroup, FormControl, Spinner, Row,  Dropdown,  ButtonGroup, SplitButton, Col } from 'react-bootstrap'
 
 import "./TaskView.css"
 
@@ -29,6 +29,7 @@ class TaskView extends React.Component {
         this.editPrimaryEnts = this.editPrimaryEnts.bind(this);
         this.editSecondaryEnts = this.editSecondaryEnts.bind(this);
         this.storeSecondaryEntities = this.storeSecondaryEntities.bind(this);
+        this.setNoCorefer = this.setNoCorefer.bind(this);
 
         this.state = {
             answerButtonsDisabled: false,
@@ -60,6 +61,13 @@ class TaskView extends React.Component {
     componentDidMount() {
         this.props.fetchTask(this.props.taskHash);
         this.initSecondaryHighlights();
+        this.setState({
+            dirtyTask:false,
+            originalEntities: {
+                science: this.props.currentTask ? this.props.currentTask.sci_ent : null,
+                news: this.props.currentTask ? this.props.currentTask.news_ent : null
+            }
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -67,7 +75,13 @@ class TaskView extends React.Component {
 
 
         if( (!prevProps.currentTask && this.props.currentTask) || (this.props.currentTask && this.props.currentTask.id !== prevProps.currentTask.id ) ){
-            this.setState({dirtyTask:false});
+            this.setState({
+                dirtyTask:false,
+                originalEntities: {
+                    science:this.props.currentTask.sci_ent,
+                    news: this.props.currentTask.news_ent
+                }
+            });
             this.initSecondaryHighlights();
         }
     }
@@ -123,10 +137,6 @@ class TaskView extends React.Component {
         this.setState({
             changeSecondaryEnts: true,
             showAllEntities:true, 
-            originalEntities: {
-                science:this.props.currentTask.sci_ent,
-                news: this.props.currentTask.news_ent
-            } 
         });
     }
 
@@ -134,10 +144,6 @@ class TaskView extends React.Component {
         this.setState({
             changePrimaryEnts: true,
             showAllEntities: true,
-            originalEntities: {
-                science:this.props.currentTask.sci_ent,
-                news: this.props.currentTask.news_ent
-            }
         });
     }
 
@@ -157,13 +163,27 @@ class TaskView extends React.Component {
 
     renderQuestion() {
         const { currentTask } = this.props;
+        const newsEntBits = currentTask.news_ent ? currentTask.news_ent.split(";") : null;
+        const sciEntBits = currentTask.sci_ent ? currentTask.sci_ent.split(";") : null;
 
-        const newsEntBits = currentTask.news_ent.split(";");
-        const sciEntBits = currentTask.sci_ent.split(";");
+        if(newsEntBits && sciEntBits){
+            return (
+                <h2>Are <b>{newsEntBits[0]}</b> and <b>{sciEntBits[0]}</b> mentions of the same thing?</h2>
+            )
+        }
 
-        return (
-            <h2>Are <b>{newsEntBits[0]}</b> and <b>{sciEntBits[0]}</b> mentions of the same thing?</h2>
-        )
+        if(newsEntBits && !sciEntBits) {
+            return (
+                <h2><b>Is it correct that {newsEntBits[0]}</b> does not co-refer with anything in the science article?</h2>
+            )
+        }
+
+        if(!newsEntBits && sciEntBits) {
+            return (
+                <h2><b>Is it correct that {sciEntBits[0]}</b> does not co-refer with anything in the news article?</h2>
+            )
+        }
+
     }
 
     renderEntitiesDoc(fullText, ents, primaryEnts, secondaryEnts, onClickCallback, secondaryClass){
@@ -293,20 +313,72 @@ class TaskView extends React.Component {
     }
 
 
+    /**
+     * This function is called after the user updates the primary entities thus  changing the current task
+     */
     refreshTaskWithNewEntities(){
         const {currentTask} = this.props;
         this.setState({changePrimaryEnts: false, showAllEntities:false});
-        this.props.fetchTask(null, currentTask.news_article_id, currentTask.sci_paper_id, currentTask.news_ent, currentTask.sci_ent);
+
+        // we only want to refresh the task if the user has not deliberately rejected one or other of the entities
+        if(currentTask.news_ent && currentTask.sci_ent){
+            this.props.fetchTask(null, currentTask.news_article_id, currentTask.sci_paper_id, currentTask.news_ent, currentTask.sci_ent);
+        }
+        
     }
 
 
+    /**
+     * This function is called when the user adds more co-referring entities to the current task
+     */
     storeSecondaryEntities(){
         this.setState({changeSecondaryEnts: false, showAllEntities:false});
+    }
+
+    /**
+     * This function is called to indicate that one of the entities is a singleton 
+     * 
+     * @param {string} entType  - which entity is the singleton: 'news' or 'science'
+     */
+    setNoCorefer(entType) {
+
+        if(entType === "news"){
+            if(!this.props.currentTask.news_ent){
+                this.props.currentTask.news_ent = this.state.originalEntities.news;
+            }
+            
+            this.props.currentTask.sci_ent = null;
+        }else{
+            if(!this.props.currentTask.sci_ent){
+                this.props.currentTask.sci_ent = this.state.originalEntities.science;
+            }
+            this.props.currentTask.news_ent = null;
+            
+        }
+
+        this.setState({dirtyTask:true});
+
     }
 
     renderTaskControlBlock(){
 
         if(this.state.changePrimaryEnts) {
+
+            let {news_ent, sci_ent} = this.props.currentTask;
+
+            let news_singleton = false;
+            let sci_singleton = false;
+
+            if(!news_ent){
+                news_ent = this.state.originalEntities.news;
+                sci_singleton = true; //if news ent not set then sci must be singleton
+            }
+
+            if(!sci_ent) {
+                sci_ent = this.state.originalEntities.science;
+                news_singleton = true; //if the sci ent is not set then the news must be a singleton
+            }
+
             return(<div>
                 
                 <ButtonGroup>
@@ -316,6 +388,29 @@ class TaskView extends React.Component {
 
                 <p>Please select which entities you want to use instead and click confirm.</p>
                 <p>Mentions highlighted <span className="text-primary">blue</span> have already been annotated by you on a previous occasion.</p>
+                
+                <Form className="flex">
+                    <Row>
+                        <Col xs="1">
+                        <Form.Check type="radio" name="no_corefer" checked={news_singleton} onClick={()=> this.setNoCorefer('news')}/>
+                        </Col>
+                        <Col>
+                        <Form.Label><b>{news_ent.split(';')[0]}</b> does not co-refer with anything in the science article
+                        </Form.Label>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs="1">
+                        <Form.Check type="radio" name="no_corefer" checked={sci_singleton} onClick={()=> this.setNoCorefer('science')}/>
+                        </Col>
+                        <Col>
+                        <Form.Label><b>{sci_ent.split(';')[0]}</b> does not co-refer with anything in the news article
+                        </Form.Label>
+                        </Col>
+                    </Row>
+                   
+                </Form>
+
             </div>)
         } else if (this.state.changeSecondaryEnts) {
 
@@ -338,6 +433,7 @@ class TaskView extends React.Component {
                 </Spinner>
             );
         }else{
+            const {currentTask} = this.props;
             return (
                 <div>
                     <Row className="taskButtons">
@@ -346,9 +442,18 @@ class TaskView extends React.Component {
                          <Button onClick={() => { this.handleAnswerButton('yes') }}>Yes</Button>
                         </ButtonGroup>
 
+                        {!(currentTask.news_ent && currentTask.sci_ent) ? 
+                        (
+                            <ButtonGroup>
+                            <Button onClick={this.resetTask}>No</Button>
+                           </ButtonGroup>
+                        )
+                        : (
                         <SplitButton title="No"  onClick={() => { this.handleAnswerButton('no') }}> 
                         <Dropdown.Item eventKey="Primary" onSelect={() => { this.handleAnswerButton('no', true) }}>No but let me choose a different entity</Dropdown.Item> 
                         </SplitButton> 
+                        )}
+
 
                         <ButtonGroup>
                         <Button onClick={() => { this.setState({ showBadExampleModal: true }) }}>Bad Example</Button>

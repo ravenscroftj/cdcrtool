@@ -238,6 +238,43 @@ class AnswerListResource(Resource):
 
         return marshal(ut, self.ut_fields), 201
 
+class SingletonAnswerResource(Resource):
+    """Provide endpoint for submitting singleton updates for one entity"""
+
+    def post(self):
+        ap = reqparse.RequestParser()
+        ap.add_argument("news_article_id", type=int, required=True)
+        ap.add_argument("sci_paper_id", type=int, required=True)
+        ap.add_argument("news_ent", type=str, required=False)
+        ap.add_argument("sci_ent", type=str, required=False)
+
+        args = ap.parse_args()
+
+        if(args.news_ent is None):
+            # science singleton
+            tasks = db_session.query(Task).filter(Task.sci_paper_id==args.sci_paper_id, Task.sci_ent==args.sci_ent).all()
+
+        elif(args.sci_ent is None):
+            # news singleton
+            tasks = db_session.query(Task).filter(Task.news_article_id ==args.news_article_id, Task.news_ent==args.news_ent).all()
+        else:
+            return {"message":"Either news_ent or sci_ent must be null"}, 400
+
+        for task in tasks:
+
+            skip_task = False
+
+            for ut in task.usertasks:
+                if ut.user_id == current_user.id:
+                    skip_task = True
+                    break
+
+            if not skip_task:
+                ut = UserTask(user_id=current_user.id, task_id=task.id, answer="no")
+                db_session.add(ut)
+        
+        db_session.commit()
+
 
 class BatchAnswerResource(Resource):
     """Provide an endpoint for updating multiple answers relating to the same news/science doc combo"""
@@ -266,7 +303,7 @@ class BatchAnswerResource(Resource):
             tasks = taskmap.get((answer['news_ent'],answer['sci_ent']))
             existing_answer = False
 
-            if len(tasks) < 1:
+            if (tasks is None) or (len(tasks) < 1):
                 print("create new task")
                 t = Task(news_article_id=args.news_article_id, 
                 sci_paper_id=args.sci_paper_id, 

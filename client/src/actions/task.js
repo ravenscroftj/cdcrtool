@@ -63,62 +63,70 @@ const submitAnswer = (answer, task, secondaryEntities, getNextTask) => {
 
         const relatedTaskSet = new Set(task.related_answers);
 
-        // calculate whether we need to batch update or not
-        for(const relatedTask of relatedTaskSet.values()) {
-            const {news_ent, sci_ent} = relatedTask;
+        // first see if the current answer has any null entities indicating singletons
+        const singleton = !task.news_ent || !task.sci_ent;
 
-            // skip the current task if it appears (e.g. if we're amending)
-            if(task.news_ent === relatedTask.news_ent && task.sci_ent === relatedTask.sci_ent){
-                continue;
-            }
-            
-            if(task.news_ent === relatedTask.news_ent ){
-
-                if(relatedTask.answer === "yes" && !secondaryEntities.science.has(sci_ent)) {
-                    toUpdate.push({news_ent, sci_ent, answer:"no"});
-                }
-
-                if(relatedTask.answer === "no" && secondaryEntities.science.has(sci_ent)) {
-                    toUpdate.push({news_ent, sci_ent, answer:"yes"});
-                }
-
-            }else if(task.sci_ent == relatedTask.sci_ent) {
-
-                if(relatedTask.answer === "yes" && !secondaryEntities.news.has(news_ent)) {
-                    toUpdate.push({news_ent, sci_ent, answer:"no"});
-                }
-
-                if(relatedTask.answer === "no" && secondaryEntities.news.has(news_ent)) {
-                    toUpdate.push({news_ent, sci_ent, answer:"yes"});
-                }
-            }
-
-        }
-
-        const allScienceEnts = Array.from(secondaryEntities.science).concat([task.sci_ent]);
-        const allNewsEnts = Array.from(secondaryEntities.news).concat([task.news_ent]);
-
-        for(const sci_ent of allScienceEnts) {
-            for(const news_ent of allNewsEnts) {
-
-                if(sci_ent == task.sci_ent && news_ent == task.news_ent){
+        // if we're not dealing with singleton then calculate whether we need to batch update or not
+        if(!singleton) {
+            for(const relatedTask of relatedTaskSet.values()) {
+                const {news_ent, sci_ent} = relatedTask;
+    
+                // skip the current task if it appears (e.g. if we're amending)
+                if(task.news_ent === relatedTask.news_ent && task.sci_ent === relatedTask.sci_ent){
                     continue;
                 }
-
-                const relatedTask = {news_ent, sci_ent, answer:"yes"};
-
-                console.log(relatedTask,relatedTaskSet.has(relatedTask));
-
-                if(!relatedTaskSet.has(relatedTask)){
-                    toUpdate.push(relatedTask);
+                
+                if(task.news_ent === relatedTask.news_ent ){
+    
+                    if(relatedTask.answer === "yes" && !secondaryEntities.science.has(sci_ent)) {
+                        toUpdate.push({news_ent, sci_ent, answer:"no"});
+                    }
+    
+                    if(relatedTask.answer === "no" && secondaryEntities.science.has(sci_ent)) {
+                        toUpdate.push({news_ent, sci_ent, answer:"yes"});
+                    }
+    
+                }else if(task.sci_ent == relatedTask.sci_ent) {
+    
+                    if(relatedTask.answer === "yes" && !secondaryEntities.news.has(news_ent)) {
+                        toUpdate.push({news_ent, sci_ent, answer:"no"});
+                    }
+    
+                    if(relatedTask.answer === "no" && secondaryEntities.news.has(news_ent)) {
+                        toUpdate.push({news_ent, sci_ent, answer:"yes"});
+                    }
+                }
+    
+            }
+    
+            const allScienceEnts = Array.from(secondaryEntities.science).concat([task.sci_ent]);
+            const allNewsEnts = Array.from(secondaryEntities.news).concat([task.news_ent]);
+    
+            for(const sci_ent of allScienceEnts) {
+                for(const news_ent of allNewsEnts) {
+    
+                    if(sci_ent == task.sci_ent && news_ent == task.news_ent){
+                        continue;
+                    }
+    
+                    const relatedTask = {news_ent, sci_ent, answer:"yes"};
+    
+                    console.log(relatedTask,relatedTaskSet.has(relatedTask));
+    
+                    if(!relatedTaskSet.has(relatedTask)){
+                        toUpdate.push(relatedTask);
+                    }
                 }
             }
         }
 
 
-        console.log(toUpdate);
+
+        // if toUpdate > 0 then we need to make batch updates
+        // the code that builds toUpdate is guarded by singleton check
+        // therefore this will always be false if singleton is false
         if(toUpdate.length > 0){
-            console.log("Batch update")
+            console.log("Batch task update")
             
             // append 'current task' to batch
             const {news_ent, sci_ent} = task;
@@ -140,27 +148,49 @@ const submitAnswer = (answer, task, secondaryEntities, getNextTask) => {
             }
 
 
-
-        }else{
-            console.log("Single update")
+        // if not singleton and nothing in toUpdate then we can do 
+        // a single task update.
+        }else if(!singleton) {
+            console.log("Single task update")
             //single update
             try{
 
-                const response = await Axios.request({
+                await Axios.request({
                     method: task.current_user_answer ? 'patch' : 'post',
                     url: `${ApiEndpoints.task}/${task.id}/answers`,
                     headers: addAuthHeaders(getState()),
                     data: {"answer": answer}
                 })
     
-                
-
                 dispatch(fetchTask(getNextTask ? null : task.hash));
                 dispatch(fetchCurrentUserProfile())
     
             }catch(error) {
                 dispatch(setTaskError(error));
             }
+
+        // now we deal with singleton submissions
+        }else {
+            console.log("Singleton update")
+
+            try{
+
+                const {news_article_id, sci_paper_id, news_ent, sci_ent} = task;
+
+                await Axios.request({
+                    method: 'post',
+                    url: `${ApiEndpoints.task}/singletons`,
+                    headers: addAuthHeaders(getState()),
+                    data: {news_article_id, sci_paper_id, news_ent,sci_ent}
+                })
+    
+                dispatch(fetchTask(getNextTask ? null : task.hash));
+                dispatch(fetchCurrentUserProfile())
+    
+            }catch(error) {
+                dispatch(setTaskError(error));
+            }
+
         }
 
 
