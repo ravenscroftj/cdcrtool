@@ -39,7 +39,7 @@ class DBServiceBase(object):
         with self.session() as session:
             session.add(obj)
             session.commit()
-        
+
     def list(self, objtype: ModelBase, filters={}, limit:int=None, joins=[], offset:int=None, orderby=None) -> List[ModelBase]:
         """List all items of given type"""
 
@@ -312,20 +312,66 @@ class TaskService(DBServiceBase):
                     Task.is_iaa_priority.desc(), 
                     Task.similarity.desc()
                     )).first()
+
+    def get_task_doc_coverage(self, min_coverage=0):
+        """Get document coverage for tasks"""
+
+        from sqlalchemy import text
+
+        with self.session() as session:
+
+            conn = session.connection()
+
+            conn.execute("""DROP TABLE IF EXISTS news_complete""")
+            conn.execute("""DROP TABLE IF EXISTS news_total""")
+
+            conn.execute("""CREATE TEMP TABLE news_complete AS 
+            SELECT newsarticles.id as news_id, count(newsarticles.id) as completed_tasks 
+            FROM newsarticles LEFT JOIN tasks ON newsarticles.id=tasks.news_article_id  
+            WHERE tasks.id in (SELECT DISTINCT user_tasks.task_id from user_tasks)
+            GROUP BY newsarticles.id;""")
+
+            conn.execute("""CREATE TEMP TABLE news_total AS 
+            SELECT newsarticles.id as news_id, count(newsarticles.id) as total_tasks FROM newsarticles 
+            LEFT JOIN tasks ON newsarticles.id=tasks.news_article_id 
+            WHERE (tasks.is_bad is null or tasks.is_bad = false)
+            GROUP BY newsarticles.id;""")
+
+            result = conn.execute(text("""SELECT news_complete.news_id, 
+                                       news_total.total_tasks, 
+                                       news_complete.completed_tasks, 
+                                       (SELECT news_complete.completed_tasks * 100 / news_total.total_tasks ) as complete_percent 
+                        FROM news_complete LEFT JOIN news_total ON news_complete.news_id=news_total.news_id
+                        ORDER BY complete_percent DESC;"""), min=min_coverage)
+
+            columns = ['news_id','news_total','news_complete','complete_percent']
+            for r in result.fetchall():
+                row = {key:value for value,key in zip(r,columns)}
+                if row['complete_percent'] >= min_coverage:
+                    yield row
         
-    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None, exclude_users=[]):
+    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None, exclude_users=[], min_coverage=None):
         """Select tasks that have been annotate by at least 1 user"""
 
         with self.session() as session:
 
+            # find document coverage
+
+
             ut_task_ids = session.query(UserTask.task_id).distinct().filter(~UserTask.user_id.in_(exclude_users))
             q = session.query(Task).filter(Task.id.in_(ut_task_ids)).join(NewsArticle).join(SciPaper).join(UserTask)
+
+
+            if min_coverage is not None:
+                covered_ids = [c['news_id'] for c in self.get_task_doc_coverage(min_coverage=min_coverage)] 
+                q = q.filter(Task.news_article_id.in_(covered_ids))
 
             if limit is not None:
                 q = q.limit(limit)
 
             if offset is not None:
                 q = q.offset(offset)
+
 
             return q.options(joinedload('usertasks')).all()
 

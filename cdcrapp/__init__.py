@@ -7,7 +7,7 @@ import json
 import hashlib
 import datetime
 import pandas as pd
-from typing import List
+from typing import List, Optional
 
 from tqdm.auto import tqdm
 
@@ -167,10 +167,13 @@ def export_conll(ctx: CLIContext, json_file: str, output_file:str):
 @click.option("--seed", type=int, default=42)
 @click.option("--split", type=float, default=0.7)
 @click.option("--exclude-user", type=int, multiple=True )
+@click.option("--min-coverage", type=float, default=None)
 @click.pass_obj
-def export_json(ctx: CLIContext, json_file:str, seed:int, split:float, exclude_user: List[int]):
+def export_json(ctx: CLIContext, json_file:str, seed:int, split:float, exclude_user: List[int], min_coverage: Optional[float]):
     """Export json to conll format"""
-    t = ctx.tasksvc.get_annotated_tasks(exclude_users=exclude_user)
+    
+
+    t = ctx.tasksvc.get_annotated_tasks(exclude_users=exclude_user, min_coverage=min_coverage)
 
     from cdcrapp.export import export_to_json
 
@@ -190,6 +193,23 @@ def compare(ctx: CLIContext, pkl_file:str):
 
 
 @cli.command()
+@click.pass_obj
+def get_doc_coverage(ctx: CLIContext):
+    """Get coverage of news documents"""
+
+    from collections import Counter
+
+    c = Counter()
+
+    for row in ctx.tasksvc.get_task_doc_coverage():
+        c[row['complete_percent']] += 1
+
+    print("Percent Complete, Count")
+    for percent, count in c.items():
+        print(f"{percent}%",count)
+
+
+@cli.command()
 @click.argument("pkl_file", type=click.Path(exists=True))
 @click.pass_obj
 def import_model_results(ctx: CLIContext, pkl_file:str):
@@ -197,8 +217,6 @@ def import_model_results(ctx: CLIContext, pkl_file:str):
     
     t = ctx.tasksvc.get_annotated_tasks()
     candidates = compare(pkl_file, t)
-
-    
 
     with ctx.tasksvc.session() as session:
         
@@ -223,7 +241,17 @@ def import_model_results(ctx: CLIContext, pkl_file:str):
                 task.news_ent.encode() + 
                 task.sci_ent.encode()).hexdigest()
 
-            existing_task = session.query(Task).filter(Task.hash==task.hash).one_or_none()
+            # try matching the hash
+            existing_task = session.query(Task).filter(Task.hash == task.hash).one_or_none()
+
+            # if the hash doesn't match then try to match values 
+            if existing_task is None:
+
+                existing_task = session.query(Task).filter(
+                    Task.sci_paper_id==sci_id, 
+                    Task.news_article_id==news_id, 
+                    Task.news_ent==news_ent, 
+                    Task.sci_ent==sci_ent).one_or_none()
 
             if existing_task:
                 existing_task.priorty=5
@@ -233,6 +261,23 @@ def import_model_results(ctx: CLIContext, pkl_file:str):
                 print(f"Add new task {task.hash}")
 
 
+
+@cli.command()
+@click.argument("json_dir", type=click.Path(exists=True))
+def count_mentions(json_dir):
+    """Return the total number of counts in the exported corpus"""
+
+    test_file = os.path.join(json_dir,"test_entities.json")
+    train_file = os.path.join(json_dir,"train_entities.json")
+
+    total_ents = 0
+    for file in [test_file,train_file]:
+        with open(file) as f:
+            ents = json.load(f)
+            print(f"Found {len(ents)} entities in {file}")
+            total_ents += len(ents)
+
+    print(f"Total entities: {total_ents}")
 
 
 @cli.command()

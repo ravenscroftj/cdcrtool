@@ -3,10 +3,13 @@ import json
 import numpy as np
 import pandas as pd
 import streamlit as st 
+import seaborn as sns
 import hashlib
 import redis
 import re
 from dotenv import load_dotenv
+
+from matplotlib import pyplot as plt
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -124,7 +127,17 @@ class CDCRTool():
         # get task difficulty
         diffdist = _tasksvc.get_task_difficulty_dist()
         
-        sns.distplot(diffdist)
+
+        st.markdown("### Percentage coverage")
+
+        coverage_df = pd.DataFrame.from_records(_tasksvc.get_task_doc_coverage())
+        st.dataframe(coverage_df)
+        sns.distplot(coverage_df['complete_percent'], norm_hist=False, kde=False)
+        plt.title("Percentage of Document Pair examples annotated")
+        plt.ylabel("Number of document pairs")
+        plt.xlabel("Percent Annotated (%)")
+        st.pyplot()
+
 
         st.markdown("### Total distinct answers")
 

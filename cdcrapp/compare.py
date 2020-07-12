@@ -38,13 +38,15 @@ def compare(pklfile: str, task_group: List[Task]):
     docid2spacy = {}
     for topic,doc_pair in doc_topics.items():
 
-        tasklist = task_items[(doc_pair['news'], doc_pair['science'])]
+        tasklist = task_items.get((doc_pair['news'], doc_pair['science']), [])
 
-        scidoc = nlp(tasklist[0].sci_text)
-        newsdoc = nlp(tasklist[0].news_text)
+        if len(tasklist) > 0:
 
-        docid2spacy[f"{topic}_news_{doc_pair['news']}"] = newsdoc
-        docid2spacy[f"{topic}_science_{doc_pair['science']}"] = scidoc
+            scidoc = nlp(tasklist[0].sci_text)
+            newsdoc = nlp(tasklist[0].news_text)
+
+            docid2spacy[f"{topic}_news_{doc_pair['news']}"] = newsdoc
+            docid2spacy[f"{topic}_science_{doc_pair['science']}"] = scidoc
 
 
     logger.info("Locate predictions")
@@ -70,13 +72,27 @@ def compare(pklfile: str, task_group: List[Task]):
 
             news_id = int(doc_ids[newsmention].split("_")[2])
             sci_id = int(doc_ids[scimention].split("_")[2])
-            newsdoc = docid2spacy[doc_ids[newsmention]]
-            scidoc = docid2spacy[doc_ids[scimention]]
 
-            news_tokens = newsdoc[starts[newsmention]:ends[newsmention]+1]
+            print(news_id, doc_ids[newsmention])
+            newsdoc = docid2spacy.get(doc_ids[newsmention])
+            scidoc = docid2spacy.get(doc_ids[scimention])
+
+            if newsdoc is None or scidoc is None:
+                print(f"Can't find docid2spacy for {doc_ids[newsmention]}->{doc_ids[scimention]}")
+                continue
+
+
+            news_tokens = [tok for tok in newsdoc if not tok.is_space][starts[newsmention]:ends[newsmention]+1]
             #print("news spacy:",news_tokens)
             #print("news model:",documents[doc_ids[newsmention]][starts[newsmention]:ends[newsmention]+1])
+
+            if len(news_tokens) < 1:
+                print("Out of bounds news mention")
+                continue
+
+            
             news_start = news_tokens[0].idx
+            
             #print(news_tokens[0])
             
             news_end = news_tokens[-1].idx + len(news_tokens[-1])
@@ -84,7 +100,7 @@ def compare(pklfile: str, task_group: List[Task]):
             #print(news_start, news_end)
             news_text = f"{newsdoc.text[news_start:news_end]};{news_start};{news_end}"
 
-            sci_tokens = scidoc[starts[scimention]:ends[scimention]+1]
+            sci_tokens = [tok for tok in scidoc if not tok.is_space][starts[scimention]:ends[scimention]+1]
             #print("sci spacy:",sci_tokens)
             #print("sci model:",documents[doc_ids[scimention]][starts[scimention]:ends[scimention]+1])
             sci_start = sci_tokens[0].idx

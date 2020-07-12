@@ -7,6 +7,8 @@ import json
 import os
 import random
 import itertools
+import html
+
 from tqdm.auto import tqdm
 from typing import List, Optional, Iterator, Dict
 from cdcrapp.model import Task, UserTask, NewsArticle, SciPaper
@@ -29,10 +31,14 @@ def map_pairs(task_group: List[Task], coref_chains: Dict[tuple, int]):
 
     for task in task_group:
 
-        _,start,end = task.news_ent.split(";")
+        try:
+            _,start,end = task.news_ent.split(";")
+            start = int(start)
+            end = int(end)
+        except ValueError as e:
+            print(f"Failed to split ent {task.sci_ent}")
+            continue
 
-        start = int(start)
-        end = int(end)
 
         cluster_id = coref_chains[("news", task.news_ent)]
 
@@ -40,9 +46,13 @@ def map_pairs(task_group: List[Task], coref_chains: Dict[tuple, int]):
         # append the mention and ID
         news_bounds.append((start,end, cluster_id))
 
-        _,start,end = task.sci_ent.split(";")
-        start = int(start)
-        end = int(end)
+        try:
+            _,start,end = html.unescape(task.sci_ent).split(";")
+            start = int(start)
+            end = int(end)
+        except ValueError as e:
+            print(f"Failed to split ent {task.sci_ent}")
+            continue
 
         cluster_id = coref_chains[("sci", task.sci_ent)]
 
