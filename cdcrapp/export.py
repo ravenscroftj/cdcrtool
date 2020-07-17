@@ -35,7 +35,7 @@ def map_pairs(task_group: List[Task], coref_chains: Dict[tuple, int]):
             _,start,end = task.news_ent.split(";")
             start = int(start)
             end = int(end)
-        except ValueError as e:
+        except ValueError:
             print(f"Failed to split ent {task.sci_ent}")
             continue
 
@@ -196,37 +196,40 @@ def generate_coref_chains(task_items: List[tuple]):
 
             resolved_se = False
             resolved_ne = False
-            for chain in groupchains:
-                if is_coref:
-                    if (ne_id in chain) or (se_id in chain):
-                        chain.add(ne_id)
-                        chain.add(se_id)
-                        resolved_se = True
-                        resolved_ne = True
-                
-                # else is_coref = False
-                else:
-                    if ne_id in chain:
-                        resolved_ne = True
-                    # controversially not an elif because someone else might have linked these two things
-                    if se_id in chain:
-                        resolved_se = True
+            related_chains = set()
+
+            for i, chain in enumerate(groupchains):
+
+                if ne_id in chain:
+                    resolved_ne = True
+                    related_chains.add(i)
+                # controversially not an elif because someone else might have linked these two things
+                if se_id in chain:
+                    resolved_se = True
+                    related_chains.add(i)
                     
                 if resolved_ne and resolved_se:
                     break
 
-            if is_coref and not (resolved_ne or resolved_se):
-                groupchains.append(set([ne_id, se_id]))
-                resolved_ne = True
-                resolved_se = True
+            if is_coref:
+                    
+                merge_set = set([ne_id, se_id])
+                # it's important we sort descending so that we don't pop stuff we need and get off by 1 errors
+                for chain_id in sorted(related_chains, reverse=True):
+                    merge_set = merge_set.union(groupchains.pop(chain_id))
+
+                groupchains.append(merge_set)
+
 
             if not(resolved_ne or is_coref):
                 groupchains.append(set([ne_id]))
 
             if not (resolved_se or is_coref):
                 groupchains.append(set([se_id]))
+                
             
         # end for task in tasks
+
 
         mention_map = {}
         for chain in groupchains:
@@ -333,7 +336,7 @@ def generate_json_maps(task_items: List[tuple], nlp: spacy.language.Language) ->
     # end topic loop
     return doc_map, entities
 
-def test_train_split(task_map_items: List[tuple], split:float, seed:int):
+def test_train_split(task_map_items: List[tuple], train_split:float, dev_split, seed:int):
     """Split a list of tasks pseudo-randomly"""
 
 
@@ -342,9 +345,10 @@ def test_train_split(task_map_items: List[tuple], split:float, seed:int):
     print(f"Found {len(task_map_items)} containing {task_count} tasks")
 
     # work out the split
-    train_amt = int(task_count * split)
+    train_amt = int(task_count * train_split)
+    dev_amt = int(task_count * dev_split)
 
-    print(f"Split into {train_amt} and {task_count-train_amt} or near as possible")
+    print(f"Split into {train_amt} training samples, {dev_amt} dev and {task_count-train_amt-dev_amt} test or near as possible")
 
     random.seed(seed)
     random.shuffle(task_map_items)
@@ -353,21 +357,26 @@ def test_train_split(task_map_items: List[tuple], split:float, seed:int):
     train_set = []
     train_task_count = 0
     test_set = []
+    dev_task_count = 0
+    dev_set = []
 
     for topic_id, tasklist in task_map_items:
         
         if train_task_count < train_amt:
             train_set.append((topic_id, tasklist))
             train_task_count += len(tasklist)
+        elif dev_task_count < dev_amt:
+            dev_set.append((topic_id, tasklist))
+            dev_task_count += len(tasklist)
         else:
             test_set.append((topic_id, tasklist))
 
-    return train_set, test_set
+    return train_set, dev_set, test_set
 
 
 
 
-def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
+def export_to_json(tasks: List[Task], output_file: str, train_split:float, dev_split:float, seed:int):
     """Export to JSON format compatible with Arie's coref model"""
 
     # first we generate arrays of words within files
@@ -380,7 +389,7 @@ def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
     # build coref chains
 
 
-    train_set, test_set = test_train_split(task_map_items, split, seed)
+    train_set, dev_set, test_set = test_train_split(task_map_items, train_split, dev_split, seed)
 
     outdir = os.path.dirname(output_file)
     basename = os.path.basename(output_file)
@@ -389,7 +398,7 @@ def export_to_json(tasks: List[Task], output_file: str, split:float,seed:int):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    for split_name, items in zip(['train', 'test'], [train_set, test_set]):
+    for split_name, items in zip(['train', 'test', 'dev'], [train_set, test_set, dev_set]):
         outfile = os.path.join(outdir, f"{namestub}_{split_name}{ext}")
         entfile = os.path.join(outdir, f"{namestub}_{split_name}_entities{ext}")
 
@@ -446,7 +455,7 @@ def generate_joshi_jsondocs(task_map_items, tokenizer: BertTokenizerFast, nlp: s
 
 
 
-def export_to_joshi(tasks: List[Task], output_file: str, split:float,seed:int):
+def export_to_joshi(tasks: List[Task], output_file: str, train_split:float, dev_split:float, seed:int):
     """Export to JOSHI jsonlines format"""
 
     nlp = spacy.load('en', disable=['textcat'])
@@ -460,16 +469,17 @@ def export_to_joshi(tasks: List[Task], output_file: str, split:float,seed:int):
 
     task_map_items = map_and_sort(tasks)
 
-    train_set, test_set = test_train_split(task_map_items, split, seed)
+    train_set, dev_set, test_set = test_train_split(task_map_items, train_split, dev_split, seed)
 
     basedir = os.path.dirname(output_file)
     basename = os.path.basename(output_file)
     namestub, ext = os.path.splitext(basename)
 
+    devname = os.path.join(basedir, f"{namestub}_dev{ext}")
     testname = os.path.join(basedir, f"{namestub}_test{ext}")
     trainname = os.path.join(basedir, f"{namestub}_train{ext}")
 
-    for taskset, outname in zip([train_set, test_set], [trainname, testname]):
+    for taskset, outname in zip([train_set, dev_set, test_set], [trainname, devname, testname]):
 
         with open(outname,"w") as f:
 

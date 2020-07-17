@@ -2,16 +2,74 @@
 
 import pickle
 import json
+from typing import List
+import itertools
+import os
 import math
+import spacy
 import pandas as pd
 import streamlit as st 
 from collections import defaultdict
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from cdcrapp.services import UserService, TaskService
+from cdcrapp.model import Task, NewsArticle, SciPaper
 
 FILE_ID_COLUMN = 2
 SENT_ID_COLUMN = 3
 TOK_ID_COLUMN = 4
 TOK_TEXT_COLUMN = 5
 CLUSTER_SIGNAL_COLUMN = 7
+
+@st.cache(allow_output_mutation=True)
+def load_spacy():
+    return spacy.load('en_core_web_sm')
+
+@st.cache(allow_output_mutation=True)
+def get_sql_engine():
+    return create_engine(os.getenv("SQLALCHEMY_DB_URI"))
+
+load_dotenv()
+_engine = get_sql_engine()
+_usersvc : UserService = UserService(_engine)
+_tasksvc : TaskService = TaskService(_engine)
+_nlp : spacy.language.Language = load_spacy()
+
+def msig(mention) -> tuple:
+    """Return mention signature for given mention"""
+    return mention[0][0], mention[0][1], mention[-1][1]
+
+def muc_score(gt_clusters, pred_clusters):
+    """Calculate MUC score - based on number of links between entities"""
+
+    actual = set()
+    pred = set()
+
+    for cluster in gt_clusters.values():
+        for m1,m2 in itertools.combinations(cluster,2):
+            actual.add((msig(m1),msig(m2)))
+
+    for cluster in pred_clusters.values():
+        for m1,m2 in itertools.combinations(cluster,2):
+            pred.add((msig(m1),msig(m2)))
+
+    if len(actual) == 0:
+        recall = 1
+    else:
+        recall = len(pred.intersection(actual)) / len(actual)
+    
+    if len(pred) == 0:
+        precision = 1
+    else:
+        precision = len(pred.intersection(actual)) / len(pred)
+
+    if recall + precision == 0:
+        f1 = 0
+    else:
+        f1 = 2 * recall * precision / (recall + precision)
+
+    return recall, precision, f1
+    
 
 def parse_conll(file):
 
@@ -65,7 +123,6 @@ def generate_cluster_table(clusters):
     for cluster_id, cluster in clusters.items():
         #print(cluster)
         if len(cluster[0]) < 1:
-            print(cluster_id)
             continue
         for mention in cluster:
             rows.append([cluster_id, mention[0][0], mention[0][1], mention[-1][1], " ".join([tok[2] for tok in mention]) ])
@@ -131,14 +188,18 @@ def analyse_clusters(gt_clusters, pred_clusters):
                 correct_cross += 1
             
             correct += 1
-            print("------------------------------------------------")
-            print(gt_neighbours,"\n---\n", pred_neighbours)
+            #print("------------------------------------------------")
+            #print(gt_neighbours,"\n---\n", pred_neighbours)
 
-    st.markdown(f"## Coreference Resolution")
+    st.markdown(f"## Coreference Resolution\n\n### Absolute Performance")
 
     st.text(f"Correct co-reference chains: {correct}/{len(correct_mentions )} ({round(correct/len(correct_mentions )*100, 2)}%)")
     st.text(f"Total intra-document chains: {total_intra} Correct intra-document chains: {correct_intra} ({round(correct_intra/total_intra,2)}%)")
     st.text(f"Total cross-document chains: {total_cross} Correct cross-document chains: {correct_cross} ({round(correct_cross/total_cross,2)}%)")
+
+    recall, precision, f1 = muc_score(gt_clusters, pred_clusters)
+
+    st.markdown(f"### MUC Performance \n Recall: {recall}\n\n Precision: {precision}\n\n F1:{f1}")
 
 
 def render_clusters(cluster_ids, clusters, title):
@@ -147,7 +208,6 @@ def render_clusters(cluster_ids, clusters, title):
         mentions = []
         markdown += f" - {cluster_id}\n"
         for mention in clusters[cluster_id]:
-            print(mention)
             doc = mention[0][0]
             markdown += f"   - {' '.join([word[2] for word in mention])} ({doc})\n" 
     
@@ -155,11 +215,35 @@ def render_clusters(cluster_ids, clusters, title):
     
 
 
+def map_tasks_to_mentions(tasks: List[Task], newsdoc: spacy.tokens.doc.Doc, scidoc: spacy.tokens.doc.Doc):
+
+    taskmap = {}
+
+
+    for task in tasks:
+        _, start, end = task.news_ent.split(";")
+        start = int(start)
+        end = int(end)
+
+        news_words = []
+        sci_words = []
+        for doc, dtype in ((newsdoc,'news'), (scidoc,'science')):
+            for word in doc:
+
+                if word.idx >= start:
+                    taskmap[(dtype, word.i)] = task.hash
+                
+                if len(word) + word.idx >= end:
+                    break
+
+    return taskmap 
+
+
+
 def deep_dive(gt_clusters, results_clusters, gt_documents, results_documents):
     """Deep dive on specific documents"""
 
     doc_ids = list(gt_documents.keys())
-
 
     gt_chain_by_doc = defaultdict(lambda: set())
 
@@ -176,57 +260,180 @@ def deep_dive(gt_clusters, results_clusters, gt_documents, results_documents):
 
     selected_doc = st.sidebar.selectbox("Select document", doc_ids)
 
+    pair_doc = None
+    topic = selected_doc.split("_")[0]
+    for doc in doc_ids:
+        if doc.startswith(topic) and doc != selected_doc:
+            pair_doc = doc
+            break
+
+    if "news" in selected_doc:
+        news_id = selected_doc.split("_")[2]
+        sci_id = pair_doc.split("_")[2]
+    else:
+        sci_id = selected_doc.split("_")[2]
+        news_id = pair_doc.split("_")[2]
+    
+    with _tasksvc.session() as session:
+        tasks = session.query(Task).filter(Task.news_article_id==news_id, Task.sci_paper_id==sci_id, Task.is_bad == False).all()
+        news_db_obj = session.query(NewsArticle).get(news_id)
+        sci_db_obj = session.query(SciPaper).get(sci_id)
+
+        newsdoc = _nlp(news_db_obj.summary)
+        scidoc = _nlp(sci_db_obj.abstract)
+        
+        #taskmap = map_tasks_to_mentions(tasks, newsdoc, scidoc)
+        
+
     text = gt_documents[selected_doc]
 
-    selected_clusterset = st.sidebar.selectbox("Cluster set", ["Ground Truth","Predicted"])
+    selected_clusterset = st.sidebar.selectbox("Cluster set", ["Both", "Ground Truth","Predicted"])
+
+    gt_cluster_ids = list(gt_chain_by_doc[selected_doc]) + list(gt_chain_by_doc[pair_doc]) 
+    gt_doc_clusters = {cluster_id: gt_clusters[cluster_id] for cluster_id in gt_cluster_ids}
+
+    pred_cluster_ids = list(pred_chain_by_doc[selected_doc]) + list(pred_chain_by_doc[pair_doc])
+    pred_doc_clusters = {cluster_id: results_clusters[cluster_id] for cluster_id in pred_cluster_ids}
+
 
     if selected_clusterset == "Ground Truth":
-        cluster_ids = list(gt_chain_by_doc[selected_doc])
-        cluster_collection = gt_clusters
+        render_clusterlist = [gt_doc_clusters]
+    elif selected_clusterset == "Predicted":
+        render_clusterlist = [{}, pred_doc_clusters]
     else:
-        cluster_ids = list(pred_chain_by_doc[selected_doc])
-        cluster_collection = results_clusters
+        render_clusterlist = [gt_doc_clusters, pred_doc_clusters]
 
-    selected_clusters = st.sidebar.selectbox("Render clusters", ["All"] + cluster_ids)
-
-    if selected_clusters == "All":
-        sel_clusters = {cluster_id: cluster_collection[cluster_id] for cluster_id in cluster_ids}
-    else:
-        sel_clusters = {selected_clusters: cluster_collection[selected_clusters]}
-
-    render_doc(selected_doc, text, sel_clusters)
+    render_doc(selected_doc, text, render_clusterlist)
 
     #st.markdown("### Selected doc \n\n" + " ".join(text))
 
-    print(selected_doc)
-
-    topic = selected_doc.split("_")[0]
-
-    for doc in doc_ids:
-        if doc.startswith(topic) and doc != selected_doc:
-            render_doc(doc, gt_documents[doc], sel_clusters)
-            break
-
+    if pair_doc != None:
+        render_doc(pair_doc, gt_documents[doc], render_clusterlist)
 
     render_clusters(gt_chain_by_doc[selected_doc], gt_clusters, "Ground Truth Clusters")
-    render_clusters(pred_chain_by_doc[selected_doc], results_clusters, "Predicted Clusters")
+    render_clusters(pred_chain_by_doc[selected_doc], results_clusters,"Predicted Clusters")
 
-def render_doc(doc_id, doc_characters, clusters):
+    gt = {cluster_id: gt_clusters[cluster_id] for cluster_id in gt_chain_by_doc[selected_doc]}
+    pred = {cluster_id: results_clusters[cluster_id] for cluster_id in pred_chain_by_doc[selected_doc]}
+
+    recall, precision, f1 = muc_score(gt, pred)
+
+    st.markdown(f"MUC Recall: {recall}, MUC Precision: {precision}, MUC F1: {f1}")
+
+    st.header("Review")
+
+    ent1 = st.selectbox("Cluster",["---"] + gt_cluster_ids)
+    #ent2 = st.selectbox("Cluster 2",["---"] + gt_cluster_ids)
+
+    if ent1 != "---":
+        news_words = [word for word in newsdoc if not word.text.strip() == ""]
+        sci_words = [word for word in scidoc if not word.text.strip() == ""]
+
+
+        doc_ents = []
+
+        for mention in gt_clusters[ent1]:
+            if "news" in mention[0][0]:
+                doc = newsdoc
+                words = news_words
+            else:
+                doc = scidoc
+                words = sci_words
+            start_idx = int(mention[0][1])
+            end_idx = int(mention[-1][1])
+            ent_words = words[start_idx:end_idx+1]
+            text = " ".join([w.text for w in ent_words])
+
+            start_offset = ent_words[0].idx
+            end_offset = ent_words[-1].idx + len(ent_words[-1])
+            text  = doc.text[start_offset:end_offset]
+            
+            ent = f"{text};{start_offset};{end_offset}"
+
+            doc_ents.append((mention[0][0],ent))
+
+        task_map = {(task.news_ent,task.sci_ent):task for task in tasks}
+
+        rows = []
+
+        #print(task_map)
+
+
+        for dent1, dent2 in itertools.combinations(doc_ents, 2):
+
+            if ("news" in dent1[0] and "news" in dent2[0]) or ("science" in dent1[0] and "science" in dent2[0]):
+                continue
+            elif "news" in dent1[0]:
+                news_ent = dent1
+                sci_ent = dent2
+            else:
+                news_ent = dent2
+                sci_ent = dent1
+            
+            print(news_ent[1], sci_ent[1])
+            task = task_map.get((news_ent[1], sci_ent[1]))
+
+
+            if task:
+                rows.append((task.id, task.hash, news_ent[1], sci_ent[1]))
+
+        df = pd.DataFrame(rows, columns=['Task ID', 'Task Hash', 'News Entity', 'Science Entity'])
+            
+
+        st.table(df)
+
+
+
+
+
+def blend_colours(col1, col2):
+    """Take the average of 2 colours"""
+
+    newcol = []
+
+    if col1.startswith("#"):
+        col1 = col1[1:]
+
+    if col2.startswith("#"):
+        col2 = col2[1:]
+    
+    for s,e in [(0,2),(2,4),(4,6)]:
+        tone1 = int(col1[s:e],16)
+        tone2 = int(col2[s:e],16)
+
+        middle = (max(tone1,tone2) - min(tone1,tone2)) // 2
+
+        halfway = min(tone1,tone2) + middle
+
+        newcol.append(hex(halfway)[2:].rjust(2,'0'))
+
+    return "#"+"".join(newcol)
+
+
+
+def render_doc(doc_id, doc_characters, cluster_sets):
 
     tok_map = {}
 
-    for cluster_id, cluster in clusters.items():
-        for mention in cluster:
-            for tok in mention:
-                if tok[0] == doc_id:
-                    tok_map[int(tok[1])] = cluster_id
+    colours = ['#fcf8e3','#9fc9ff']
+
+    for clusters, colour in zip(cluster_sets, colours):
+        for cluster_id, cluster in clusters.items():
+            for mention in cluster:
+                for tok in mention:
+                    if tok[0] == doc_id:
+                        if int(tok[1]) in tok_map:
+                            prev_cluster,prev_color = tok_map[int(tok[1])] 
+                            tok_map[int(tok[1])] = (cluster_id + "|" + prev_cluster, blend_colours(colour, prev_color))
+                        else:
+                            tok_map[int(tok[1])] = (cluster_id, colour)
     
 
     markdown = f"### {doc_id}\n\n"
 
     for i, tok in enumerate(doc_characters):
         if (i in tok_map) and ((i-1) not in tok_map):
-            markdown += f"<mark>(**{tok_map[i]}**)"
+            markdown += f"<mark style='background-color: {tok_map[i][1]}'>(**{tok_map[i][0]}**)"
         
         markdown += " " + tok
 

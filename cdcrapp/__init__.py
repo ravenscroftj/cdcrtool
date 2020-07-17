@@ -165,19 +165,20 @@ def export_conll(ctx: CLIContext, json_file: str, output_file:str):
 @cli.command()
 @click.argument("json_file", type=click.Path(exists=False))
 @click.option("--seed", type=int, default=42)
-@click.option("--split", type=float, default=0.7)
+@click.option("--train-split", type=float, default=0.6)
+@click.option("--dev-split", type=float, default=0.2)
 @click.option("--exclude-user", type=int, multiple=True )
 @click.option("--min-coverage", type=float, default=None)
 @click.pass_obj
-def export_json(ctx: CLIContext, json_file:str, seed:int, split:float, exclude_user: List[int], min_coverage: Optional[float]):
+def export_json(ctx: CLIContext, json_file:str, seed:int, train_split:float, dev_split:float, exclude_user: List[int], min_coverage: Optional[float]):
     """Export json to conll format"""
     
 
     t = ctx.tasksvc.get_annotated_tasks(exclude_users=exclude_user, min_coverage=min_coverage)
-
+    
     from cdcrapp.export import export_to_json
 
-    export_to_json(t, json_file, split=split, seed=seed)
+    export_to_json(t, json_file, train_split=train_split, dev_split=dev_split, seed=seed)
 
 
 @cli.command()
@@ -283,14 +284,15 @@ def count_mentions(json_dir):
 @cli.command()
 @click.argument("json_file", type=click.Path(exists=False))
 @click.option("--seed", type=int, default=42)
-@click.option("--split", type=float, default=0.7)
+@click.option("--train-split", type=float, default=0.6)
+@click.option("--dev-split", type=float, default=0.2)
 @click.pass_obj
-def export_joshi(ctx: CLIContext, json_file:str, seed:int, split:float):
+def export_joshi(ctx: CLIContext, json_file:str, seed:int, train_split:float, dev_split:float):
     t = ctx.tasksvc.get_annotated_tasks()
 
     from .export import export_to_joshi
 
-    export_to_joshi(t, json_file, split, seed)
+    export_to_joshi(t, json_file, train_split, dev_split, seed)
 
 @cli.command()
 @click.argument("sheet_id", type=str)
