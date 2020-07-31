@@ -154,12 +154,15 @@ class UserService(DBServiceBase):
 
                 yield row
 
-    def get_fleiss_iaa(self) -> float:
+    def get_fleiss_iaa(self, just_difficult=False) -> float:
 
         with self.session() as session:
             q = session.query(UserTask)\
                 .join(User)\
                 .join(UserTask.task)
+
+            if just_difficult:
+                q = q.filter(UserTask.task_id.in_(session.query(Task.id).filter(Task.is_difficult)))
 
             all_data = defaultdict(lambda: list())
 

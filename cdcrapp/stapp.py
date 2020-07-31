@@ -108,11 +108,48 @@ class CDCRTool():
     def init_ui(self):
         self.display_admin_panel()
 
+
+    def show_iaa(self):
+        """Show stuff related to IAA"""
+
+        st.markdown("## User Statistics")
+
+
+        user_stats = pd.DataFrame(data=_usersvc.get_user_statistics(), columns=['Username', 'yes', 'no'])
+
+        st.dataframe(user_stats)
+
+        st.markdown("## Multi Annotator IAA (Fleiss' Kappa)")
+
+        just_difficult = st.checkbox(label="Just show IAA for difficult tasks")
+
+        iaa_table = pd.DataFrame(data=_usersvc.get_fleiss_iaa(just_difficult=just_difficult), columns=['Group', 'Samples', 'Fleiss IAA Score'])
+        
+        st.dataframe(iaa_table)
+
+        
+        st.markdown("## Pairwise IAA (Cohen's Kappa) \n\nSelect users to compare")
+
+        
+        users = self.user_list()
+        
+        username_a = st.selectbox(label="User A", options=users)
+        username_b = st.selectbox(label="User B", options=users)
+        
+        if username_a != "---" and username_b != "---":
             
-    def display_admin_panel(self):
+            if username_a == username_b:
+                st.markdown("You can't compare the user against themselves")
+            else:
+            
+                iaa = _usersvc.get_pairwise_iaa(username_a,username_b)
+            
+                st.markdown(f"IAA {username_a} <-> {username_b}: {iaa}")        
         
-        st.markdown("# Admin View")
-        
+                
+        st.markdown(IAA_GUIDE)
+
+    def show_progress(self):
         # get user performance
         
         progress = _usersvc.get_all_user_progress()
@@ -148,42 +185,7 @@ class CDCRTool():
         st.markdown("### BERT Similarity distribution of Tasks")
         st.pyplot()
 
-
-
-        st.markdown("## User Statistics")
-
-        user_stats = pd.DataFrame(data=_usersvc.get_user_statistics(), columns=['Username', 'yes', 'no'])
-
-        st.dataframe(user_stats)
-
-        st.markdown("## Multi Annotator IAA (Fleiss' Kappa)")
-
-        iaa_table = pd.DataFrame(data=_usersvc.get_fleiss_iaa(), columns=['Group', 'Samples', 'Fleiss IAA Score'])
-        
-        st.dataframe(iaa_table)
-
-        
-        st.markdown("## Pairwise IAA (Cohen's Kappa) \n\nSelect users to compare")
-
-        
-        users = self.user_list()
-        
-        username_a = st.selectbox(label="User A", options=users)
-        username_b = st.selectbox(label="User B", options=users)
-        
-        if username_a != "---" and username_b != "---":
-            
-            if username_a == username_b:
-                st.markdown("You can't compare the user against themselves")
-            else:
-            
-                iaa = _usersvc.get_pairwise_iaa(username_a,username_b)
-            
-                st.markdown(f"IAA {username_a} <-> {username_b}: {iaa}")        
-        
-                
-        st.markdown(IAA_GUIDE)
-
+    def do_bad_task_management(self):
 
         st.markdown("## Bad Tasks")
 
@@ -225,6 +227,24 @@ class CDCRTool():
                     _tasksvc.remove_tasks_by_doc_ids(task.news_article_id, task.sci_paper_id)
 
                     st.markdown("Removed the task.")
+
+            
+    def display_admin_panel(self):
+        
+        st.markdown("# Admin View")
+
+        nav = st.sidebar.selectbox(label="View",options=['Progress','IAA','Bad Tasks'])
+
+        if nav == 'Progress':
+            self.show_progress()
+
+        elif nav == 'IAA':
+            self.show_iaa()
+
+        elif nav == 'Bad Tasks':
+            self.do_bad_task_management()
+
+
 
 
 

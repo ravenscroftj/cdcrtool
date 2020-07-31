@@ -40,35 +40,76 @@ def msig(mention) -> tuple:
     return mention[0][0], mention[0][1], mention[-1][1]
 
 def muc_score(gt_clusters, pred_clusters):
-    """Calculate MUC score - based on number of links between entities"""
-
-    actual = set()
-    pred = set()
-
-    for cluster in gt_clusters.values():
-        for m1,m2 in itertools.combinations(cluster,2):
-            actual.add((msig(m1),msig(m2)))
-
-    for cluster in pred_clusters.values():
-        for m1,m2 in itertools.combinations(cluster,2):
-            pred.add((msig(m1),msig(m2)))
-
-    if len(actual) == 0:
-        recall = 1
-    else:
-        recall = len(pred.intersection(actual)) / len(actual)
+    """Calculate MUC score - based on number of links between entities
     
-    if len(pred) == 0:
-        precision = 1
-    else:
-        precision = len(pred.intersection(actual)) / len(pred)
+    MUC/CONLL co-reference scoring algorithm based on 
+    https://www.cs.cmu.edu/~hovy/papers/14ACL-coref-scoring-standard.pdf
+    
+    """
 
-    if recall + precision == 0:
+    R_num = 0
+    R_denom = 0
+
+    
+    # in the Hovy paper, gt_clusters is 'K'
+    for cluster in gt_clusters.values():
+
+        gt_cluster_sigs = set([msig(mention) for mention in cluster])
+
+        R_denom += len(gt_cluster_sigs) -1
+
+        intersecting = 0
+        remaining = set(gt_cluster_sigs)
+        for pcluster in pred_clusters.values():
+            pt_cluster_sigs = set([msig(mention) for mention in pcluster])
+
+
+            if len(gt_cluster_sigs.intersection(pt_cluster_sigs)) > 0:
+                remaining -= gt_cluster_sigs.intersection(pt_cluster_sigs)
+                intersecting += 1
+
+        # mop up singletons and spurious mentions
+        intersecting += len(remaining)
+
+        R_num += (len(gt_cluster_sigs) - intersecting)
+
+    P_num = 0
+    P_denom = 0
+
+
+    for pcluster in pred_clusters.values():
+        pt_cluster_sigs = set([msig(mention) for mention in pcluster])
+
+        P_denom += len(pt_cluster_sigs) - 1
+
+        intersecting = 0
+        remaining = set(pt_cluster_sigs)
+        for cluster in gt_clusters.values():
+            gt_cluster_sigs = set([msig(mention) for mention in cluster])
+
+            if len(gt_cluster_sigs.intersection(pt_cluster_sigs)) > 0:
+                remaining -= gt_cluster_sigs.intersection(pt_cluster_sigs)
+                intersecting += 1
+        # mop up singletons and spurious mentions
+        intersecting += len(remaining)
+        
+        print(f"({len(pt_cluster_sigs)}-{intersecting})")
+        print(f"{len(pt_cluster_sigs)} - 1")
+        P_num += (len(pt_cluster_sigs) - intersecting)
+
+    
+    R = R_num / R_denom if R_denom > 0 else 0
+    P = P_num / P_denom if P_denom > 0 else 0
+
+    print("recall:", R)
+    print("precision:", P)
+
+    if R + P == 0:
         f1 = 0
     else:
-        f1 = 2 * recall * precision / (recall + precision)
+        f1 = 2 * R * P / (R+P)
 
-    return recall, precision, f1
+    return R,P,f1
     
 
 def parse_conll(file):
