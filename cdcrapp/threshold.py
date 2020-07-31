@@ -12,7 +12,7 @@ from export import get_next_cluster_id
 
 from ingest import tokenizer,model,get_tokens_by_offset,cosine
 
-def predict_threshold(data_file, threshold=0.6):
+def predict_threshold(data_file, threshold=0.65):
     """Given a data file, make a series of predictions"""
 
     with open(data_file,"r") as f:

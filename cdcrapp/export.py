@@ -147,7 +147,7 @@ def export_to_conll(input_file:str, output_file: str):
             else:
                 ent_map_val = "-"
 
-            ent_map[(ent['doc_id'], ent['sentence_id'], tok_id)] = ent_map_val
+            ent_map[(ent['doc_id'], tok_id)] = ent_map_val
     
     with open(output_file, "w") as fp:
         fp.write("#begin document test_entities\n")
@@ -158,11 +158,11 @@ def export_to_conll(input_file:str, output_file: str):
             topic_id = doc_id.split("_")[0]
             subtopic_id = f"{topic_id}_0"
 
+            open_clusters = []
+
             for sent_id, word_id, word, flag in doc:
 
-                coref_val = ent_map.get((doc_id, sent_id, word_id), "-")
-
-                
+                coref_val = ent_map.get((doc_id, word_id), "-")                
 
                 row = [topic_id, subtopic_id, doc_id, str(sent_id), str(word_id), word, str(flag), coref_val]
 
@@ -376,7 +376,7 @@ def test_train_split(task_map_items: List[tuple], train_split:float, dev_split, 
 
 
 
-def export_to_json(tasks: List[Task], output_file: str, train_split:float, dev_split:float, seed:int):
+def export_to_json(tasks: List[Task], output_dir: str, train_split:float, dev_split:float, seed:int):
     """Export to JSON format compatible with Arie's coref model"""
 
     # first we generate arrays of words within files
@@ -388,19 +388,16 @@ def export_to_json(tasks: List[Task], output_file: str, train_split:float, dev_s
 
     # build coref chains
 
-
     train_set, dev_set, test_set = test_train_split(task_map_items, train_split, dev_split, seed)
 
-    outdir = os.path.dirname(output_file)
-    basename = os.path.basename(output_file)
-    namestub, ext = os.path.splitext(basename)
+    ext = ".json"
 
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     for split_name, items in zip(['train', 'test', 'dev'], [train_set, test_set, dev_set]):
-        outfile = os.path.join(outdir, f"{namestub}_{split_name}{ext}")
-        entfile = os.path.join(outdir, f"{namestub}_{split_name}_entities{ext}")
+        outfile = os.path.join(output_dir, f"{split_name}{ext}")
+        entfile = os.path.join(output_dir, f"{split_name}_entities{ext}")
 
         doc_map, entities = generate_json_maps(items, nlp)
 
