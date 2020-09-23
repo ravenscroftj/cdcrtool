@@ -234,8 +234,17 @@ def analyse_clusters(gt_clusters, pred_clusters):
 
     st.markdown(f"## Coreference Resolution\n\n### Absolute Performance")
 
-    st.text(f"Correct co-reference chains: {correct}/{len(correct_mentions )} ({round(correct/len(correct_mentions )*100, 2)}%)")
-    st.text(f"Total intra-document chains: {total_intra} Correct intra-document chains: {correct_intra} ({round(correct_intra/total_intra,2)}%)")
+    if len(correct_mentions) > 0:
+        st.text(f"Correct co-reference chains: {correct}/{len(correct_mentions )} ({round(correct/len(correct_mentions )*100, 2)}%)")
+    else:
+        st.text(f"Correct co-reference chains: {correct}/{len(correct_mentions )} (0%)")
+    
+    if total_intra > 0:
+        st.text(f"Total intra-document chains: {total_intra} Correct intra-document chains: {correct_intra} ({round(correct_intra/total_intra,2)}%)")
+    else:
+        st.text(f"Total intra-document chains: {total_intra} Correct intra-document chains: {correct_intra} (0%)")
+
+
     st.text(f"Total cross-document chains: {total_cross} Correct cross-document chains: {correct_cross} ({round(correct_cross/total_cross,2)}%)")
 
     recall, precision, f1 = muc_score(gt_clusters, pred_clusters)

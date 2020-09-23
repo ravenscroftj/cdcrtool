@@ -12,7 +12,7 @@ import html
 from tqdm.auto import tqdm
 from typing import List, Optional, Iterator, Dict
 from cdcrapp.model import Task, UserTask, NewsArticle, SciPaper
-from collections import defaultdict, OrderedDict
+from collections import defaultdict, OrderedDict, Counter
 from urllib.parse import urlparse
 from transformers import BertModel, BertTokenizerFast
 
@@ -114,9 +114,34 @@ def map_and_sort(tasks: List[Task]) -> List[tuple]:
 
     return task_map_items
 
+def export_json_to_csv(json_dir:str, output_file: str):
+    """Given a JSON set of mentions, produce a CSV containing doc content"""
 
+    test_file = os.path.join(json_dir,"test.json")
+    train_file = os.path.join(json_dir,"train.json")
+    dev_file = os.path.join(json_dir,"dev.json")
 
-def export_to_conll(input_file:str, output_file: str):
+    total_docs = 0
+    with open(output_file,"w") as f:
+        import csv
+        csvw = csv.writer(f)
+
+        csvw.writerow(["Doc ID", "Doc Content"])
+
+        for file in [test_file,train_file,dev_file]:
+            print(f"Processing {file}")
+            with open(file) as f:
+                docs = json.load(f)
+
+                for docname, tokens in docs.items():
+                    words = " ".join(tok[2] for tok in tokens)
+
+                    csvw.writerow([docname, words])
+        
+        print("Done")
+    
+
+def export_to_conll(input_file:str, output_file: str, remove_singletons:bool=False):
     """Given a JSON formatted set of mentions, turn into CONLL notation"""
 
     # open the 'complete' json file
@@ -132,11 +157,20 @@ def export_to_conll(input_file:str, output_file: str):
 
     ent_map = {}
 
+
+
+    cluster_count = Counter([ent['cluster_id'] for ent in entities])
+
+
     for ent in entities:
 
         tok_total = len(ent['tokens_ids'])
         for i, tok_id in enumerate(ent['tokens_ids']):
             
+            # remove singleton entries
+            if cluster_count[ent['cluster_id']] == 1 and remove_singletons:
+                continue
+
             if i == 0 and tok_total == 1:
                 ent_map_val = f"({ent['cluster_id']})"
             elif i == 0:

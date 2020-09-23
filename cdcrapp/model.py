@@ -8,6 +8,8 @@ from datetime import datetime
 
 from flask_security import RoleMixin, UserMixin, current_user
 
+from collections import Counter
+
 Base = declarative_base()
 
 
@@ -119,6 +121,21 @@ class Task(Base):
     def sci_ents(self):
         base_query = Task.query.filter(Task.sci_paper_id==self.sci_paper_id)
         return list(set([t.sci_ent for t in base_query.all()]))
+
+    def get_best_answer(self):
+        """Use votes to work out which answer is most appropriate"""
+        
+        votes = Counter([ut.answer for ut in self.usertasks])
+
+        if len(votes) < 1:
+            return None
+
+        if votes['yes'] > votes['no']:
+            return 'yes'
+        else:
+            return 'no'
+
+        
 
     @property
     def related_answers(self):

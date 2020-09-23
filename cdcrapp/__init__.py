@@ -154,23 +154,24 @@ def rebalance_iaa(ctx: CLIContext, new_count: int):
 @cli.command()
 @click.argument("json_file", type=click.Path(exists=False))
 @click.argument("output_file", type=click.Path(exists=False))
+@click.option('--remove-singletons/--no-remove-singletons', default=False)
 @click.pass_obj
-def export_conll(ctx: CLIContext, json_file: str, output_file:str):
+def export_conll(ctx: CLIContext, json_file: str, output_file:str, remove_singletons=False):
     """Export tasks to conll format"""
 
     from cdcrapp.export import export_to_conll
 
-    export_to_conll(json_file, output_file)
+    export_to_conll(json_file, output_file, remove_singletons)
 
 @cli.command()
-@click.argument("json_file", type=click.Path(exists=False))
+@click.argument("json_dir", type=click.Path(exists=False))
 @click.option("--seed", type=int, default=42)
 @click.option("--train-split", type=float, default=0.6)
 @click.option("--dev-split", type=float, default=0.2)
 @click.option("--exclude-user", type=int, multiple=True )
 @click.option("--min-coverage", type=float, default=None)
 @click.pass_obj
-def export_json(ctx: CLIContext, json_file:str, seed:int, train_split:float, dev_split:float, exclude_user: List[int], min_coverage: Optional[float]):
+def export_json(ctx: CLIContext, json_dir:str, seed:int, train_split:float, dev_split:float, exclude_user: List[int], min_coverage: Optional[float]):
     """Export json to conll format"""
     
 
@@ -178,7 +179,7 @@ def export_json(ctx: CLIContext, json_file:str, seed:int, train_split:float, dev
     
     from cdcrapp.export import export_to_json
 
-    export_to_json(t, json_file, train_split=train_split, dev_split=dev_split, seed=seed)
+    export_to_json(t, json_dir, train_split=train_split, dev_split=dev_split, seed=seed)
 
 
     
@@ -265,6 +266,34 @@ def import_model_results(ctx: CLIContext, pkl_file:str):
                 print(f"Add new task {task.hash}")
 
 
+@cli.command()
+@click.argument("json_dir", type=click.Path(exists=True))
+@click.argument("csvname", type=click.Path(exists=False, file_okay=True))
+def export_doc_contents(json_dir, csvname):
+    """Return the total number of individual documents in exported corpus"""
+
+    from .export import export_json_to_csv
+
+    export_json_to_csv(json_dir, csvname)
+
+
+@cli.command()
+@click.argument("json_dir", type=click.Path(exists=True))
+def count_docs(json_dir):
+    """Return the total number of individual documents in exported corpus"""
+
+    test_file = os.path.join(json_dir,"test.json")
+    train_file = os.path.join(json_dir,"train.json")
+    dev_file = os.path.join(json_dir,"dev.json")
+
+    total_docs = 0
+    for file in [test_file,train_file,dev_file]:
+        with open(file) as f:
+            docs = json.load(f)
+            print(f"Found {len(docs)} docs in {file}")
+            total_docs += len(docs)
+
+    print(f"Total entities: {total_docs}")
 
 @cli.command()
 @click.argument("json_dir", type=click.Path(exists=True))
@@ -273,15 +302,85 @@ def count_mentions(json_dir):
 
     test_file = os.path.join(json_dir,"test_entities.json")
     train_file = os.path.join(json_dir,"train_entities.json")
+    dev_file = os.path.join(json_dir,"dev_entities.json")
 
     total_ents = 0
-    for file in [test_file,train_file]:
+    for file in [test_file,train_file,dev_file]:
         with open(file) as f:
             ents = json.load(f)
             print(f"Found {len(ents)} entities in {file}")
             total_ents += len(ents)
 
     print(f"Total entities: {total_ents}")
+
+@cli.command()
+@click.argument("json_dir", type=click.Path(exists=True))
+def count_clusters(json_dir):
+    """Return the total number of counts in the exported corpus"""
+
+    from collections import Counter
+
+    test_file = os.path.join(json_dir,"test_entities.json")
+    train_file = os.path.join(json_dir,"train_entities.json")
+    dev_file = os.path.join(json_dir,"dev_entities.json")
+
+    
+    total_ents = 0
+    for file in [test_file,train_file,dev_file]:
+        cluster_ids = []
+        with open(file) as f:
+            ents = json.load(f)
+            for ent in ents:
+                cluster_ids.append(ent['cluster_id'])
+
+            cids = Counter(cluster_ids)
+
+            non_singletons = [id for (id,count) in cids.items() if count > 1]
+            singletons = [id for (id,count) in cids.items() if count == 1]
+            print(f"Found {len(non_singletons)} clusters in {file}")
+            print(f"Found {len(singletons)} singletons in {file}")
+            total_ents += len(ents)
+
+    print(f"Total entities: {total_ents}")
+
+@cli.command()
+@click.argument("corpus_dir", type=click.Path(exists=True, dir_okay=True))
+@click.option("--priority", type=int, default=5)
+@click.pass_obj
+def prioritise_docs(ctx: CLIContext,corpus_dir: str, priority=5):
+    """Re-prioritise tasks in documents associated with the given json corpus"""
+
+    for fn in ['dev.json','train.json','test.json']:
+
+        news_docs = []
+        sci_docs = []
+
+        with open(os.path.join(corpus_dir, fn),'r') as f:
+            docs = json.load(f)
+
+            docnames = docs.keys()
+
+            for doc in docnames:
+                topic,doctype,docid = doc.split("_")
+
+                if doctype == "news":
+                    news_docs.append(int(docid))
+                else:
+                    sci_docs.append(int(docid))
+
+    print(f"Found {len(news_docs)} news docs and {len(sci_docs)} sci docs.")
+
+    with ctx.tasksvc.session() as session:
+        changes = session.query(Task)\
+          .filter(Task.news_article_id.in_(news_docs) | Task.sci_paper_id.in_(sci_docs))\
+          .update({"priority": priority}, synchronize_session=False)
+        print(f"Updated {changes} rows")
+        session.commit()
+
+
+    
+
+
 
 
 @cli.command()

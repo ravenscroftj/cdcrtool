@@ -229,8 +229,8 @@ class UserService(DBServiceBase):
         
         with self.session() as session:
             q = session.query(UserTask)\
-                .join(User)\
-                .join(Task)\
+                .join(UserTask.user)\
+                .join(UserTask.task)\
                 .filter(
                     (User.username==usernameA) | (User.username==usernameB),
                     Task.is_iaa == True
@@ -353,7 +353,7 @@ class TaskService(DBServiceBase):
                 if row['complete_percent'] >= min_coverage:
                     yield row
         
-    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None, exclude_users=[], min_coverage=None):
+    def get_annotated_tasks(self, limit:Optional[int]=None, offset:Optional[int]=None, exclude_users=[], min_coverage=None) -> List[Task]:
         """Select tasks that have been annotate by at least 1 user"""
 
         with self.session() as session:
@@ -383,12 +383,20 @@ class TaskService(DBServiceBase):
             q = session.query(UserTask.answer, func.count(UserTask.task_id.distinct())).join(Task).filter(~Task.is_bad).group_by(UserTask.answer)
             return(q.all())
             
-    def get_task_difficulty_dist(self) -> np.ndarray:
+    def get_task_difficulty_dist(self, answered=True, only_difficult=False) -> np.ndarray:
         """Return a distribution of difficulties"""
 
         with self.session() as session:
-            subq = session.query(UserTask.task_id.distinct())
-            q = session.query(Task).filter(Task.id.in_(subq), ~Task.is_bad)
+            
+
+            q = session.query(Task).filter(~Task.is_bad, Task.similarity != None)
+            
+            if only_difficult:
+                q = q.filter(Task.is_difficult==True)
+                
+            if answered:
+                subq = session.query(UserTask.task_id.distinct())
+                q = q.filter(Task.id.in_(subq))
 
             return np.array([t.similarity for t in q.all()])
 

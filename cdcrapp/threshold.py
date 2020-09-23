@@ -39,6 +39,7 @@ def predict_threshold(data_file, threshold=0.65):
     for topic, topic_pair in tqdm(topic_map.items()):
 
         groupchains = []
+        sentcache = {}
 
         mentions = [ (ent_id, ent) for ent_id, ent in enumerate(ents) if ent['doc_id'] in topic_pair]
 
@@ -48,25 +49,34 @@ def predict_threshold(data_file, threshold=0.65):
 
             sent1_len = sum([len(tok[2]) for tok in sent1])
             sent1_text = " ".join([tok[2] for tok in sent1])
-
             sent2_text = " ".join([tok[2] for tok in sent2])
 
+            s1id = (m1['doc_id'], m1['sentence_id'])
+            s2id = (m2['doc_id'], m2['sentence_id'])
+
+            #print(s1id,s2id)
+
             model_inputs = tokenizer.encode_plus(text=sent1_text, text_pair=sent2_text, 
-                add_special_tokens=True, 
-                return_offsets_mapping=True,
-                max_length=512,
-                truncation_strategy='only_second')
+                    add_special_tokens=True, 
+                    return_offsets_mapping=True,
+                    max_length=512,
+                    truncation_strategy='only_second')
 
-            # run single pass of BERT with both documents to get attention matrices
-            with torch.no_grad():
-                    hidden_state, out = model(
-                        input_ids=torch.tensor([model_inputs['input_ids']]).cuda(), 
-                        token_type_ids = torch.tensor([model_inputs['token_type_ids']]).cuda(),
-                        attention_mask = torch.tensor([model_inputs['attention_mask']]).cuda()
-                    )
+            if (s1id,s2id) not in sentcache:
 
-            state = hidden_state.squeeze()
+                # run single pass of BERT with both documents to get attention matrices
+                with torch.no_grad():
+                        hidden_state, out = model(
+                            input_ids=torch.tensor([model_inputs['input_ids']]).cuda(), 
+                            token_type_ids = torch.tensor([model_inputs['token_type_ids']]).cuda(),
+                            attention_mask = torch.tensor([model_inputs['attention_mask']]).cuda()
+                        )
 
+                state = hidden_state.squeeze()
+
+                sentcache[(s1id,s2id)] = hidden_state.squeeze()#state
+
+            state = sentcache[(s1id,s2id)]
             vectors = []
 
             for i, (mention, sent) in enumerate([(m1, sent1),(m2,sent2)]):
@@ -132,11 +142,11 @@ def predict_threshold(data_file, threshold=0.65):
     for ent_id, ent in enumerate(new_ents):
         ent['cluster_id'] = mention_map[ent_id]
 
-    with open("pred.json","w") as f:
+    with open("pred_entities.json","w") as f:
         json.dump(new_ents, f)
 
 
         
 if __name__ == "__main__":
 
-    predict_threshold(sys.argv[1])
+    predict_threshold(sys.argv[1], float(sys.argv[2]))
