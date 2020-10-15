@@ -18,7 +18,7 @@ UA_STRING = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefo
 
 site_patterns = {
     "bbc.co.uk": [".story-body__inner p",'div[data-component="text-block"] p',".story-inner p",],
-    "guardian": ".content__article-body p",
+    "guardian": ".content__standfirst p, .content__article-body p",
     "eurekalert": ".entry p",
     "nytimes": ".StoryBodyCompanionColumn p"
 }
@@ -33,7 +33,7 @@ def get_child_text(selection):
         #        for item in get_child_text([content]):
         #            yield item
 
-def get_body_text(url: str, css_selector: Union[str,List[str]], user_agent: str=UA_STRING) -> str:
+def get_body_text(url: str, css_selector: Union[str,List[str]], user_agent: str=UA_STRING, join_str: str=" ") -> str:
     r = requests.get(url, headers={
         "User-Agent": UA_STRING
     })
@@ -47,7 +47,7 @@ def get_body_text(url: str, css_selector: Union[str,List[str]], user_agent: str=
     for selector in css_selector:
 
         texts = get_child_text(bs.select(selector))
-        body_text = " ".join([t.strip() for t in texts])
+        body_text = join_str.join([t.strip() for t in texts])
         #body_text = re.sub(r"[^\S]+", " ", body_text)
 
         if len(body_text) > best_length:
@@ -65,7 +65,7 @@ def get_selector(url) -> str:
     
     return None
 
-def fetch_news_articles(urls: List[str], outfile: str, wait: int, user_agent:str=UA_STRING, legacy: List[int]=[]):
+def fetch_news_articles(urls: List[dict], outfile: str, wait: int, user_agent:str=UA_STRING):
 
     existing_docs = {}
     
@@ -79,9 +79,11 @@ def fetch_news_articles(urls: List[str], outfile: str, wait: int, user_agent:str
     
     start_time = time.time()
 
-    for i, url in enumerate(urls):
+    for i, item in enumerate(urls):
         avg_time = round((time.time() - start_time) / (i+1),2)
         remaining = math.floor(avg_time * (len(urls) - i - 1) / 60)
+
+        url = item['url']
 
         print(f"[{i+1}/{len(urls)}] Fetch content for {url}...")
         print(f"[{avg_time}s per article - est. {remaining} minutes remaining]")
@@ -90,9 +92,9 @@ def fetch_news_articles(urls: List[str], outfile: str, wait: int, user_agent:str
             print(f"Skipping content for existing doc {url}")
             continue
 
-        selector = get_selector(url)
+        selector = item.get('custom_selector') or get_selector(url)
 
-        if not selector or i in legacy:
+        if not selector or item.get('legacy',False):
             print(f"Using newspaper for {url}")
             article = Article(url)
             try:
@@ -102,7 +104,9 @@ def fetch_news_articles(urls: List[str], outfile: str, wait: int, user_agent:str
                 print(f"Failed to get {url}")
             existing_docs[url] = article.text
         else:
-            existing_docs[url] = get_body_text(url, selector, user_agent=user_agent)
+            existing_docs[url] = get_body_text(url, selector, 
+            user_agent=user_agent, 
+            join_str=item.get("text_join_str", " "))
 
         with open(outfile,'w') as f:
             json.dump(existing_docs, f, indent=2)
@@ -123,10 +127,6 @@ if __name__ == "__main__":
 
         # just get list of urls from id:{url:'...'} structure
         urls = [article['url'] for _, article in news_articles.items()]
-        legacy = [i for i, (_, article) in enumerate(news_articles.items()) 
-            if article.get('legacy', False)]
 
-        print(legacy)
-
-        fetch_news_articles(urls, args.output_file, args.wait, args.user_agent, legacy=legacy)
+        fetch_news_articles(news_articles.values(), args.output_file, args.wait, args.user_agent)
 # %%

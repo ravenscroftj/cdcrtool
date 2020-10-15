@@ -1,0 +1,1479 @@
+{
+  "2": {
+    "url": "http://m.bbc.co.uk/news/health-17221910",
+    "sha256": "8093e825025f0f1d2def35b594e8e6df5bb0cf4c834ae440b6382fb40203cb2a",
+    "legacy": false,
+    "strip_whitespace": false
+  },
+  "3": {
+    "url": "http://m.bbc.co.uk/news/health-17398746",
+    "sha256": "87bed7c75f844e651f6b5ead9b5c69338e64eec4cb8bc2095246773b1af9a7ca",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "4": {
+    "url": "http://m.bbc.co.uk/news/health-17769929",
+    "sha256": "e98015c3388cd263269d555ed44f96b1b5ec4dd142f321da4b83f831e73a019c",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "6": {
+    "url": "http://m.bbc.co.uk/news/health-18883163",
+    "sha256": "0897b7913ea826b43ccc34c31b3899a9cc89d91f8b1450e7fcc50534216e124f",
+    "strip_whitespace": true
+  },
+  "8": {
+    "url": "http://m.bbc.co.uk/news/health-20983324?print=true",
+    "sha256": "9f20a39e0387dc70fd3f0d177e1d05132710a9e98114eb12eb3c6d9b7b2c9824",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "9": {
+    "url": "http://m.bbc.co.uk/news/health-21320859?print=true",
+    "sha256": "ed991873ca012f90dddeabcd50f0f19e77b3cb826ca448d4ff733348f9beeed1",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "11": {
+    "url": "http://m.bbc.co.uk/news/science-environment-19180983",
+    "sha256": "4aca2a0c3ed28e95ca376e90e8c075a06bb301e6dbb4b7e81aa74b6f65b36306",
+    "legacy": false,
+    "strip_whitespace": false
+  },
+  "13": {
+    "url": "http://m.bbc.co.uk/news/science-environment-20851434",
+    "sha256": "bcfa4e4a3eaa6ae010bbcc6c146ae55caa6004076799c16974c3771afdf5fbfb",
+    "strip_whitespace": false
+  },
+  "15": {
+    "url": "http://m.bbc.co.uk/news/science-environment-21519998?print=true",
+    "sha256": "329fa747022603b7bfe7d5b7dc2ed074e778f9998fffa3a442f4c3250f66858b",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "16": {
+    "url": "https://web.archive.org/web/20160924042131/http://www.bbc.co.uk/news/science-environment-21778171",
+    "sha256": "5d1887624f65863e9c9c20a09957db8ad46e78050bd07cb05643317062962867",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "17": {
+    "url": "http://m.bbc.co.uk/news/science-environment-22184556?print=true",
+    "sha256": "b6046282b6abebd93dd1079ebc9432d2aa0930d51ba0f3b1d833b13f7ad94e37",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "18": {
+    "url": "http://m.bbc.co.uk/news/uk-england-hampshire-21850080",
+    "sha256": "8414a5def081d09a63c4cacd6a0874dec640fa0b011a44727410cacfc3861b22",
+    "strip_whitespace": false
+  },
+  "19": {
+    "url": "https://web.archive.org/web/20190308160419/http://news.bbc.co.uk/2/hi/science/nature/4640420.stm",
+    "sha256": "e1514e2cf683c507e4dc40865bc1310677591335b13048ea94cd1ec7480e73c0",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "20": {
+    "url": "https://web.archive.org/web/20170208070715/http://news.bbc.co.uk/2/hi/technology/8161775.stm",
+    "sha256": "2854adb7644d489f3745f1a16ec37f6f981570c2619a5da0adb62ab25dee3b4d",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "21": {
+    "url": "https://web.archive.org/web/20160304120304/http://news.bbc.co.uk/earth/hi/earth_news/newsid_9001000/9001866.stm",
+    "sha256": "47ac0768018db13f22859fac0b5b0f1b0b56c40169e1879d8e00dc88104f763f",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "30": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/ibri-ndi042120.php",
+    "sha256": "0961f83e1ded35f689ef7296138c12a991bd4010b689264bf6acf129b38fcc03",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "31": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/kauo-bpe040720.php",
+    "sha256": "f39cd1724b87c72090e79476d018e2c27b36bc1a188887155fe4dabb6f883dce",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "40": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/tiot-ftw042420.php",
+    "sha256": "c8a90c78fd8a03ab86e91b3b8f79010007fea14ffe5bd507940f42197e653b37",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "41": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/uoc-qru042120.php",
+    "sha256": "19248dde2cd73064d72c892ed0d29b666d451c8ff7bf0ab6e749ce380d0c25ef",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "54": {
+    "url": "https://www.nytimes.com/2020/04/08/science/monarch-butterflies-captive.html",
+    "sha256": "77240a896e79aad24c07faa898217943352b52c087ca2a2d6cdab1d23c516165",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_newlines": false,
+    "strip_specialchars": false
+  },
+  "59": {
+    "url": "https://www.nytimes.com/2020/04/16/health/n95-masks-decontaminated-coronavirus.html",
+    "sha256": "0f212eabbed07e6eb78c40e38b64417fab9dd08408b2784ccd9a11654df2e0f2",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "66": {
+    "url": "https://www.theguardian.com/lifeandstyle/2015/jul/02/diverse-parental-genes-lead-to-taller-smarter-children-says-extensive-study",
+    "sha256": "7736e951d2dc655c835c635d69b5f1fd2c24f40e9796aefd2f8a127e78635d11",
+    "legacy": true,
+    "strip_whitespace": true,
+    "strip_newlines": false,
+    "strip_specialchars": false
+  },
+  "73": {
+    "url": "https://www.theguardian.com/science/2011/jun/14/pregnant-women-sleep-left-stillbirth",
+    "sha256": "e9e162d6b79839bf6787f98345d790337e1940cd3915809c1220de12502643ae",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "75": {
+    "url": "https://www.theguardian.com/science/2011/mar/09/penis-spines-human-genetics-chimps",
+    "sha256": "b9b3c9f1d4ad897497aa855307f505de3ffe999049986ca913ac47b47f60146d",
+    "strip_whitespace": false
+  },
+  "76": {
+    "url": "https://www.theguardian.com/science/2011/may/06/happiness-gene-long-short-versions",
+    "sha256": "3cb85fff21118d877e6352dfa00a2ab70004decbe47b8e47e0f23196bd6d864b",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "77": {
+    "url": "https://www.theguardian.com/science/2011/nov/09/malaria-weak-spot-vaccine",
+    "sha256": "4de6753f8cda428efeb7c6767c3da14452b3390a797875a94ef1bcebf03b7975",
+    "strip_whitespace": false
+  },
+  "78": {
+    "url": "https://www.theguardian.com/science/2013/apr/20/painkillers-marathons-health-risk-study",
+    "sha256": "04d91c9220d6da2d09832e38dd5382ff238e8c18adb04be8d1d5af05ae7584d2",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false,
+    "custom_selector": ".content__standfirst, .content__article-body p"
+  },
+  "79": {
+    "url": "https://www.theguardian.com/science/2013/aug/07/dogs-yawn-most-human-pals-strangers",
+    "sha256": "8efaac1d27398da9843e0659a69a074ecfaa42de2f66b7dafed12cf599fa34c8",
+    "strip_whitespace": false
+  },
+  "80": {
+    "url": "https://www.theguardian.com/science/2013/dec/03/snore-burp-male-koala-call",
+    "sha256": "d93a02cf2330f7a761af21c9b09967654d0c7b7cc0ee7445a29d05ef1394672f",
+    "strip_whitespace": false
+  },
+  "88": {
+    "url": "https://www.theguardian.com/science/2015/apr/07/brontosaurus-is-back-new-analysis-suggests-genus-might-be-resurrected",
+    "sha256": "0b5214d2b9b56444266fc8e5487a047bc726c4ab63c9b9cb6419451dd4cf67cd",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "91": {
+    "url": "https://www.theguardian.com/science/2015/apr/23/transparent-findings-invisible-people-less-anxious-say-scientists",
+    "sha256": "3ee6723ec6348cc8fa4391eed0e77dd058f0b4eb0b922b5a66dcf0bfed2094bf",
+    "strip_whitespace": false
+  },
+  "95": {
+    "url": "https://www.theguardian.com/science/2015/dec/22/new-type-of-moon-rock-discovered-by-chinese-lunar-lander",
+    "sha256": "9553b144fc21bac07b97fc6a2b11a0da434f9dacca3fa1961a49261ef0ffc5fe",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "97": {
+    "url": "https://www.theguardian.com/science/2015/jul/23/genes-influence-academic-ability-across-all-subjects-latest-study-shows",
+    "sha256": "6dcfce2a698e4dace5cbaf44d916b7d380e4d298ac7b439ebfdfd40664d15cb2",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "99": {
+    "url": "https://www.theguardian.com/science/2015/nov/15/sacrificed-incan-boy-genome-lineage-diversity",
+    "sha256": "25b696f6abb6201a9e986ffe8ae20894e089dec8d400b3fd3f5e7a503ab08505",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "101": {
+    "url": "https://www.theguardian.com/science/2016/apr/25/musical-play-may-boost-understanding-and-long-term-learning-in-babies",
+    "sha256": "a42423bb45733872ea70dc3ab9c84581e4ef760725386283287ef57e572d3e8c",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "102": {
+    "url": "https://www.theguardian.com/science/2016/aug/11/cunning-cucumber-virus-alters-plant-aromas-to-attract-bees",
+    "sha256": "79b5c767d99efaf5d2e613cceb79d5f5bc2ac876292e963ddadba9fedb410dc6",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "103": {
+    "url": "https://www.theguardian.com/science/2016/aug/23/childhood-concussion-linked-to-lifelong-health-and-social-problems",
+    "sha256": "d383b2105348d82eb69111a147356db80864a2e11026acccd120821eb1cf0240",
+    "strip_whitespace": false
+  },
+  "104": {
+    "url": "https://www.theguardian.com/science/2016/aug/23/sleep-resets-brain-connections-crucial-for-memory-and-learning-study-reveals",
+    "sha256": "fa8b2de0354bb706977857f4fab804d11407b540e0fdfcb965363ccffb474500",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "112": {
+    "url": "https://www.theguardian.com/science/2016/jul/20/updated-map-of-the-human-brain-hailed-as-a-scientific-tour-de-force",
+    "sha256": "e4e556b98432dc8874b96ec64db0908dae7c31a9098eb63d10d50483cdf823a1",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "114": {
+    "url": "https://www.theguardian.com/science/2016/jun/08/doctors-edge-closer-to-creating-babies-with-dna-from-three-people",
+    "sha256": "e0bc34e0a92831aa99ba80385111c0888ef34565b628f38fc09018d2755d3712",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "116": {
+    "url": "https://www.theguardian.com/science/2016/may/02/could-these-newly-discovered-planets-orbiting-an-ultracool-dwarf-host-life",
+    "sha256": "7a8a36c226f4fd55d2b76f2fd62874d74350a0483adbb6ee5dd674bf4d387024",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "118": {
+    "url": "https://www.theguardian.com/science/2016/nov/29/never-go-to-bed-angry-study-finds-evidence-for-age-old-advice",
+    "sha256": "0b14a533b8710b57fd3934ab89920473585b5e185ec770d7e510b1c7e4cb45e9",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "119": {
+    "url": "https://www.theguardian.com/science/2017/apr/04/geologists-reveal-how-violent-brexit-10-separated-britain-from-europe",
+    "sha256": "a679da982951e6810ada495871f0d75b2fa066a6dedb50f31afa1cc10fb2ceac",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "121": {
+    "url": "https://www.theguardian.com/science/2017/aug/01/mother-of-all-blooms-is-this-what-the-last-common-ancestor-of-flowers-looked-like",
+    "sha256": "badec786a2f15569c2ada1d1e1951de8db6dab7a11235e3737a037cb3252a2a7",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "122": {
+    "url": "https://www.theguardian.com/science/2017/aug/09/moon-had-magnetic-field-at-least-a-billion-years-longer-than-thought-study",
+    "sha256": "c96e14ea61bc0117b8fbc7b211cbcb732fadaa8008fad02486c6dbea950cf5ce",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "124": {
+    "url": "https://www.theguardian.com/science/2017/aug/15/geneticists-trace-humble-apples-exotic-lineage-all-the-way-to-the-silk-road",
+    "sha256": "77bb2dba50d894307d7034e6b0a2c343883ff007044ee80e7a14bdc968c287ae",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "127": {
+    "url": "https://www.theguardian.com/science/2017/aug/24/life-cycle-of-the-mysterious-and-long-dead-dodo-revealed-by-bone-study",
+    "sha256": "c6b95db58b0285bdad7aea8c2336384ccf5bc5b31fcb5a5f4ebace3d6127c68b",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "128": {
+    "url": "https://www.theguardian.com/science/2017/aug/30/volcanic-eruptions-triggered-global-warming-56m-years-ago-study-reveals",
+    "sha256": "18ab8b05c7e7f3276fd8e916bd91ae75dc69e570600a505ad3dbcdbd460f8000",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "130": {
+    "url": "https://www.theguardian.com/science/2017/feb/15/adding-vitamin-d-to-food-would-reduce-deaths-say-scientists-nhs-study-reduce-risk-respiratory-diseases",
+    "sha256": "7d7d744e112c227c0948831aa71c8a6e683f7c4e4dfa18dd4179e2a7ef3757d2",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "133": {
+    "url": "https://www.theguardian.com/science/2017/jul/18/did-human-women-contribute-to-neanderthal-genomes-over-200000-years-ago",
+    "sha256": "e1c88d96e90df393a0ce36a5b87227f55872cd8a08c03ed88d7761625e2b1d99",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "139": {
+    "url": "https://www.theguardian.com/science/2017/nov/08/is-it-baa-rack-obama-sheep-able-to-recognise-celebrities-say-neuroscientists",
+    "sha256": "41bdc837bcd2e445c82b532b02fd800099a42e7aa866bc84b492a324c51e7a8f",
+    "strip_whitespace": false
+  },
+  "140": {
+    "url": "https://www.theguardian.com/science/2017/nov/09/unlucky-dinosaurs-no-extinction-if-asteroid-had-hit-almost-any-other-part-of-earth",
+    "sha256": "d54acade7adc11fcffd4ca8e13f14905f04eee0759145c24473db7ab8262a62e",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "141": {
+    "url": "https://www.theguardian.com/science/2017/nov/13/facebook-likes-targeted-advertising-psychological-persuasion-academics-research",
+    "sha256": "e6b6ab0fca0458799f1ae6bb503400dc8b143da9aaf3ad207bf78630c66710f1",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "142": {
+    "url": "https://www.theguardian.com/science/2017/nov/15/rare-genetic-mutation-found-in-amish-community-could-combat-ageing",
+    "sha256": "124715a6df130d23df7ecf6547744dcc64201e4becde33c6b4e778150cf9bc5f",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "143": {
+    "url": "https://www.theguardian.com/science/2017/oct/11/scientists-discover-ring-around-dwarf-planet-haumea-beyond-neptune",
+    "sha256": "e9c5276bd0f4e5d0536e09cb943fbdd94aaea8d99b8ca84728dfb870b79354aa",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false
+  },
+  "145": {
+    "url": "https://www.theguardian.com/science/2017/sep/04/supermassive-black-hole-discovered-near-heart-of-the-milky-way",
+    "sha256": "36f501f704965ab1020a86539e855646678a0a10840f49013599c67105f264cb",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "146": {
+    "url": "https://www.theguardian.com/science/2017/sep/15/how-the-female-viking-warrior-was-written-out-of-history",
+    "sha256": "ca22a8915ae36fb6735c03ddad2ef5111cdbde78a6cd4806533fedb68f1e0ea8",
+    "strip_whitespace": false
+  },
+  "147": {
+    "url": "https://www.theguardian.com/science/2018/apr/09/competitive-eater-taken-to-hospital-after-eating-worlds-hottest-chilli-pepper",
+    "sha256": "ee9c900d7ec60aafb29f21ed98d77547a3a1b761921af569e68635ef9cc3e353",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "150": {
+    "url": "https://www.theguardian.com/science/2018/jan/29/vaping-may-raise-cancer-and-heart-disease-risk-study-suggests",
+    "sha256": "dfd6f2c730fa93b9de664b2de789165d5d446bb4b407cb5185029d5b2db8330d",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "154": {
+    "url": "https://www.theguardian.com/science/2018/mar/20/cockroaches-dna-reveals-why-they-thrive-in-filthy-places",
+    "sha256": "731a09384d869b194a7cf7a5873193d6b657d82a9934b4947bb6f7be457bba69",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "155": {
+    "url": "https://www.theguardian.com/science/2018/mar/20/obesity-dulls-sense-of-taste-study-suggests",
+    "sha256": "efc81c66bf31e38cf3c6c79f48ef7b8600012d057360b797aae55289597c491a",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "157": {
+    "url": "https://www.theguardian.com/science/2018/mar/27/lost-amazon-villages-uncovered-by-archaeologists",
+    "sha256": "15010cf49f018562ecf28273f6fff8507917ee757a287bb2d1ad174934cb3322",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "158": {
+    "url": "https://www.theguardian.com/science/2018/may/02/plants-talk-to-each-other-through-their-roots",
+    "sha256": "bb388a6324a139669c78d3d778ab35e9dd59f341e8cf53d1ffc8fb3a8e7dd45a",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "162": {
+    "url": "https://www.theguardian.com/science/2020/apr/09/scientists-digitally-reconstruct-skulls-of-dinosaurs-in-fossilised-eggs",
+    "sha256": "214d346eaadff497bd377d7b051822db7cbe029aeec55123e61908a07ea32b62",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "165": {
+    "url": "https://www.theguardian.com/science/animal-magic/2014/feb/13/whale-watching-space",
+    "sha256": "14efc4282ed783bb68d2aeff00cc34e48b5bd629013718ce74d230567ff780b4",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "167": {
+    "url": "https://www.theguardian.com/science/blog/2009/feb/06/homeopathy-homeopathic-nhs-placebo-effect",
+    "sha256": "d9b1faf8397213b1954154ef913dc505e84c7fa228fb74cc502cbc82ef923f44",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "171": {
+    "url": "https://www.theguardian.com/science/blog/2012/jul/06/pterosaur-bellubrunnus-dinosaur-uv-light",
+    "sha256": "b9fddc9d855d64b3265d16099d45e5ed7f6fb113fa21485bccf53f990d6aa34d",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "173": {
+    "url": "https://www.theguardian.com/science/blog/2014/dec/16/prescribing-pills-public-health-statins-risks-benefits",
+    "sha256": "92aea46a503f0fc78f313da7a2d49cbe5949450eebaa3402b1aa697e6b90f708",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "183": {
+    "url": "https://www.theguardian.com/science/grrlscientist/2015/jul/30/golden-jackal-a-new-wolf-species-hiding-in-plain-sight",
+    "sha256": "b0900cd3e2a042a9da87d5715ee04cbb908bb6a1d5ebdbe01c9dfbecde5ed69c",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "184": {
+    "url": "https://www.theguardian.com/science/head-quarters/2015/jun/24/life-happiness-curve-u-shaped-ageing",
+    "sha256": "7fc407b7e74d71256a2b6b033da1341d5ed47cd32d94ae76928c92f33270161c",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "188": {
+    "url": "https://www.theguardian.com/science/head-quarters/2017/jan/09/why-do-people-pay-thousands-for-celebrity-memorabilia",
+    "sha256": "2dbfc37d2f8b6521c4440a30f7e6f8ceb89815702b224d0b41566b22ae80a4df",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "190": {
+    "url": "https://www.theguardian.com/science/lost-worlds/2012/dec/19/dinosaurs-fossils",
+    "sha256": "a945070e36103f35c73a66458cb17f5eab9e5917cf0acee74d8cce3bae44835b",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "191": {
+    "url": "https://www.theguardian.com/science/lost-worlds/2014/nov/26/dinosaurs-formed-groups-throughout-their-lives-protoceratops",
+    "sha256": "6abed6ca32fd196397d5f962134e393a4b393bf7accb28486a98beb110ca314a",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "192": {
+    "url": "https://www.theguardian.com/science/lost-worlds/2015/apr/07/the-thunder-lizard-returns-brontosaurus-resurrected",
+    "sha256": "cb2533d6b7ee4051a62c734ff74bc9c1fcac398b8fc93557a4315149606e885c",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "194": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2012/dec/09/turning-urine-into-brain-cells",
+    "sha256": "42d11e5626c1f0beba119ba185ea5a46fd0192524a4464b69f4671de8331841f",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false
+  },
+  "195": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2012/feb/05/1",
+    "sha256": "821e4d3f17be8a80db6dde48ea8cd6b750ff03e3cf590a9496c0b76db2e4be14",
+    "strip_whitespace": false
+  },
+  "197": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2012/jan/04/neuroscience-human-biology",
+    "sha256": "19988083861539f36f248d3998329e9e0c45c2f465f5ac802d567684c77660ed",
+    "strip_whitespace": false
+  },
+  "204": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2015/may/14/fruit-fly-neural-compass-works-like-a-mammals",
+    "sha256": "7f30ea762909ec86ea909b745432a6746b3eac76a468922595617d2d8e2556fa",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "205": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2015/nov/09/ancient-arthropod-brains-surprise-paleontologists",
+    "sha256": "b7f1f64b0442b11de53fb5593dc45f07c3b6f77c994099a2c5256d65246fc80c",
+    "legacy": true,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "206": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2015/sep/11/blind-cave-fish-evolved-an-energy-saving-shrunken-brain",
+    "sha256": "96bf63d4659eb080d1ac558e1fbdf0c19038b61e68e0417b9ad620a5f7de85d8",
+    "strip_whitespace": false,
+    "legacy": true,
+    "strip_specialchars": false
+  },
+  "210": {
+    "url": "https://www.theguardian.com/science/neurophilosophy/2016/nov/01/stem-cells-from-schizophrenics-produce-fewer-neurons",
+    "sha256": "d72dc86944eda9f2de66982be9fe6f0a3f019f9dc30ff5d55bb54d6eb6ea3b2e",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "229": {
+    "url": "https://www.theguardian.com/science/the-h-word/2016/oct/11/ada-lovelace-day-celebrate-19th-century-renaissance-woman-agnes-clerke",
+    "sha256": "30fc25d371fc7aee2f6f7cf566432a6b9fcd86ab075ce9a48d1904b9cdb31f1f",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "236": {
+    "url": "https://www.theguardian.com/world/2020/apr/07/plasma-from-coronavirus-survivors-found-to-help-severely-ill-patients",
+    "sha256": "7b10faba08b287ea67f75298667a672ba9449612d58d52c918c8b694eb353ca0",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false
+  },
+  "241": {
+    "url": "http://www.bbc.co.uk/news/21956795?print=true",
+    "sha256": "f1e29fd1d6e959a8af528dc341e7ddc8601f1b6b69c573a1aca379c8f7f2e7b1",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "242": {
+    "url": "http://www.bbc.co.uk/news/health-10880232?print=true",
+    "sha256": "b683cb8045e930007ede3fe19e496847a2030a69a001146721f55d0e771e8f15",
+    "strip_whitespace": false
+  },
+  "244": {
+    "url": "http://www.bbc.co.uk/news/health-12160618",
+    "sha256": "5e540e3845a031b232cd3e77ffcb888ea4f9e561670fc81ba3859e25600648d4",
+    "strip_whitespace": false
+  },
+  "246": {
+    "url": "http://www.bbc.co.uk/news/health-12531837",
+    "sha256": "d31c6b0bca66fd6bea254ab32e13b6579305c6498a5b61a432a95e5ae6c571c8",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "247": {
+    "url": "http://www.bbc.co.uk/news/health-13128327?print=true",
+    "sha256": "b8305b378245283c75c799736904a4a3cc1d7ae6c5ce0d43fbb0edcf6a405b82",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "248": {
+    "url": "http://www.bbc.co.uk/news/health-13128327?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+DailyGoodNews+%28Ode+Magazine+-+And+now+for+the+good+news%29",
+    "sha256": "b8305b378245283c75c799736904a4a3cc1d7ae6c5ce0d43fbb0edcf6a405b82",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "249": {
+    "url": "https://web.archive.org/web/20160616160714/http://www.bbc.co.uk/news/health-13766152",
+    "sha256": "47b0e89cb3f580a93a14871a32972562ec449d5bf658fc4a1bc624eb22dbad2e",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "252": {
+    "url": "http://www.bbc.co.uk/news/health-14152095",
+    "sha256": "f0332f7ecdefdf12a36e190abf067c845a0d1fca4055627d1b7956015b4dbc09",
+    "strip_whitespace": false
+  },
+  "253": {
+    "url": "http://www.bbc.co.uk/news/health-14411746",
+    "sha256": "eb61d95b110c1bf0f2149898b9d8dace2f9f50fea9074b27b90f1f9c89e9e521",
+    "strip_whitespace": false
+  },
+  "254": {
+    "url": "http://www.bbc.co.uk/news/health-14788046",
+    "sha256": "55522dbaaa268aa256ce57626b66c70ee7327ce2e831ee5e4acc7b3f58e7a9c1",
+    "strip_whitespace": false
+  },
+  "256": {
+    "url": "http://www.bbc.co.uk/news/health-15480754",
+    "sha256": "9ee1fdd96dbd17f3705087874d9289869cf886d0e9f3f067a2d7cb991ebfc736",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "257": {
+    "url": "https://web.archive.org/web/20160304052653/http://www.bbc.co.uk/news/health-15571711",
+    "sha256": "1f085881d561bf94ce9e78a3c6cc75a64cfd65c2ea3713bfdacb6d1803114f32",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "258": {
+    "url": "http://www.bbc.co.uk/news/health-15674998?print=true",
+    "sha256": "91392df34ec6674cfb5fbc69cfc31530e148c5ddab50e5394b1244bac7b29962",
+    "strip_whitespace": false
+  },
+  "260": {
+    "url": "http://www.bbc.co.uk/news/health-16425522",
+    "sha256": "d2f7f2d6e269089d858295dbf6ce6987bccca969a2eee669144a35a70b3a10bc",
+    "strip_whitespace": false
+  },
+  "261": {
+    "url": "http://www.bbc.co.uk/news/health-16425522?filter=EditorPicks",
+    "sha256": "d2f7f2d6e269089d858295dbf6ce6987bccca969a2eee669144a35a70b3a10bc",
+    "strip_whitespace": false
+  },
+  "265": {
+    "url": "http://www.bbc.co.uk/news/health-16425522?postId=111348195",
+    "sha256": "d2f7f2d6e269089d858295dbf6ce6987bccca969a2eee669144a35a70b3a10bc",
+    "strip_whitespace": false
+  },
+  "267": {
+    "url": "http://www.bbc.co.uk/news/health-16425522?postId=111348238",
+    "sha256": "d2f7f2d6e269089d858295dbf6ce6987bccca969a2eee669144a35a70b3a10bc",
+    "strip_whitespace": false
+  },
+  "271": {
+    "url": "http://www.bbc.co.uk/news/health-16425522?postId=111350346",
+    "sha256": "d2f7f2d6e269089d858295dbf6ce6987bccca969a2eee669144a35a70b3a10bc",
+    "strip_whitespace": false
+  },
+  "272": {
+    "url": "http://www.bbc.co.uk/news/health-16425522?postId=111350471",
+    "sha256": "d2f7f2d6e269089d858295dbf6ce6987bccca969a2eee669144a35a70b3a10bc",
+    "strip_whitespace": false
+  },
+  "278": {
+    "url": "http://www.bbc.co.uk/news/health-17234033?print=true",
+    "sha256": "b1d3cc8488ec5a293afc465261169053b525d1adddca5afeb41e94c5d07fb29e",
+    "strip_whitespace": false
+  },
+  "282": {
+    "url": "http://www.bbc.co.uk/news/health-18883163?print=true",
+    "sha256": "0897b7913ea826b43ccc34c31b3899a9cc89d91f8b1450e7fcc50534216e124f",
+    "strip_whitespace": false
+  },
+  "287": {
+    "url": "http://www.bbc.co.uk/news/health-20314849",
+    "sha256": "1d851adc2f702422e739fd85a69d408a3b0721d07484bafd522b3a2248adca7e",
+    "strip_whitespace": false
+  },
+  "288": {
+    "url": "http://www.bbc.co.uk/news/health-20509577?print=true",
+    "sha256": "3f764499755814daa14cee804ba128529f4959f9763e9fbe973424da059352b3",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "289": {
+    "url": "http://www.bbc.co.uk/news/health-20583678",
+    "sha256": "b5fb3ae1c25e9ec92b00d7ab04dc2ecc0f565a79ffa9abf3b7a6ba5e5971e078",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "290": {
+    "url": "http://www.bbc.co.uk/news/health-20608905?print=true",
+    "sha256": "b876771b8bd0c1168673f5647694068209a350a8f15dba29565c452729994b7b",
+    "strip_whitespace": false
+  },
+  "291": {
+    "url": "http://www.bbc.co.uk/news/health-20631344?print=true",
+    "sha256": "6901c3e9909b59b6af7d8b8c639f4bb88c093deffc0b0869ef3cc8fbb8621342",
+    "strip_whitespace": false
+  },
+  "292": {
+    "url": "http://www.bbc.co.uk/news/health-21083458",
+    "sha256": "7dcfb31dec5740d9c76fb64b84d1e34fcee2abe8a5a551da188bf304ed5b02a5",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "293": {
+    "url": "http://www.bbc.co.uk/news/health-21199949?print=true",
+    "sha256": "3080169b89b78aa98d21d83fa5d3143c7ad09f68e886e10fa557d31aa81dd322",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "296": {
+    "url": "http://www.bbc.co.uk/news/health-21547508?print=true",
+    "sha256": "691d2c4627f42c11c2b34f3558ee50007a6c2e870a942cc5c80f75ed5bcedad3",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "300": {
+    "url": "http://www.bbc.co.uk/news/health-21834440?filter=EditorPicks",
+    "sha256": "2865a68b24fe240620b17c285edee72423dea253b6ca27816d149e05e1c98955",
+    "strip_whitespace": false
+  },
+  "301": {
+    "url": "http://www.bbc.co.uk/news/health-21834440?postId=115694907",
+    "sha256": "2865a68b24fe240620b17c285edee72423dea253b6ca27816d149e05e1c98955",
+    "strip_whitespace": false
+  },
+  "303": {
+    "url": "http://www.bbc.co.uk/news/health-22042995",
+    "sha256": "02846a6e6a2999ef8c99a8856ca2f6bd137c618fabd1eba34af8c3cc4f37664f",
+    "strip_whitespace": false
+  },
+  "305": {
+    "url": "http://www.bbc.co.uk/news/magazine-15438547?module=comments&controller=index&action=index&siteId=newscommentsmodule&forumId=__CPS__15438547&title=Can+crowdsourcing+beat+the+flu%3F&parentUri=http%3A%2F%2Fwww.bbc.co.uk%2Fnews%2Fmagazine-15438547&preset=opin",
+    "sha256": "6196b392ad5eac37bf732b9e6b48cfb4c5fb4035126e4938625a21f305e4ea13",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "308": {
+    "url": "http://www.bbc.co.uk/news/science-environment-14492948",
+    "sha256": "3674157c5a5930ffa68217eb88af28bdec5601dde762d27605d21bad463f30c4",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "309": {
+    "url": "http://www.bbc.co.uk/news/science-environment-14630012",
+    "sha256": "e95a166004a1614fcdba147a388f1b7915711c2c4531f995b16968247893a4cd",
+    "strip_whitespace": false
+  },
+  "310": {
+    "url": "https://web.archive.org/web/20160102012216/https://www.bbc.co.uk/news/science-environment-15897803",
+    "sha256": "188ad79495139b82f3c4f2f3de0fc2a155be2e1f1ff7efef7ec2240237450ee7",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "311": {
+    "url": "http://www.bbc.co.uk/news/science-environment-16270759?print=true",
+    "sha256": "4f8294c32e2140ca675f3f7de9bbf8d9424bc3e20a238d3f43d7086aaaf31288",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "312": {
+    "url": "http://www.bbc.co.uk/news/science-environment-16811042",
+    "sha256": "0592242ac0313be38cd6175b4a29bcfab3ba94d811ea52571b4cf32a330fcc09",
+    "strip_whitespace": false
+  },
+  "313": {
+    "url": "http://www.bbc.co.uk/news/science-environment-16811042?print=true",
+    "sha256": "0592242ac0313be38cd6175b4a29bcfab3ba94d811ea52571b4cf32a330fcc09",
+    "strip_whitespace": false
+  },
+  "314": {
+    "url": "http://www.bbc.co.uk/news/science-environment-17192624",
+    "sha256": "21c20dc69cc1553d070128e1ef441d2e63fc307f89bda35822280681cc3a97e0",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "315": {
+    "url": "https://web.archive.org/web/20171224234010/http://www.bbc.co.uk/news/science-environment-17857641",
+    "sha256": "aeffff9a579790ea1f9aeb7bd3d1b56d80e53d1351db19a30751515d86c6f304",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "316": {
+    "url": "http://www.bbc.co.uk/news/science-environment-17909396",
+    "sha256": "30409a15e6c0e0429dbbf16796dbdc317039d741ed477c0e28edb8a037805c45",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "319": {
+    "url": "http://www.bbc.co.uk/news/science-environment-19208400?print=true",
+    "sha256": "4e798f03edc1d696cec457839db80c2e990092c658386205f1f0988bc4de311f",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "320": {
+    "url": "http://www.bbc.co.uk/news/science-environment-19440500",
+    "sha256": "dc6d70b5240d72b7b502a5208c0a1e8dc37cd7f98ced2471a089ef2f456de76a",
+    "strip_whitespace": false
+  },
+  "321": {
+    "url": "http://www.bbc.co.uk/news/science-environment-19898947?print=true",
+    "sha256": "b22ff8b01b1e0abea1b0bb9ee8dce376c09d5b9ae14b0d1417cad97d2d6c59e1",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "322": {
+    "url": "http://www.bbc.co.uk/news/science-environment-20958060?postId=114919998",
+    "sha256": "06a19e1f03458a5bb2ab505d370aea8a9bd9643a17e8cfc9c09fbdeb75c80d7b",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "323": {
+    "url": "http://www.bbc.co.uk/news/science-environment-21471908?from=astrowire.com",
+    "sha256": "2f6ab0428072798f827881155995b128d17328659f9fdb7c1ae07acbf99f4d41",
+    "strip_whitespace": false
+  },
+  "324": {
+    "url": "http://www.bbc.co.uk/news/science-environment-22075182",
+    "sha256": "bfe83d5af1cce039a35c43dc340ce762da8e81eb6e435407f2d712bc10df4994",
+    "strip_whitespace": false
+  },
+  "325": {
+    "url": "http://www.bbc.co.uk/news/science-environment-22184556",
+    "sha256": "b6046282b6abebd93dd1079ebc9432d2aa0930d51ba0f3b1d833b13f7ad94e37",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "326": {
+    "url": "http://www.bbc.co.uk/news/science-environment-22355187",
+    "sha256": "ffbd16e671e152273b1e9ab8b7718b72f0b9d9f489e7cb15685462a2c75e4fb2",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "334": {
+    "url": "http://www.dailymail.co.uk/sciencetech/article-2111976/Why-tax-makes-unhappy-Scientists-words-left-hand-QWERTY-keyboard-make-people-sad.html?printingPage=true",
+    "sha256": "8b3ab2d13a96fa261f280406468dd82213a16f894b494dcba6f7f9da498757ee",
+    "strip_whitespace": true
+  },
+  "335": {
+    "url": "http://www.express.co.uk/posts/view/308227/horoscopes/forecast/Sagittarius/9/.google-analytics.com/ga.js",
+    "sha256": "210d0eee2ecdac55a09ddc0bfb68b0404151d3096324f3cd21bb7201895248c1",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "336": {
+    "url": "https://web.archive.org/web/20111209064243/http://wwwnews.live.bbc.co.uk/nature/15559929?print=true",
+    "sha256": "601fd889a79ed317c31005cbdf66d46d7939cd0029da4e7086a8d235e1b1b4e1",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "338": {
+    "url": "http://wwwnews.live.bbc.co.uk/nature/19556915",
+    "sha256": "d7570b8322f80dc28a40deb186c25cae8a8d56f06851a69c30f623dd733fedec",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "340": {
+    "url": "http://wwwnews.live.bbc.co.uk/nature/20593634",
+    "sha256": "864e4f0922906f4685906fe82a6e00222d7d1cd645d2bd9fe2d74a6ec8f2cdcd",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "341": {
+    "url": "http://wwwnews.live.bbc.co.uk/nature/20945543",
+    "sha256": "febe20a5c0b855b03a15481559d1289b2c801848f67d823f355e2860f59d397b",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "344": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-14403201",
+    "sha256": "cf089631962bd70719654369181adb8f447242ba0d797a2c273f926c457cde35",
+    "strip_whitespace": false,
+    "strip_newlines": false,
+    "legacy": true
+  },
+  "345": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-14679497",
+    "sha256": "5736cf558e2f377abc157a124bfda61aca2ae3fa84b63d6d7e7d40d3fdad3b6b",
+    "strip_whitespace": false,
+    "strip_newlines": false,
+    "legacy": true
+  },
+  "346": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-14788046?print=true",
+    "sha256": "d09a9af12dd2c98c81c02bca5d976bd543cce106d68ca5179defa286aabdbf1a",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "347": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-14851651?print=true",
+    "sha256": "fae0478e65c5d0a6a2702defcc7257864070822bf36a861d2d0059ce15fb6d9c",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "348": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-15572990",
+    "sha256": "828e1b77185df64645eb70ce88b22e114cea88125444ec532c7c416438cef234",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "353": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-18101423",
+    "sha256": "bda389a2647b20d4c95a8ea52ac992b37ce54e7a877233660d22dedd462b70c3",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "355": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-18190352",
+    "sha256": "d55c4f51681ab351e1901e6c1e348a609e2f247830190b6a635b0795d43448e3",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "356": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-18190352?print=true",
+    "sha256": "d55c4f51681ab351e1901e6c1e348a609e2f247830190b6a635b0795d43448e3",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "357": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-19421818?print=true",
+    "sha256": "850d84f7029cce7925477de8fd68486c7cbfd55cfe44cc6d2965c1279caaceaa",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "358": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/health-20583678",
+    "sha256": "b5fb3ae1c25e9ec92b00d7ab04dc2ecc0f565a79ffa9abf3b7a6ba5e5971e078",
+    "strip_whitespace": false,
+    "strip_newlines": false,
+    "legacy": true
+  },
+  "359": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/magazine-15438547",
+    "sha256": "fa8f84c8424ac5c9a3ff9d93bd3de0b1ad6f260cc91795286e5460d283636c52",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "361": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-11525087",
+    "sha256": "d75840d3d2330810e372fc146629e7d89b20e884136de4799f66292fc68c04bc",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "362": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-14630012",
+    "sha256": "5319f5ec0fefda2f01a8783ef01e02bbeffd7e10c0e7f948adef5bcb0b985306",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "363": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-14947363",
+    "sha256": "515583cbbe4f39a7604bec4532a19c3c2ab687ae15a69e06d24c38400307a256",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "366": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-16514637?print=true",
+    "sha256": "2963e50cf545580553e828dac1933b44b5a3603b4ed4af75c1245b137eca6ad8",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "367": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-16811042",
+    "sha256": "0592242ac0313be38cd6175b4a29bcfab3ba94d811ea52571b4cf32a330fcc09",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "368": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-16811042?print=true",
+    "sha256": "0592242ac0313be38cd6175b4a29bcfab3ba94d811ea52571b4cf32a330fcc09",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "369": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-19180983?print=true",
+    "sha256": "1eac1439a8f1724a468db1f0c6b3148bf0aa80f48656c0bf706bfe0f5dc99683",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "370": {
+    "url": "http://wwwnews.live.bbc.co.uk/news/science-environment-19898947",
+    "sha256": "b22ff8b01b1e0abea1b0bb9ee8dce376c09d5b9ae14b0d1417cad97d2d6c59e1",
+    "strip_whitespace": false,
+    "legacy": true
+  },
+  "372": {
+    "url": "https://web.archive.org/web/20180307110937/https://www.telegraph.co.uk/news/health/news/7989889/Vitamin-B-is-revolutionary-new-weapon-against-Alzheimers-Disease.html",
+    "sha256": "c1f8b070178758f3d967ac0b4404b65d90432f48ebeb19154531ddff0e91f030",
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false,
+    "legacy": true
+  },
+  "374": {
+    "url": "https://web.archive.org/web/20160820032329/http://www.telegraph.co.uk/news/health/news/9633402/Closed-drug-trials-leave-patients-at-risk-and-doctors-in-the-dark.html",
+    "sha256": "96e73b9b2926afaba0c678c4ab245007b88b021e23ed9b07b50f06bb91ce0305",
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "strip_newlines": false,
+    "legacy": true,
+    "str_insert": [
+      {
+        "str": " ",
+        "loc": 162
+      }
+    ]
+  },
+  "407": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/su-dgt040820.php",
+    "sha256": "a36ed118a9d927a66dd4bde97bc2bfa1288567dcfd2e8ef9cbfd19dd292d9e6a",
+    "strip_whitespace": false
+  },
+  "410": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/tuot-ass040920.php",
+    "sha256": "df87b1b2fe8cba921adf33f362ae67c3d37a09111c62e410c97eae6198358cea",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "411": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/nyio-aah040920.php",
+    "sha256": "fb674ff265a1570b2b4b4f0ef3328ca5380e6b6ab2d4596eabf5b37c269763f0",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "414": {
+    "url": "https://www.theguardian.com/environment/2020/apr/07/air-pollution-linked-to-far-higher-covid-19-death-rates-study-finds",
+    "sha256": "dd8db2f9a3c007370840dd634d23f8e26b205dc78e29137c727a10d47abaffce",
+    "strip_whitespace": false
+  },
+  "415": {
+    "url": "https://www.theguardian.com/commentisfree/2020/apr/07/coronavirus-hits-men-harder-evidence-risk",
+    "sha256": "b413bd4c04c092b2afe2425281537d307ac8993d61c57b045bf71f39bf375732",
+    "strip_whitespace": false
+  },
+  "416": {
+    "url": "https://www.theguardian.com/world/2020/apr/07/saliva-spray-during-speech-could-transmit-coronavirus-study",
+    "sha256": "f0b954e4a8ce8ce6a07b82ce4d67f3e236039319717e64ff88678925c3ddd4dd",
+    "strip_whitespace": true
+  },
+  "422": {
+    "url": "https://www.theguardian.com/environment/2020/apr/14/worldwide-climate-commitments-economy-emissions",
+    "sha256": "432e2eccad1d4d05387e00c12b53de81a86245ebc58f8b31114f721d0ad0ba5a",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false,
+    "str_insert": [
+      {
+        "str": " ",
+        "loc": 62
+      },
+      {
+        "str": " ",
+        "loc": 177
+      }
+    ]
+  },
+  "428": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52312260",
+    "sha256": "7c4fac27a9235320e443f78af2e6a3fc22b89a0347b7957df3244b2b99a86828",
+    "strip_whitespace": false
+  },
+  "433": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/tuoh-n3i041420.php",
+    "sha256": "da359b7f5ad0565cbef5a9b864b19bd73b744d4d5998457d0e07725f82315781",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "435": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/kfu-hse041020.php",
+    "sha256": "4ab629ebe652d083949528c27cd67106617e6c23377ebdfb3d63e49daf3f5d19",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "443": {
+    "url": "https://www.theguardian.com/environment/2020/apr/18/covid-19-a-blessing-for-pangolins",
+    "sha256": "eda90e18cf55434ac2c4c73706a20a1fa13554bf27268c00f575169fb5c404bc",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false
+  },
+  "444": {
+    "url": "https://www.theguardian.com/society/2020/apr/20/uk-trial-coronavirus-treatments-using-blood-from-survivors",
+    "sha256": "fd87dfaf7fb67c3c38a55e6f4463f1c2d0a06d4a7ec734c9559414cc068d0b01",
+    "strip_whitespace": false
+  },
+  "445": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52353671",
+    "sha256": "1f8b3aa3e5f16adaf6276fda18e6e733a08627ff9180aa8e8bc95f177d5810e6",
+    "strip_whitespace": false
+  },
+  "446": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/pu-trl040920.php",
+    "sha256": "2121a4066f661f154b22381331d43d85e6414b5c1ffc19aeb53c8676723d2cce",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "455": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-04/epfd-csi042420.php",
+    "sha256": "eff7e4027ad6f7abd7ecc443c4c5ccec4d57b9b1801f6f64af61b4ea210a7e1c",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "461": {
+    "url": "https://www.nytimes.com/2020/04/18/health/coronavirus-america-future.html",
+    "sha256": "c1c6b6839b9190095e5d7a953f1659aa515254ec04060c2a6ce0587f111a5af6",
+    "legacy": false,
+    "strip_whitespace": false
+  },
+  "465": {
+    "url": "https://www.nytimes.com/2020/04/21/us/coronavirus-updates.html",
+    "sha256": "1461e0daff2308d7cdbabaafbef9133f87dc9a0bbc3ef983df0ae515fcaa5fea",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "467": {
+    "url": "https://www.nytimes.com/2020/04/21/health/nih-covid-19-treatment.html",
+    "sha256": "a925fb0ad446df3c373b3ea96ec6f123a4bacaf3ef36ff0ccde7eac27f3fa05b",
+    "strip_whitespace": false
+  },
+  "472": {
+    "url": "https://www.nytimes.com/2020/04/08/science/new-york-coronavirus-cases-europe-genomes.html",
+    "sha256": "487bc02db07854e7f3b6e898437db58a07591c43b2a381d883b9d928b61feb15",
+    "strip_whitespace": false
+  },
+  "482": {
+    "url": "https://www.nytimes.com/2020/04/16/climate/drought-southwest-climate-change.html",
+    "sha256": "06f63e7fdb0e6fb59de564161eb4c0bff98ef46a2f0bdcce9b9326b628e069c4",
+    "strip_whitespace": false
+  },
+  "496": {
+    "url": "https://www.nytimes.com/2020/05/04/health/fda-antibody-tests-coronavirus.html",
+    "sha256": "15f91b3a909e7e76fc490ab6bf37b071d7aa0caf5dac0663f98091748f18ddb5",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "497": {
+    "url": "https://www.nytimes.com/2020/05/06/climate/new-york-coronavirus-composting.html",
+    "sha256": "11e426d2266f56eba99d9758932b253b31f138f95f919edde747508a99d4977b",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "526": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/tuot-icw050120.php",
+    "sha256": "6691275eee6acdda207f8749fd31d6add2809ce229387a9318b32c02fb5aa038",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "541": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52666309",
+    "sha256": "b3ea5fd8044c3959c8d4d0eff8397bb031147d4ef7e4bee08e961c466b4d4880",
+    "strip_whitespace": false
+  },
+  "542": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52759804",
+    "sha256": "1ec5ab7a5ffd729f92ebb9494f62779b5e6f6882d2a85aba4679cb3a3b05248f",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "543": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/tifb-csa051920.php",
+    "sha256": "8ad7f4dc0b26adbcbaa8df1eae5ef5efe3479f2b893d4eabb9384f8a6d62ed0c",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "545": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/uos-asi052020.php",
+    "sha256": "c6dc01f5e84a91add282b653e7809f20ade0f9078a7e84e331ec6eee16737f92",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "546": {
+    "url": "https://www.nytimes.com/2020/05/23/science/tyrannosaurus-rex-legs.html",
+    "sha256": "57ab9ec7707c3d0a70ef7e7727ee22851356df73638ecfd153a816fa6aecd7d2",
+    "strip_whitespace": false
+  },
+  "547": {
+    "url": "https://www.nytimes.com/2020/05/22/health/coronarvirus-convalescent-serum.html",
+    "sha256": "c88e7f066fd3877b43feb7e3934107c71086d2c4363284ae21ef62064add0e18",
+    "strip_whitespace": false
+  },
+  "549": {
+    "url": "https://www.nytimes.com/2020/05/22/health/coronavirus-vaccine-china.html",
+    "sha256": "9d5b2d3ffc323ca69b4fd549d44abd47c50eacb1f4629606a7e492736a665174",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "550": {
+    "url": "https://www.nytimes.com/2020/05/22/world/live-coronavirus-world-cases.html",
+    "sha256": "a96cc9adaae354ee173445e1eeba896100f84fc2c15c2bef1721f3e8219b6aa8",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "551": {
+    "url": "https://www.nytimes.com/2020/05/20/health/coronavirus-vaccine-harvard.html",
+    "sha256": "342341713614c6ccc86592faca4eccc547bb7577e900ef35e069408948466c77",
+    "strip_whitespace": false
+  },
+  "552": {
+    "url": "https://www.nytimes.com/2020/05/18/climate/climate-changes-hurricane-intensity.html",
+    "sha256": "ccdd6d0f8a12ac9d5c64af6e12e615f39962b18645a68e5c243f641eb0d4938b",
+    "strip_whitespace": false
+  },
+  "553": {
+    "url": "https://www.nytimes.com/2020/05/18/science/virus-outbreak-rabbits.html",
+    "sha256": "293278ea0d308c6764204987c8c597c119df4fa1b7341abcddc17de77504b90c",
+    "strip_whitespace": false
+  },
+  "554": {
+    "url": "https://www.nytimes.com/2020/05/18/science/salamanders-amphibians-wildlife-migration.html",
+    "sha256": "a9281b238679f6d5dbc612e5ea50dcaa4210dfa794c97708cabb9e554261d557",
+    "strip_whitespace": false
+  },
+  "555": {
+    "url": "https://www.theguardian.com/world/2020/may/30/covid-19-asymptomatic-coronavirus-how-common-is-it-and-can-its-spread-be-contained",
+    "sha256": "196ff8732b7a316ed36c44ea671def901818dc6aaa3c8c3b439518fb47a806a5",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "556": {
+    "url": "https://www.theguardian.com/science/2020/may/28/how-will-no-10-decide-to-ease-lockdown-and-reopen-schools",
+    "sha256": "6ada18974fff0d1d1e30df025b5881f0dd6ab38490924b6cc3b191c26be0c422",
+    "strip_whitespace": false
+  },
+  "557": {
+    "url": "https://www.theguardian.com/world/2020/may/10/will-covid-19-mutate-into-a-more-dangerous-virus",
+    "sha256": "73fcb3a885197e168c55ef74949b0b3097183eccd77aab0e6573d6169aa48e0d",
+    "custom_selector": ".content__article-body p",
+    "text_join_str": "",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "558": {
+    "url": "https://www.theguardian.com/science/2020/may/28/nhs-to-increase-covid-19-patients-receiving-antibody-therapy",
+    "sha256": "8bec278c62ace86b6f9ed235a25f3e5336fe11cf51118ad2779e58bef7298a48",
+    "strip_whitespace": false
+  },
+  "560": {
+    "url": "https://www.theguardian.com/science/2020/may/28/questions-raised-over-hydroxychloroquine-study-which-caused-who-to-halt-trials-for-covid-19",
+    "sha256": "28964ceac5084684c16c704a0ba06aa58278ad254b5bdee657b1c3ef061bbe81",
+    "strip_whitespace": false,
+    "legacy": false,
+    "strip_specialchars": false
+  },
+  "562": {
+    "url": "https://www.theguardian.com/science/2020/may/13/italian-doctors-find-link-between-covid-19-and-inflammatory-disorder",
+    "sha256": "523d4888d7cd568c0dede4b9e6b3133ad4db691d54e444b092b3a10656e3bc9a",
+    "strip_whitespace": false
+  },
+  "563": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52724821",
+    "sha256": "b2d9a971d7ba341f721b556b0dbdc45f4dc6978f4ba34bd31b2bfa44771d16bd",
+    "strip_whitespace": false
+  },
+  "564": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52710224",
+    "sha256": "b9d00ad5f81427c3890b12d9f8e91756c7222d9bdae0aa7f650f878b33f5ea5c",
+    "strip_whitespace": false
+  },
+  "566": {
+    "url": "https://www.nytimes.com/2020/05/23/climate/climate-change-coronavirus.html",
+    "sha256": "ee4d68e985170e4a2bac1c81e4c73050166c4c83d72f60469d76f293bbfcbed6",
+    "strip_whitespace": false
+  },
+  "567": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/uoc--htc052920.php",
+    "sha256": "37bf89782ca419465c7ff6bad94a9f235bee3481167a33125048f45e9b1d88bf",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "568": {
+    "url": "https://www.nytimes.com/2020/05/27/us/coronavirus-live-news-updates.html",
+    "sha256": "2eebec5ebe7c91dedc5880ef40d00d422eb6cd59a81bd04df9c0f36b729fefb9",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "570": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/cuso-nvo052820.php",
+    "sha256": "d31c2db5bdd5e42c4f8849a4423af6a08d2031bea9564dc7b92a856ef5c803fb",
+    "strip_whitespace": false
+  },
+  "573": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52845990",
+    "sha256": "594ffa39f9648c793468ddf5268f64c8d5f279cfd0d67107a896922fc1ab9db7",
+    "legacy": false,
+    "strip_whitespace": false
+  },
+  "574": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52839678",
+    "sha256": "151fac5fb759856728540409f25eaacb70093bc949049d3ee9fcb185b765abcc",
+    "legacy": false,
+    "strip_whitespace": false
+  },
+  "575": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52795929",
+    "sha256": "c3566977e2a4fd03529a10b1d92e00115683979b22444a9b429d743a05bb8148",
+    "strip_whitespace": false
+  },
+  "577": {
+    "url": "https://www.theguardian.com/commentisfree/2020/may/28/coronavirus-infection-rate-too-high-second-wave",
+    "sha256": "d81bef26121e1abd00ae689b647e97e124237ce9792dd1b0fbad37d070f88c48",
+    "legacy": false,
+    "strip_whitespace": false,
+    "strip_specialchars": false
+  },
+  "578": {
+    "url": "https://www.nytimes.com/2020/05/26/science/cockatoos-intelligence.html",
+    "sha256": "e5237ff39296831f3467a0d2dfc1cdcbba778f5a1b4418b60bf1be68d68fc5b1",
+    "strip_whitespace": false
+  },
+  "581": {
+    "url": "https://www.nytimes.com/2020/05/27/health/coronavirus-spread-united-states.html",
+    "sha256": "ddf273ac7dc1ed2a9e53712870d7a3a318826cefc98b674f15576a008027f524",
+    "strip_whitespace": false
+  },
+  "584": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/uoia-sis052920.php",
+    "sha256": "0e26110bf53ded202a2d1ffcf95c1e58d4500263d6068f4b5df80a8f1e2878a9",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "585": {
+    "url": "https://www.nytimes.com/2020/05/27/world/coronavirus-world-global.html",
+    "sha256": "c1637ac2d862dd70ae17b4624167508d2e2a10c59ccabe0d6f3e8bea99cc5a0e",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "586": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/uoj-ncm052920.php",
+    "sha256": "c0f8dde7afbcf1bb3ad37c4bbcccb1fe92a4f6687d497744560cb2026dd3aa41",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "587": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/bu-ahs052920.php",
+    "sha256": "7adf7e31efae15993ee9d8226f652ac670680b5bb007925cfe20c2be48c54b95",
+    "strip_whitespace": false
+  },
+  "589": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/ifas-bpf052920.php",
+    "sha256": "e057a651bb9af41c1547cf8990cae7942bad5168c7ad38ddcac05d28dcefb62c",
+    "strip_whitespace": false
+  },
+  "590": {
+    "url": "https://www.bbc.co.uk/news/uk-england-hampshire-52834029",
+    "sha256": "509f239ddc53839a3cb65e8753ba62cfe51da5ab7ee539060441c6f7037739e0",
+    "strip_whitespace": false
+  },
+  "591": {
+    "url": "https://www.nytimes.com/2020/05/29/health/coronavirus-hydroxychloroquine.html",
+    "sha256": "a28eabdb1d095f7884001afae3cd0c70886d297bfeae9c5d72ab856527a20859",
+    "strip_whitespace": false
+  },
+  "592": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/puos-swt052820.php",
+    "sha256": "bb9d9810c46318c2c62d3def31a89f0e2cf8f4a307b8dd137ef3ca65e5336cbd",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "594": {
+    "url": "https://www.nytimes.com/2020/05/27/climate/covid-coronavirus-lyme-disease.html",
+    "sha256": "57abb9d2c1781f915d8a747af007d618d7eebdd6fe38adfb0936498cd3204a97",
+    "strip_whitespace": false
+  },
+  "596": {
+    "url": "https://web.archive.org/web/20200528231017/https://www.nytimes.com/2020/05/28/us/coronavirus-news-usa.html",
+    "sha256": "03cce80e0b41c63048897207dc58c635ef82779b03b10e7a2602d171a3d8a22e",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "597": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/vuot-tad052920.php",
+    "sha256": "c98a51c32f07775feb9c0223a6e8429b0e6a78bea560b61075e182955ea4a376",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "599": {
+    "url": "https://www.nytimes.com/2020/05/30/health/running-exercising-masks-coronavirus.html",
+    "sha256": "a9515526101a50096e28f165d0fced552988c9962f1d22263cf3b7a6517332ff",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "600": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-05/eu-bta052920.php",
+    "sha256": "148486a6c5f5868cd1257d230de5337f72f6cdbdfdb7ed1ca92287daecbd877e",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "603": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/ku-dad060120.php",
+    "sha256": "6f20bdbc96f79dbc41eab0bb66b47773ca402b2b735a40b89931fc7f7f2caacf",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "604": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/mrap-dam060120.php",
+    "sha256": "c85ed16637b6b2d321b5e1fc452705469e996432689c5075683490f743fddf63",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "605": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/ptgs-rst060120.php",
+    "sha256": "781fcf392b076b83dabf322bb1a162042600077ff3b354a7789b9a96bac1e3dd",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "606": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/epfd-fan060120.php",
+    "sha256": "e5c1bab13c974675424e56bc720e19d854e172d0eca5810a201d002a712c2ee3",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "607": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/su-nnb060120.php",
+    "sha256": "9ebd41d8b79ed62495425a94b98d795490dfa79a371a93a60d392a54eb97ca64",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "608": {
+    "url": "https://www.nytimes.com/2020/06/01/science/coronavirus-bats-wuhan.html",
+    "sha256": "b2347f35cde8571f293c7939c52ad29ba5ab987cfc6f84ec55308d6879680303",
+    "strip_whitespace": false
+  },
+  "609": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/ezdo-tct060120.php",
+    "sha256": "34ffa5d8dda2a1cd60c0ade885e1b3a4864c65175bb2331b56a7ff4a7377db96",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "611": {
+    "url": "https://www.eurekalert.org/pub_releases/2020-06/uota-atc060120.php",
+    "sha256": "2f2ee9d9aab1441b57c696d36da87705f890c1178f5791b17773abf49fe41d1e",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "612": {
+    "url": "https://web.archive.org/web/20200601194811/https://www.nytimes.com/2020/06/01/science/mass-extinctions-are-accelerating-scientists-report.html",
+    "sha256": "1034fa309b4fb9c706b90bd0b92ff4b30bb218e8bcbe55cfdb27a1e20be312d2",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "614": {
+    "url": "https://www.bbc.co.uk/news/science-environment-52921479",
+    "sha256": "3c9543c10dc549461d2fdc6e992bcfae8160aaf98689fc622bd2b2958f570e87",
+    "strip_whitespace": false
+  },
+  "615": {
+    "url": "https://www.nytimes.com/article/how-to-read-a-science-study-coronavirus.html",
+    "sha256": "d181c2bca81474661ef225c9a91d8fefc4b05868bc4c85eb028615c10071ac61",
+    "strip_whitespace": false
+  },
+  "616": {
+    "url": "https://www.nytimes.com/2020/06/03/health/coronavirus-blood-type-genetics.html",
+    "sha256": "5e86cba357cf10eca7906269945b5e930ac025bd1d9f877f4c352d12e5a5e08d",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "617": {
+    "url": "https://www.nytimes.com/2020/06/03/health/hydroxychloroquine-coronavirus-trump.html",
+    "sha256": "6692094abc34b1c10eb3c217f26a19c9fd4d202851cb4bbc581abe92aefd1c64",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "618": {
+    "url": "https://www.nytimes.com/2020/06/03/world/coronavirus-live.html",
+    "sha256": "5e86cba357cf10eca7906269945b5e930ac025bd1d9f877f4c352d12e5a5e08d",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "620": {
+    "url": "https://www.nytimes.com/article/coronavirus-facts-history.html",
+    "sha256": "8ededa7a086db785f2e9f2597321ca5e62a4aa0a3c4cbef9d6022d1a5807ab4f",
+    "legacy": true,
+    "strip_whitespace": false
+  },
+  "621": {
+    "url": "https://www.nytimes.com/2020/06/02/climate/deforestation-climate-change.html",
+    "sha256": "0d3b84ff381650370762f0ec619eb733c0f0f30dc702a47cca3dd9c23baf5b14",
+    "strip_whitespace": false
+  },
+  "624": {
+    "url": "https://www.nytimes.com/2020/06/01/health/coronavirus-mysteries.html",
+    "sha256": "465b7af306327e0092c9002e156fa46aaae5bf9b44364823ee3b46d9b979ec66",
+    "legacy": true,
+    "strip_whitespace": false
+  }
+}
