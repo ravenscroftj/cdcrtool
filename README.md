@@ -2,6 +2,14 @@
 
 This application can be used to generate ground truth data for the purpose of cross docment coreference resolution.
 
+
+## Dataset Access
+
+Due to copyright restrictions we are currently unable to offer the CD$^2$CR corpus as a direct download. However we have provided a script that can be run for free in Google Colab that will generate the corpus for you for your own personal or academic use. The script takes ~20 minutes and provides a standard CONLL formatted corpus at the end.
+
+![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/ravenscroftj/cdcrtool/blob/master/CDCR_Corpus/CDCR_Corpus_Builder.ipynb)
+
+
 ## Installing
 
 
