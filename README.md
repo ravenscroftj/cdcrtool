@@ -9,9 +9,19 @@ The $CD^2CR$ dataset is provided in CONLL markup format.
 
 You can download the partitioned dataset here:
 
- * [train set](CDCR_CORPUS/train.conll)
- * [test set](CDCR_CORPUS/test.conll)
- * [dev set](CDCR_CORPUS/dev.conll)
+ * [train set](CDCR_Corpus/train.conll)
+ * [test set](CDCR_Corpus/test.conll)
+ * [dev set](CDCR_Corpus/dev.conll)
+
+Document IDs in the corpus follow the convention "{topic_id}_{document_type}_{document_id}" where topic_id uniquely identifies a pair of related news article and scientific paper documents, document_type indicates which of the pair the document is (either news or science) and document_id uniquely identifies the document in our annotation system's RDBMS tables.
+
+A JSON mapping of news article IDs "{something}_news_{id}" to the original URL of the news article can be found here:
+
+ * [news urls](CDCR_Corpus/news_urls.json)
+
+A JSON Mapping of scientific paper IDs "{something}_science_{id}" to the DOI of the scientific paper can be found here:
+
+ * [scientific paper DOIs](CDCR_Corpus/sci_papers.json)
 
 
 ## Installing
