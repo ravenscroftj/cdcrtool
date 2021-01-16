@@ -66,7 +66,7 @@ with _usersvc.session() as session:
         .filter(Task.id.in_(session.query(sqlalchemy.distinct(UserTask.task_id))))\
         .all()
 
-    with open("task_dump.csv",'w') as f:
+    with open("data/processed/cdcr_task_dump.csv",'w') as f:
 
         csvw = csv.DictWriter(f, fieldnames=['id','hash','news_text','sci_text','news_ent','sci_ent','bert_similarity'])
 
@@ -91,7 +91,7 @@ with _usersvc.session() as session:
 #%%
 
 
-df = pd.read_csv("task_dump.csv")
+df = pd.read_csv("data/processed/cdcr_task_dump.csv")
 # user generated task entries don't have a bert similarity 
 # so we exclude them from comparison for now
 df.dropna(subset=['bert_similarity'],inplace=True)
