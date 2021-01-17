@@ -15,6 +15,7 @@ from html import unescape
 from tqdm.auto import tqdm
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
+from sqlalchemy.orm import subqueryload
 from cdcrapp.services import UserService, TaskService
 from cdcrapp.model import Task, NewsArticle, SciPaper, UserTask
 
@@ -64,11 +65,12 @@ with _usersvc.session() as session:
     tasks = session.query(Task)\
         .filter(Task.news_article_id.in_(news_docs) | Task.sci_paper_id.in_(sci_docs))\
         .filter(Task.id.in_(session.query(sqlalchemy.distinct(UserTask.task_id))))\
+        .options(subqueryload(Task.usertasks))\
         .all()
 
     with open("data/processed/cdcr_task_dump.csv",'w') as f:
 
-        csvw = csv.DictWriter(f, fieldnames=['id','hash','news_text','sci_text','news_ent','sci_ent','bert_similarity'])
+        csvw = csv.DictWriter(f, fieldnames=['id','hash','news_text','sci_text','news_ent','sci_ent','bert_similarity','answer'])
 
         csvw.writeheader()
 
@@ -81,6 +83,7 @@ with _usersvc.session() as session:
                 "news_ent": task.news_ent,
                 "sci_ent": task.sci_ent,
                 "bert_similarity": task.similarity,
+                "answer": task.get_best_answer()
             })
 
 # *************************************************************************
@@ -129,18 +132,6 @@ def get_tokens_by_offset(start:int,end:int, model_inputs: dict, second_doc=False
     
         if s >= start:
             yield i,tok
-
-# %%
-model_input
-
-# %%
-res = model(input_ids=torch.tensor([model_input['input_ids']]).cuda(), attention_mask = torch.tensor([model_input['attention_mask']]).cuda(),output_hidden_states=True)
-
-res.last_hidden_state
-# %%
-news_tokens
-# %%
-res.last_hidden_state[0,news_tokens].mean(dim=0).cpu().shape
 
 
 #%%
@@ -225,4 +216,16 @@ line2 = sns.distplot(df.bert_similarity, kde=False, label="BERT")
 plt.legend()
 # %%
 df.iloc[0]
+# %%
+
+
+line2 = sns.distplot(df[df.answer=="no"].roberta_similarity, kde=False, label="no")
+line = sns.distplot(df[df.answer=="yes"].roberta_similarity, kde=False, label="yes")
+
+
+plt.legend()
+
+# %%
+
+df.to_csv("roberta_sims_dump.csv")
 # %%

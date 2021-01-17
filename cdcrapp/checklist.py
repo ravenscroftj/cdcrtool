@@ -190,3 +190,27 @@ task.sci_text[830:901]
 # %%
 task.news_url
 # %%
+ro_df = pd.read_csv("../roberta_sims_dump.csv")
+# %%
+df.head()
+# %%
+ro_df.head()
+# %%
+len(df)
+# %%
+with_sim = df.merge(ro_df[['id','roberta_similarity']], on='id')
+# %%
+import pandas as pd
+import seaborn as sns
+
+from matplotlib import pyplot as plt
+
+filter = True #(with_sim['Test Example']=='Anaphora')
+
+line2 = sns.distplot(with_sim[filter & (with_sim.Answer=="no")].roberta_similarity, kde=False, label="no")
+line = sns.distplot(with_sim[filter &(with_sim.Answer=="yes")].roberta_similarity, kde=False, label="yes")
+
+plt.legend()
+# %%
+with_sim['Test Example']
+# %%
