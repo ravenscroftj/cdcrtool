@@ -23,6 +23,22 @@ A JSON Mapping of scientific paper IDs "{something}_science_{id}" to the DOI of 
 
  * [scientific paper DOIs](CDCR_Corpus/sci_papers.json)
 
+## Checklist tasks
+
+In table 4 of our paper we describe a series of 'challenging' co-reference tasks that we use as test cases/unit tests in the style of [Ribeiro et al](https://www.aclweb.org/anthology/2020.acl-main.442/). 
+
+The specific list of these challenging tasks can be found [here](CDCR_Corpus/checklist_conll_testset.csv). This file contains a list of manually annotated 'is co-referent?' yes/no checks that were hand picked by the authors as particularly difficult as described in [our paper](https://arxiv.org/abs/2101.12637).
+
+Each row gives the document IDs containing the two mentions (corresponding to the document ID in the third column of the test.conll file without the topic prefix), the token indices of the mention separated by semi colons (corresponding to the 5th column in the CoNLL file), is_coreferent indicates whether or not the pair co-refer or not (there are challenging cases of both yes and no that we wanted to explore) and finally the type of task or reason that we picked it.
+
+The below diagram provides visual explanation for how the information fits together
+
+![diagram showing how the tables in the checklist csv correspond to the CoNLL file](assets/checklist_table.png)
+
+**********************************
+
+
+# CDCR Annotation Tool
 
 ## Installing
 

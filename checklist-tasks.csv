@@ -1,0 +1,151 @@
+Task ID,News Entity,Science Entity,Task Type
+98219,the masks,N95 respirators,Anaphora
+237048,the virus,SARS-CoV-2,Anaphora
+94099,the embryos,dinosaur embryos,Anaphora
+164,the dinosaurs,the best known sauropod dinosaurs,Anaphora
+142032,his team,a research team,Anaphora
+232393,the Austrian cockatoo colony,an avian model species,Anaphora
+232399,the Austrian cockatoo colony,laboratory-raised birds,Anaphora
+232392,the Austrian cockatoo colony,the Goffin’s cockatoo,Anaphora
+209,the galaxy,our Milky Way galaxy,Anaphora
+225126,the coronavirus,SARS-CoV-2,Anaphora
+240409,the delicate jaw fragment,An isolated partial premaxilla,Anaphora
+108695,existing techniques,conventional catalysts,Anaphora
+235,a mission to peer through the thick clouds that shroud the planet,the mission,Anaphora
+260906,this trial,this double-blind randomized trial,Anaphora
+208019,the inoculation,an intramuscular injection of vaccine,Anaphora
+204459,the carnivore,the Tyrannosauridae,Anaphora
+111921,monarchs,monarch butterflies,Anaphora
+240433,The delicate jaw fragment,This specimen,Anaphora
+180196,the coronavirus,Severe acute respiratory syndrome coronavirus 2,Anaphora
+338,three patients,these patients,Anaphora
+351,a new species of monkey,this new species,Anaphora
+385,the star,the Sun,Anaphora
+94114,the embryos,well-preserved embryos,Anaphora
+142123,a new optical imaging technology,the technique,Anaphora
+218341,an old antimalarial drug,this drug,Anaphora
+204399,the carnivore,Tyrannosauridae,Anaphora
+445,the animals,eight sheep (Ovis aries),Anaphora
+618,probably rocky planet,a sub-Mercury-sized exoplanet,Anaphora
+167556,the coronavirus,the new virus,Anaphora
+228464,the region,this location,Anaphora
+207752,the vaccine,an Ad5 vectored COVID-19 vaccine,Anaphora
+265251,it,the new novel coronavirus disease (COVID-19),Anaphora
+567,the link,causality,Anaphora
+139848,the drought,Severe and persistent 21st-century drought,Anaphora
+214361,all patients,thirty-nine hospitalized patients,Anaphora
+236298,land-use changes,the changes,Anaphora
+240652,it,"An isolated, partial premaxilla",Anaphora
+228451,the region,the Larsen continental shelf,Anaphora
+213249,the coronavirus genes,SARS-CoV-2 genomes,Anaphora
+209055,the virus,a recombinant adenovirus,Anaphora
+239631,the financial crisis,the crisis,Anaphora
+229015,the planet,Earth,Anaphora
+139870,the drought,the 2000–2018 drought,Anaphora
+762,the Eurasian golden jackal,wolf-like animals,Anaphora
+785,their children,a genetically related child,Anaphora
+195,spoon-fed babies,the spoon-fed group,Anaphora
+824,the number,the number of infected mosquitoes,Anaphora
+136858,their current CO2 pledges,the proposed self-preservation strategy;1237;1276,Anaphora
+837,the birds,979 goose flocks,Anaphora
+872,the DNA,ancient DNA,Anaphora
+174,Spain,Northerm Spain,Subset
+219970,an inflammatory disortder,a Kawasaki-like disease,Subset
+108860,reduced greenhouse gas emissions,zero CO2 emissions,Subset
+196,American airports,several international airports,Subset
+232117,a cockatoo,the Goffin's cockatoo,Subset
+224,changes in flight patterns,behavioral responses,Subset
+226745,tissues,organs,Subset
+259366,scientific papers,research papers,Subset
+202049,cartilage,damaged articular cartilage,Subset
+100617,tumor cells,Cells,Subset
+130906,permanent neurological damage,developmental delay,Subset
+298,patients with schizophrenia,two schizophrenia patients,Subset
+214566,a serum transfusion,convalescent plasma transfusion,Subset
+205677,intravenous infusions,convalescent plasma transfusions,Subset
+254887,coronaviruses,all known bat-CoVs,Subset
+130855,AHT,fatal brain injuries,Subset
+130765,fatal brain injuries,abusive head trauma,Subset
+139737,Climate change,anthropogenic climate change,Subset
+410,Mothers,Women,Subset
+466,antimatter particles,antihydrogen atoms,Subset
+513,women,pregnant women,Subset
+509,aggressive pancreatic tumours,pancreatic ductal adenocarcinoma (PDA),Subset
+544,some people,Humans,Subset
+240740,a flying pterosaur,a tapejarid;225;236,Subset
+226804,tissues,functional tissues;52;70,Subset
+151398,comets,extrasolar comets,Subset
+221410,flood conditions,weather conditions,Subset
+600,space,low Earth orbit,Subset
+151460,the Sun,other stars,Subset
+207835,Certain immune cells,specific antibodies,Subset
+211250,the northeastern United States,southern Maine,Subset
+130649,Abusive head trauma,neurological trauma,Subset
+241303,people,hospitalized patients,Subset
+625,a government-issued licence,asmoker's license,Subset
+635,mental skills,the participants' information processing capability,Subset
+646,post-traumatic stress disorder,affective disorders,Subset
+265412,the illness,the novel coronavirus disease (COVID-19),Subset
+679,five pairs,ten participants,Subset
+226411,these tissues,functional tissues,Subset
+700,oil exposure,hydrocarbon exposure,Subset
+128189,the intestines,the cecum,Subset
+767,Malaysia,Sumatra,Subset
+776,bee behaviour,plant-pollinator interactions,Subset
+823,GCSE results,educational achievement,Subset
+258245,terrestrial vetebrate species,Earth's species,Subset
+856,Wales,England and Wales,Subset
+914,domestic dogs,wolf-like animals,Subset
+923,a game,the “20 Questions” game,Subset
+977,Malaysia,Borneo,Subset
+205103,T. rex,Tyrannosauridae,Subset
+229327,computer simulations,3D numerical simulations,Paraphrasing
+259209,short-term weather forecasting,6 hour weather forecasting,Paraphrasing
+98411,the Covid-19 pandemic,the unprecedented pandemic,Paraphrasing
+98251,one-time use,single use,Paraphrasing
+239817,the study,the paper,Paraphrasing
+247019,an elegant solution,a powerful alternative,Paraphrasing
+151450,the Sun,the central star,Paraphrasing
+109,a double mastectomy,preventive mastectomy,Paraphrasing
+142074,a new optical imaging technology,a novel fluorescence imaging approach,Paraphrasing
+128165,the intestines,the gut,Paraphrasing
+126,its host star,the Sun-like host star,Paraphrasing
+138,scientific journals,peer-reviewed academic articles,Paraphrasing
+238952,six causes,six key drivers,Paraphrasing
+233431,The United States,the US,Paraphrasing
+201,the air,the atmosphere,Paraphrasing
+149820,recovered patients,recently recovered donors,Paraphrasing
+136837,their current CO2 pledges,the current emissions reduction efforts,Paraphrasing
+133127,the death rate,case fatality rate,Paraphrasing
+257,rich enough hyudrocarbon deposits,the hydrocarbon-rich areas,Paraphrasing
+229513,inclination of up to 60 degrees,a steeply-inclined (45–60°,Paraphrasing
+319,the Congo,the Confo (Lualaba) River,Paraphrasing
+321,the newly discovered species,the new animal,Paraphrasing
+340,the nervous system,their central nervous systems,Paraphrasing
+137334,current emissions targets,current climate pledges,Paraphrasing
+361,the sensation,this experience,Paraphrasing
+200910,a sizeable second epidemic wave,a rapic resurgence,Paraphrasing
+132871,particle pollution levels,air pollution levels,Paraphrasing
+390,three patients,three previously blind persons,Paraphrasing
+406,patients,human subjects,Paraphrasing
+422,Europe's indigenous hunters,indigenous hunter-gatherer males,Paraphrasing
+425,a poll,a web-based questionnaire,Paraphrasing
+238945,six causes,the key factors,Paraphrasing
+1296,jelly-filled pores on their heads called,highly sensitive electroreceptors,Paraphrasing
+490,an ancient flow,relatively young mare lava flows,Paraphrasing
+502,a mid-life crisis,a midlife low,Paraphrasing
+523,another human,a second participant,Paraphrasing
+205802,patients,control patients,Paraphrasing
+527,a giant short-faced bear,the gigantic extinct Agriotherium africanum,Paraphrasing
+185137,strange dreams,distressing dreams,Paraphrasing
+641,smell,Odor perception,Paraphrasing
+653,The triple-drug cocktail,the combination,Paraphrasing
+233830,the pandemic,the global spread,Paraphrasing
+703,the summer months,the austral summer,Paraphrasing
+142064,a new optical imaging technology,a comprehensive three-dimensional (3D) visualization,Paraphrasing
+709,the animal's genes,its evolutionary proximity,Paraphrasing
+717,nematode worms,the nematode Caenorhabditis elegans,Paraphrasing
+201558,the scientists,Experimenters,Paraphrasing
+782,The brains of rodents,the Drosophila brain,Paraphrasing
+239073,international integration,global interconnectedness,Paraphrasing
+229445,the crust,the subsurface structure,Paraphrasing

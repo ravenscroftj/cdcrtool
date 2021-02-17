@@ -32,6 +32,8 @@ df = pd.read_csv("../checklist-tasks-v2.csv").dropna(subset=['Test Example'])
 # %%
 df.head()
 
+#%%
+
 task_types = {}
 for i,row in df.iterrows():
     task_types[row['id']] = row['Test Example']
@@ -66,7 +68,7 @@ for doc in docs.keys():
         sci_docs.append(int(id))
 # %%
 import spacy
-nlp = spacy.load('en')
+nlp = spacy.load('en_core_web_md')
 
 news_docs = {}
 sci_docs = {}
@@ -80,7 +82,6 @@ for task in tasks:
     if task.sci_paper_id not in sci_docs:
         sci_docs[task.sci_paper_id] = nlp(task.sci_text)
 
-
 #%%
 def tok_id_from_doc(doc, start,end):
     tok_id = 0
@@ -93,7 +94,47 @@ def tok_id_from_doc(doc, start,end):
             yield tok_id
 
         tok_id += 1
+#%%
 
+for task in tasks:
+
+    news_tokens = []
+
+    if task.news_article_id not in news_docs:
+        news_docs[task.news_article_id] = nlp(task.news_text)
+    
+    if task.sci_paper_id not in sci_docs:
+        sci_docs[task.sci_paper_id] = nlp(task.sci_text)
+#%%
+difficult = []
+for task in tasks:
+
+    text,start,end = task.news_ent.split(';')
+
+    news_idx = list(tok_id_from_doc(
+        news_docs[task.news_article_id], 
+        int(start), int(end)))
+
+    text,start,end = task.sci_ent.split(';')
+
+    sci_idx = list(tok_id_from_doc(
+        sci_docs[task.sci_paper_id], 
+        int(start), int(end)))
+
+    difficult.append({
+        "news_document":  f"news_{task.news_article_id}",
+        "science_document": f"science_{task.sci_paper_id}",
+        "news_tokens_idx": ";".join([str(x) for x in news_idx]),
+        "sci_token_idx": ";".join([str(x) for x in sci_idx]),
+        "is_coreferent": task.get_best_answer(),
+        "task_type":task_types[task.id]
+    })
+
+
+checklist_df = pd.DataFrame.from_records(difficult).sort_values(by='task_type')
+
+#%%
+checklist_df.to_csv("../CDCR_Corpus/checklist_conll_testset.csv", index=False)
 #%%
 from analyse import parse_conll
 
