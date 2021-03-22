@@ -35,6 +35,10 @@ The below diagram provides visual explanation for how the information fits toget
 
 ![diagram showing how the tables in the checklist csv correspond to the CoNLL file](assets/checklist_table.png)
 
+## Trained Model
+
+You can find model and config files for our CA-V model [here](https://papro.org.uk/downloads/cd2cr/models/cd2cr_ca_v.zip). The model is compatible with [Arie Cattan's coref repository](https://github.com/ariecattan/coref).
+
 **********************************
 
 
